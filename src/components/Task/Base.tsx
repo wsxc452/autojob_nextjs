@@ -1,12 +1,12 @@
 "use client";
-import dynamic from "next/dynamic";
 import React from "react";
+import Form from "./Form";
 // import ChartOne from "../Charts/ChartOne";
 // import ChartTwo from "../Charts/ChartTwo";
 // import ChatCard from "../Chat/ChatCard";
 // import TableOne from "../Tables/TableOne";
 // import CardDataStats from "../CardDataStats";
-// import BaseFrom from "./Components/Base";
+
 // const MapOne = dynamic(() => import("@/components/Maps/MapOne"), {
 //   ssr: false,
 // });
@@ -15,12 +15,14 @@ import React from "react";
 //   ssr: false,
 // });
 
-const ECommerce: React.FC = () => {
+const BaseFrom: React.FC = () => {
   return (
-    <>
-      <div className="container mx-auto">{/* <BaseFrom /> */}</div>
-    </>
+    <div className="flex flex-row">
+      <div className="flex-1 ">
+        <Form isLoading={false} />
+      </div>
+    </div>
   );
 };
 
-export default ECommerce;
+export default BaseFrom;

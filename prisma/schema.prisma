@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 定义表模型
+model Tasks {
+  id             Int      @id @default(autoincrement())
+  title          String? // 任务标题
+  salary         String? // 任务薪资
+  position       String? // 任务职位
+  staffnum       String? // 员工人数
+  isIgnorePassed Boolean? @default(true) // 是否忽略已投递记录
+
+  filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字的关系
+
+  search    Search[] // 搜索结果的关系
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 定义主键
+  @@map(name: "tasks")
+}
+
+// 定义过滤公司关键字表
+model FilteredCompanyKeywords {
+  id      Int    @id @default(autoincrement())
+  keyword String // 需要过滤的公司关键字
+  taskId  Int // 关联的任务ID
+
+  task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 确保 taskId 和 keyword 的组合唯一
+  @@unique([taskId, keyword])
+  // 定义主键
+  @@map(name: "filtered_company_keywords")
+}
+
+// 定义过滤公司关键字表
+model Search {
+  id       Int    @id @default(autoincrement())
+  md5      String @db.VarChar(32) // MD5 哈希值通常为 32 个字符
+  position String @db.VarChar(100) // 职位名称，假设最大长度为 100 个字符
+  salary   String @db.VarChar(50) // 薪资信息，假设最大长度为 50 个字符
+  company  String @db.VarChar(100) // 公司名称，假设最大长度为 100 个字符
+  scale    String @db.VarChar(50) // 公司规模，假设最大长度为 50 个字符
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  taskId Int // 关联的任务ID
+
+  autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
+
+  task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+
+  // 确保 taskId 和 keyword 的组合唯一
+  @@unique([taskId, md5])
+  // 定义主键
+  @@map(name: "search")
+}
