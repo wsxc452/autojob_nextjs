@@ -1,20 +1,26 @@
-import { NextResponse } from "next/server";
-import { auth, BASE_PATH } from "@/auth";
-
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
+// const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
 
-export default auth((req) => {
-  const reqUrl = new URL(req.url);
-  if (!req.auth && reqUrl?.pathname !== "/") {
-    return NextResponse.redirect(
-      new URL(
-        `${BASE_PATH}/signin?callbackUrl=${encodeURIComponent(
-          reqUrl?.pathname,
-        )}`,
-        req.url,
-      ),
-    );
-  }
-});
+// export default clerkMiddleware((auth, req) => {
+//   if (isProtectedRoute(req)) auth().protect();
+// });
+
+const isPublicRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/",
+  "/h5/(.*)",
+]);
+export default clerkMiddleware(
+  (auth, request) => {
+    if (!isPublicRoute(request)) {
+      auth().protect();
+    }
+  },
+  {
+    debug: true,
+  },
+);

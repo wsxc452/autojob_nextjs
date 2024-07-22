@@ -1,5 +1,28 @@
 const nextConfig = {
   reactStrictMode: false,
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/dashboard",
+        permanent: true, // 如果是永久重定向，可以设置为 true
+      },
+    ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+        port: "",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+        port: "",
+      },
+    ],
+  },
   // async headers() {
   //   return [
   //     {

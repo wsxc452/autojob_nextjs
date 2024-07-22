@@ -8,7 +8,9 @@ export default function RootLayout({
 }>) {
   return (
     <DefaultLayout>
-      <div className="flex flex-col">{children}</div>
+      <div className="flex flex-col dark:bg-boxdark dark:text-bodydark ">
+        {children}
+      </div>
     </DefaultLayout>
   );
 }

@@ -1,7 +1,7 @@
 import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   title: "Auto Post Resume-Czm",
@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const session = await auth();
+  // const session = await auth();
   return (
     <>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
       {/* <DefaultLayout>
         <ECommerce />
       </DefaultLayout> */}

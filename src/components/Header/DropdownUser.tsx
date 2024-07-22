@@ -1,30 +1,47 @@
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import ClickOutside from "@/components/ClickOutside";
+// import { useState } from "react";
+// import Link from "next/link";
+// import Image from "next/image";
+// import ClickOutside from "@/components/ClickOutside";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const DropdownUser = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  // const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useUser();
   return (
-    <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
-      <Link
+    <>
+      {/* <ClickOutside onClick={() => setDropdownOpen(false)} className="relative"> */}
+      <div className="flex items-center gap-4">
+        <span className="hidden text-right lg:block">
+          <span className="block text-sm font-medium text-black dark:text-white">
+            {user?.username || "Guest"}
+          </span>
+          <span className="block text-xs">Hi,{user?.firstName || "Guest"}</span>
+        </span>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
+      {/* <Link
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center gap-4"
         href="#"
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {user?.firstName || "Guest"}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{user?.fullName}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
+            src={user?.imageUrl || "/images/user/user-01.png"}
             style={{
               width: "auto",
               height: "auto",
@@ -48,10 +65,9 @@ const DropdownUser = () => {
             fill=""
           />
         </svg>
-      </Link>
-
+      </Link> */}
       {/* <!-- Dropdown Start --> */}
-      {dropdownOpen && (
+      {/* {dropdownOpen && (
         <div
           className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
         >
@@ -149,10 +165,80 @@ const DropdownUser = () => {
             Log Out
           </button>
         </div>
-      )}
+      )} */}
       {/* <!-- Dropdown End --> */}
-    </ClickOutside>
+      {/* </ClickOutside> */}
+    </>
   );
 };
 
 export default DropdownUser;
+// const userInfo = {
+//   pathRoot: "/me",
+//   id: "user_2jVbehy2ILhhjfzfL5yXgl7QEIw",
+//   externalId: null,
+//   username: "wsxc453",
+//   emailAddresses: [
+//     {
+//       pathRoot: "/me/email_addresses",
+//       emailAddress: "387558864@qq.com",
+//       linkedTo: [],
+//       id: "idn_2jVbenzrO53PDFUidIDW0trGgWD",
+//       verification: {
+//         pathRoot: "",
+//         status: "verified",
+//         strategy: "admin",
+//         nonce: null,
+//         externalVerificationRedirectURL: null,
+//         attempts: null,
+//         expireAt: "2024-07-20T11:43:22.275Z",
+//         error: null,
+//       },
+//     },
+//   ],
+//   phoneNumbers: [],
+//   web3Wallets: [],
+//   externalAccounts: [],
+//   passkeys: [],
+//   samlAccounts: [],
+//   organizationMemberships: [],
+//   passwordEnabled: true,
+//   firstName: "zhiming",
+//   lastName: "cao",
+//   fullName: "zhiming cao",
+//   primaryEmailAddressId: "idn_2jVbenzrO53PDFUidIDW0trGgWD",
+//   primaryEmailAddress: {
+//     pathRoot: "/me/email_addresses",
+//     emailAddress: "387558864@qq.com",
+//     linkedTo: [],
+//     id: "idn_2jVbenzrO53PDFUidIDW0trGgWD",
+//     verification: {
+//       pathRoot: "",
+//       status: "verified",
+//       strategy: "admin",
+//       nonce: null,
+//       externalVerificationRedirectURL: null,
+//       attempts: null,
+//       expireAt: "2024-07-20T11:43:22.275Z",
+//       error: null,
+//     },
+//   },
+//   primaryPhoneNumberId: null,
+//   primaryPhoneNumber: null,
+//   primaryWeb3WalletId: null,
+//   primaryWeb3Wallet: null,
+//   imageUrl:
+//     "https://img.clerk.com/eyJ0eXBlIjoiZGVmYXVsdCIsImlpZCI6Imluc18yalZWYlBFeEhvWXRNVlZLWXZCcko5M1FXYVYiLCJyaWQiOiJ1c2VyXzJqVmJlaHkySUxoaGpmemZMNXlYZ2w3UUVJdyIsImluaXRpYWxzIjoiWkMifQ",
+//   hasImage: false,
+//   twoFactorEnabled: false,
+//   totpEnabled: false,
+//   backupCodeEnabled: false,
+//   publicMetadata: {},
+//   unsafeMetadata: {},
+//   createOrganizationEnabled: true,
+//   deleteSelfEnabled: false,
+//   lastSignInAt: "2024-07-20T11:35:20.390Z",
+//   updatedAt: "2024-07-20T11:35:20.419Z",
+//   createdAt: "2024-07-20T11:34:48.567Z",
+//   cachedSessionsWithActivities: null,
+// };

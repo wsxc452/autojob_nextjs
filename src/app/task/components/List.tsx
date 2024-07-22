@@ -1,13 +1,12 @@
 "use client";
 import React from "react";
-import type { PopconfirmProps } from "antd";
+import "./tableStyles.css"; // 引入自定义样式文件
 
 import { Button, message, Space, Table, Popconfirm } from "antd";
 import type { TableProps } from "antd";
 import { useTasks } from "@/hooks/useTask";
 import Link from "next/link";
 import { deleteTask } from "@/service/task";
-import { revalidatePath } from "next/cache";
 
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
@@ -98,8 +97,9 @@ export default function List() {
     },
   ];
   return (
-    <div>
+    <div className="dark:bg-gray-800 flex flex-col ">
       <Table
+        className="custom-table"
         columns={columns}
         dataSource={data?.data || []}
         rowKey={(record) => record.id}
