@@ -167,7 +167,8 @@ export default function Page() {
             注册
           </button>
           <button
-            type="submit"
+            type="button"
+            onClick={() => router.push("/h5/login")}
             className="mt-3 box-content w-full rounded border-2 border-solid border-blue-500 bg-white py-2 font-semibold text-black transition duration-200 hover:bg-blue-600"
           >
             去登录
