@@ -14,6 +14,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // if (!userId) {
+  //   router.replace("/sign-in");
+  // }
+
   return (
     <ClerkProvider localization={zhCN}>
       <html lang="zh">

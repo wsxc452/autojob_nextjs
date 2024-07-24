@@ -1,5 +1,5 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { proxy, subscribe } from "valtio";
+import { UserInfo } from "@/types";
+import { proxy } from "valtio";
 import { subscribeKey } from "valtio/utils";
 // const [colorMode, setColorMode] = useLocalStorage("color-theme", "light");
 // const themeAtom = atom({
@@ -9,20 +9,37 @@ import { subscribeKey } from "valtio/utils";
 // localStorage.getItem("color-theme") ||
 const globaStore = proxy<{
   theme: any;
+  userInfo: UserInfo;
 }>({
   theme: "light",
+  userInfo: {
+    name: "",
+    email: "",
+    avatar: "",
+    id: "",
+  },
 });
 subscribeKey(globaStore, "theme", (colorMode) => {
-  console.log("state.count has changed to", colorMode);
   const className = "dark";
   const bodyClass = window.document.body.classList;
   localStorage.setItem("color-theme", colorMode);
-
   colorMode === "dark" ? bodyClass.add(className) : bodyClass.remove(className);
 });
 
 // subscribe(globaStore, () => {
 //   localStorage.setItem("color-theme", globaStore.theme);
 // });
+
+export const userActions = {
+  setTheme: (theme: any) => {
+    globaStore.theme = theme;
+  },
+  setUserInfo: (userInfo: UserInfo) => {
+    globaStore.userInfo = userInfo;
+  },
+  clearUserInfo: () => {
+    globaStore.userInfo = { name: "", email: "", avatar: "", id: "" };
+  },
+};
 
 export default globaStore;

@@ -9,6 +9,7 @@ export interface TaskItem {
   salary: string;
   position: [];
   staffnum: string;
+  oid: string;
   filteredKeywords: Array<FilterCompony>;
 }
 
@@ -20,4 +21,14 @@ export interface ListProps<T> {
     limit: number;
     totalPages: number;
   };
+}
+
+export interface UserInfo {
+  id: string;
+  name?: string;
+  email: string;
+  avatar: string;
+  role?: string;
+  status?: string;
+  oid?: string;
 }

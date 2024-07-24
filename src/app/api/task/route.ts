@@ -1,30 +1,29 @@
-// https://nextjs.org/docs/app/building-your-application/routing/route-handlers
 import { NextRequest, NextResponse } from "next/server";
 type Params = {};
 
 import { PrismaClient } from "@prisma/client";
-
+import { auth } from "@clerk/nextjs/server";
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest, context: { params: Params }) {
-  // 从查询参数中解析分页参数
+  const { userId } = auth().protect();
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1");
   const limit = parseInt(url.searchParams.get("limit") || "10");
 
-  // 计算偏移量
   const offset = (page - 1) * limit;
 
-  // 查询数据库，获取任务数据
   const [data, total] = await prisma.$transaction([
     prisma.tasks.findMany({
       skip: offset,
       take: limit,
+      where: {
+        oid: userId,
+      },
     }),
     prisma.tasks.count(),
   ]);
 
-  // 返回分页数据和分页信息
   return NextResponse.json({
     data,
     pagination: {
@@ -58,6 +57,7 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
         salary: body.salary,
         position: body.position,
         staffnum: body.staffnum,
+        oid: body.oid,
         filteredKeywords: {
           create: [
             { keyword: "阿里" },

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `search` ADD COLUMN `oid` VARCHAR(64) NOT NULL DEFAULT '';
+
+-- AlterTable
+ALTER TABLE `tasks` ADD COLUMN `oid` VARCHAR(64) NOT NULL DEFAULT '';

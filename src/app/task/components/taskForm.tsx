@@ -21,6 +21,7 @@ function TaskForm() {
     position: [],
     staffnum: "",
     filteredKeywords: [],
+    oid: "",
   } as TaskItem;
   const [initialValues, setInitialValues] = useState(taskInit);
   const { isLoading, isError, data, error } = useQuery({

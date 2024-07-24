@@ -17,10 +17,10 @@ model Tasks {
   isIgnorePassed Boolean? @default(true) // 是否忽略已投递记录
 
   filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字的关系
-
-  search    Search[] // 搜索结果的关系
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  oid              String                    @default("") @db.VarChar(64)
+  search           Search[] // 搜索结果的关系
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
 
   // 定义主键
   @@map(name: "tasks")
@@ -56,6 +56,8 @@ model Search {
   updatedAt DateTime @updatedAt
 
   taskId Int // 关联的任务ID
+
+  oid String @default("") @db.VarChar(64) // oauth2 relative ID
 
   autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
 

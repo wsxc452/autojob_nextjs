@@ -2,12 +2,12 @@
 import React from "react";
 import "./tableStyles.css"; // 引入自定义样式文件
 
-import { Button, message, Space, Table, Popconfirm } from "antd";
+import { Button, Space, Table, Popconfirm } from "antd";
 import type { TableProps } from "antd";
 import { useTasks } from "@/hooks/useTask";
 import Link from "next/link";
 import { deleteTask } from "@/service/task";
-
+import message from "@/components/Message";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>

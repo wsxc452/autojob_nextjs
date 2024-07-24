@@ -7,23 +7,27 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "npx prisma migrate dev --name add-task-table",
-    "generate": "npx prisma generate",
+    "migrate": "dotenv -e .env.local -- npx prisma migrate dev --name autojob",
+    "generate": "dotenv -e .env.local -- npx prisma generate",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
     "@ant-design/nextjs-registry": "^1.0.0",
+    "@clerk/clerk-js": "^5.9.0",
     "@clerk/localizations": "^2.4.8",
     "@clerk/nextjs": "^5.2.4",
     "@prisma/client": "5.17.0",
     "@tanstack/react-query": "^5.51.1",
     "@tanstack/react-query-devtools": "^5.51.1",
+    "@types/js-cookie": "^3.0.6",
     "antd": "^5.19.0",
     "apexcharts": "^3.45.2",
     "flatpickr": "^4.6.13",
+    "js-cookie": "^3.0.5",
     "jsvectormap": "^1.6.0",
     "next": "^14.2.4",
+    "pollify": "^1.0.2",
     "react": "^18",
     "react-apexcharts": "^1.4.1",
     "react-dom": "^18",
@@ -31,11 +35,13 @@
     "valtio": "^1.13.2"
   },
   "devDependencies": {
+    "@clerk/types": "^4.8.0",
     "@tanstack/eslint-plugin-query": "^5.51.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
@@ -44,5 +50,12 @@
     "prisma": "^5.17.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
-  }
+  },
+  "browserslist": [
+    "chrome 64",
+    "edge 79",
+    "firefox 67",
+    "opera 51",
+    "safari 12"
+  ]
 }

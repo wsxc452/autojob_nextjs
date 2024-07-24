@@ -26,6 +26,7 @@ export default function FormWrap({ id }: { id?: number }) {
     position: [],
     staffnum: "",
     filteredKeywords: [],
+    oid: "",
   });
 
   useEffect(() => {

@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Select, Space, App, Tag } from "antd";
-import { CloseCircleOutlined } from "@ant-design/icons";
 import type { SelectProps } from "antd";
-import FilterCompony from "./FilterComp";
 import { TaskItem } from "@/types";
 import { createTask, updateTask } from "@/service/task";
-
+import globaStore from "@/states/globaStore";
+import { useSnapshot } from "valtio";
+import message from "@/utils/antdMessage";
 const posOptions: SelectProps["options"] = [
   {
     label: "front-end",
@@ -116,37 +116,27 @@ const TaskForm: React.FC<FormValues> = ({
   initialValues,
   isLoading = false,
 }) => {
-  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [isCreate, setIsCreate] = useState<boolean>(!initialValues);
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
-  const [formValue, setFormValue] = useState<TaskItem>(function () {
-    if (!initialValues) {
-      return {
-        id: 0,
-        title: "",
-        salary: "",
-        position: [],
-        staffnum: "",
-        filteredKeywords: [],
-      };
-    }
-    return {
-      id: initialValues.id,
-      title: initialValues.title,
-      salary: initialValues.salary,
-      position: initialValues.position,
-      staffnum: initialValues.staffnum,
-      filteredKeywords: initialValues.filteredKeywords,
-    };
+  const [formValue, setFormValue] = useState<TaskItem>({
+    id: 0,
+    title: "",
+    salary: "",
+    position: [],
+    staffnum: "",
+    filteredKeywords: [],
+    oid: "",
   });
 
   useEffect(() => {
-    const newValue = {
-      ...initialValues,
-    } as TaskItem;
-    setFormValue(newValue);
-    form.setFieldsValue(newValue);
+    if (initialValues) {
+      const newValue = {
+        ...initialValues,
+      } as TaskItem;
+      setFormValue(newValue);
+      form.setFieldsValue(newValue);
+    }
     setIsCreate(!initialValues);
   }, [initialValues, form]);
 
@@ -163,15 +153,25 @@ const TaskForm: React.FC<FormValues> = ({
       position: [],
       staffnum: "",
       filteredKeywords: [],
+      oid: "",
     } as TaskItem;
   }
 
+  const userInfo = useSnapshot(globaStore.userInfo);
+
+  useEffect(() => {
+    if (initialValues) {
+      setFormValue(initialValues);
+    }
+  }, [initialValues]);
+  console.log("formValue", formValue);
   const onFinish = async (values: any) => {
     setIsSubmiting(true);
     const submitValue = {
       ...values,
       position: values.position.join(","),
       filteredKeywords: formValue.filteredKeywords,
+      oid: userInfo.id,
     };
     console.log("111", submitValue);
     if (isCreate) {
@@ -196,7 +196,7 @@ const TaskForm: React.FC<FormValues> = ({
   };
 
   const onValuesChange = (changedValues: any, allValues: any) => {
-    console.log("onValuesChange", changedValues, allValues);
+    console.log("onValuesChange", formValue, changedValues, allValues);
     setFormValue(Object.assign({}, formValue, allValues));
   };
 
@@ -217,6 +217,11 @@ const TaskForm: React.FC<FormValues> = ({
 
   const addFilter = () => {
     // check if the value is already in the list
+    console.log("formValue", formValue);
+    if (inputValue.trim() === "") {
+      message.info("请输入要过滤的公司关键字");
+      return;
+    }
     if (
       formValue.filteredKeywords.findIndex(
         (item) => item.keyword === inputValue,
@@ -279,11 +284,7 @@ const TaskForm: React.FC<FormValues> = ({
           options={posOptions}
         />
       </Form.Item>
-      <Form.Item
-        name="filteredKeywords2"
-        label="过滤公司名"
-        rules={[{ required: false }]}
-      >
+      <Form.Item label="过滤公司名" rules={[{ required: false }]}>
         <div>
           <div className="grid grid-cols-4 gap-4">
             <div className="col-span-2">

@@ -12,6 +12,7 @@ export default async function Home() {
   // const session = await auth();
   return (
     <>
+      <h3>loading</h3>
       {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
       {/* <DefaultLayout>
         <ECommerce />

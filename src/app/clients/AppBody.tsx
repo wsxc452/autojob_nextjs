@@ -8,7 +8,7 @@ export default function AppBody({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const { theme } = useSnapshot(globaStore);
   useEffect(() => {
-    globaStore.theme = localStorage.getItem("color-theme") || "dark";
+    globaStore.theme = localStorage.getItem("color-theme") || "light";
     // setTimeout(() => setLoading(false), 200);
     setLoading(false);
   }, []);

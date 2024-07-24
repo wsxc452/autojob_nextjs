@@ -72,6 +72,7 @@ export async function PATCH(
         salary: body.salary,
         position: body.position,
         staffnum: body.staffnum,
+        oid: body.oid,
         filteredKeywords: {
           create: keywords.map((item: FilterCompony) => {
             return {

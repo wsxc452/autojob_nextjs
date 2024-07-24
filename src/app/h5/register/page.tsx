@@ -3,21 +3,63 @@ import * as React from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/utils";
+import message from "@/utils/antdMessage";
+import CardWrap from "../common/CardWrap";
+import { Button, Col, Form, Input, Row } from "antd";
+import { useMemo, useState } from "react";
+
+type FieldType = {
+  email?: string;
+  code?: string;
+  remember?: string;
+};
+const fromInfo = {
+  email: "doe+clerk_test@example.com",
+  code: "424242",
+};
+const countMaxNum = 10;
 export default function Page() {
+  const [form] = Form.useForm(); // 创建表单实例
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [email, setEmail] = React.useState("85039485@qq.com");
-  const [verifying, setVerifying] = React.useState(false);
-
-  const [password, setPassword] = React.useState("");
-
-  const [code, setCode] = React.useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [submiting, setIsSubmiting] = useState(false);
+  const [isSendCode, setIsSendCode] = useState(false);
+  const [countNum, setCountNum] = useState(countMaxNum);
   const router = useRouter();
+  const codeMsgMemo = useMemo(() => {
+    let codeMsg = "验证码";
+    if (countNum !== countMaxNum) {
+      codeMsg = `${countNum}s`;
+    }
+
+    return codeMsg;
+  }, [countNum]); //
+
+  function startCounter() {
+    console.log("startCounter....------");
+    const intervalId = setInterval(function () {
+      console.log("startCounter....------1");
+      setCountNum((prevCount: number) => {
+        console.log("startCounter....------1-" + prevCount);
+        if (prevCount <= 1) {
+          clearInterval(intervalId); // 倒计时结束时清除计时器
+          setVerifying(false);
+          return countNum;
+        }
+        return prevCount - 1;
+      });
+    }, 1000);
+  }
 
   // 处理注册表单的提交
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!isLoaded) return;
-
+    if (!isSendCode) {
+      message.info("请先获取验证码");
+      return;
+    }
+    setIsSubmiting(true);
+    const { code, email } = form.getFieldsValue(); // 获取
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code: code,
@@ -30,24 +72,36 @@ export default function Page() {
       }
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
-        router.push("/");
+        router.push("/h5/index");
       }
     } catch (err) {
       console.error("Error:", err);
       const errmsg = getErrorMessage(err);
       if (errmsg.includes("is incorrect")) {
-        alert("验证码错误");
+        message.info("验证码错误");
       } else {
-        alert(errmsg || "注册失败");
+        message.info(errmsg || "注册失败");
       }
+      setIsSubmiting(false);
     }
   };
+
+  // const onFinishFailed = (errorInfo: any) => {
+  //   console.log("Failed:", errorInfo);
+  // };
   const getVerificationCode = async () => {
     if (!isLoaded) {
       return;
     }
+    const { email } = form.getFieldsValue(); // 获取
+    console.log("getVerificationCode", email);
+    if (email === "") {
+      message.info("请输先入邮箱");
+      return;
+    }
 
     try {
+      setVerifying(true);
       await signUp.create({
         emailAddress: email,
       });
@@ -57,124 +111,95 @@ export default function Page() {
         strategy: "email_code",
       });
       console.log("codeRet", codeRet);
-      setVerifying(true);
-      alert("验证码已发送");
+      startCounter();
+      message.info("验证码已发送");
+      setIsSendCode(true);
     } catch (err: any) {
-      console.error("Error:", err);
+      console.log("Error:", err);
       const errmsg = getErrorMessage(err);
       if (errmsg.includes("That email address is taken")) {
-        alert("邮箱已被注册");
+        message.info("邮箱已被注册");
       } else {
-        alert(errmsg || "验证码发送失败");
+        message.info(errmsg || "验证码发送失败");
       }
-
+      setCountNum(countMaxNum);
       setVerifying(false);
-    }
-  };
-
-  const handleSubmitByUsername = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
-
-    try {
-      // 开始使用提供的用户名和密码进行注册
-      const completeSignUp = await signUp.create({
-        username: email,
-        password,
-        redirectUrl: "/h5/index",
-      });
-
-      // 如果注册成功，设置会话为活跃状态
-      // 并重定向用户
-      //   const completeSignUp = await signUp.prepareEmailAddressVerification({});
-
-      console.log("completeSignUp", completeSignUp);
-      if (completeSignUp.status === "complete") {
-        await setActive({ session: completeSignUp.createdSessionId });
-        router.push("/h5/index");
-      } else {
-        // 如果状态不是完成，检查原因。用户可能需要
-        // 完成进一步的步骤。
-        console.error(JSON.stringify(completeSignUp, null, 2));
-        const codeRet = await completeSignUp.attemptEmailAddressVerification({
-          code: "123456",
-        });
-        console.log("codeRet", codeRet);
-      }
-    } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
-      alert(err.clerkError && err.errors[0].message);
+      setIsSendCode(false);
     }
   };
 
   // 显示注册表单以捕获用户名和密码
   return (
-    <div className="bg-gray-100  flex min-h-screen items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="relative w-80 rounded bg-white p-6 shadow-md"
+    <CardWrap>
+      <Form
+        name="basic"
+        initialValues={{ ...fromInfo }}
+        onFinish={handleSubmit}
+        // onFinishFailed={onFinishFailed}
+        // onValuesChange={onValuesChange}
+        autoComplete="off"
+        form={form}
       >
-        <h2 className="mb-4 text-center text-lg font-bold">注册</h2>
-        <div className="mb-4">
-          <label
-            htmlFor="username"
-            className="text-gray-700 block text-sm font-medium"
-          >
-            输入邮箱
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border-gray-300 mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="code"
-            className="text-gray-700 block text-sm font-medium"
-          >
-            邮箱验证码
-          </label>
-          <div className="flex items-center justify-center">
-            <input
-              id="code"
-              type="text"
-              name="code"
-              onChange={(e) => setCode(e.target.value)}
-              className="border-gray-300 mr-2 mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
-              required
-            />
-            <button
-              type="button"
-              disabled={verifying}
-              onClick={getVerificationCode}
-              className=" mt-1 w-20 rounded bg-blue-300 px-2 py-3 text-xs font-semibold
-               text-white transition duration-200 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-300"
-            >
-              {verifying ? "已发送" : "验证码"}
-            </button>
-          </div>
-        </div>
-        <div>
-          <button
-            type="submit"
-            className="border-blue box-content w-full rounded border-2 bg-blue-500 py-2 font-semibold text-white transition duration-200 hover:bg-blue-600"
+        <Row>
+          <Col span={24}>
+            <div className="my-2 text-center text-lg">注册 AutoJob</div>
+          </Col>
+        </Row>
+        <Form.Item<FieldType>
+          label="邮箱"
+          name="email"
+          rules={[{ required: true, message: "请输入邮箱" }]}
+        >
+          <Input type="email" size="large" allowClear />
+        </Form.Item>
+        <Form.Item
+          label="验证码"
+          name="code"
+          rules={[{ required: true, message: "请输入验证码" }]}
+        >
+          <Row gutter={10}>
+            <Col span={14}>
+              <Form.Item name="code" noStyle>
+                <Input size="large" allowClear />
+              </Form.Item>
+            </Col>
+            <Col span={10}>
+              <Button
+                type="primary"
+                size="large"
+                loading={verifying}
+                block
+                onClick={getVerificationCode}
+              >
+                {codeMsgMemo}
+              </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            size="large"
+            loading={submiting}
+            disabled={submiting}
+            type="primary"
+            htmlType="submit"
+            block
           >
             注册
-          </button>
-          <button
-            type="button"
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button
+            size="large"
+            type="default"
             onClick={() => router.push("/h5/login")}
-            className="mt-3 box-content w-full rounded border-2 border-solid border-blue-500 bg-white py-2 font-semibold text-black transition duration-200 hover:bg-blue-600"
+            block
           >
             去登录
-          </button>
-        </div>
-      </form>
-    </div>
+          </Button>
+        </Form.Item>
+      </Form>
+    </CardWrap>
   );
 }
