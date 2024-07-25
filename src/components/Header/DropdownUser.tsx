@@ -8,15 +8,18 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 const DropdownUser = () => {
   // const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user } = useUser();
+  console.log("user", user);
   return (
     <>
       {/* <ClickOutside onClick={() => setDropdownOpen(false)} className="relative"> */}
       <div className="flex items-center gap-4">
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.username || "Guest"}
+            {user?.username || "No Name"}
           </span>
-          <span className="block text-xs">Hi,{user?.firstName || "Guest"}</span>
+          <span className="block text-xs">
+            Hi,{user?.firstName || "No Name"}
+          </span>
         </span>
         <SignedOut>
           <SignInButton />

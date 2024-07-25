@@ -1,54 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
-type Params = {};
+import { NextRequest } from "next/server";
 
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { jsonReturn } from "../common/common";
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest, context: { params: Params }) {
-  const { userId } = auth().protect();
-  const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get("page") || "1");
-  const limit = parseInt(url.searchParams.get("limit") || "10");
-
-  const offset = (page - 1) * limit;
-
-  const [data, total] = await prisma.$transaction([
-    prisma.tasks.findMany({
-      skip: offset,
-      take: limit,
-      where: {
-        oid: userId,
-      },
-    }),
-    prisma.tasks.count(),
-  ]);
-
-  return NextResponse.json({
-    data,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    },
-  });
-}
-// export async function GET2(request: Request, context: { params: Params }) {
-//   const data = await prisma.tasks.findMany({});
-//   console.log(request.headers);
-//   return NextResponse.json(data);
-//   // request.status(200).json({ message: "Hello, world! test", data: data });
-// }
 export async function POST(request: Request) {
   const res = await request.json();
   return Response.json({ res });
 }
 
 export async function PUT(request: NextRequest, context: { params: {} }) {
-  console.log("POST request", request);
   const body = await request.json();
-
+  const { userId } = auth().protect();
+  //body.filteredKeywords.map((item: any) => {return item.keyword},
   try {
     // 使用 Prisma 更新任务数据
     const updatedTask = await prisma.tasks.create({
@@ -57,24 +22,22 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
         salary: body.salary,
         position: body.position,
         staffnum: body.staffnum,
-        oid: body.oid,
+        oid: userId,
         filteredKeywords: {
-          create: [
-            { keyword: "阿里" },
-            { keyword: "腾讯" },
-            { keyword: "百度" },
-            { keyword: "字节跳动" },
-          ],
+          create: body.filteredKeywords.map((item: any) => {
+            return { keyword: item.keyword };
+          }),
         },
       },
     });
 
     // 返回更新后的任务数据
-    return NextResponse.json(updatedTask);
+    return jsonReturn(updatedTask);
   } catch (e: any) {
     // 处理错误情况
+    console.error("Unknown Error:", e);
     const errorMessage = e.message || "Internal Server Error";
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return jsonReturn({ error: errorMessage }, 500);
   }
 }
 

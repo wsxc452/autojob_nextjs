@@ -1,6 +1,7 @@
 import prisma from "@/db";
 import { Prisma, Search } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+
 function transformSalary(input: string): string {
   return input.replace(/·\d+薪/, "");
 }
@@ -64,6 +65,7 @@ function isIncludeSalary(keyword1: string, keyword2: string): boolean {
   // 判断是否存在交集
   return min1 <= max2 && max1 >= min2;
 }
+
 function isIncludeKeyword(company: string, filterKeywords: string[]) {
   let isExits = false;
   let keyword = "";
@@ -89,6 +91,8 @@ export async function POST(
   const taskId = urlParams.get("taskId");
   const company = urlParams.get("company") || "";
   const salary = urlParams.get("salary") || "";
+  console.log("urlParams==========11");
+  console.log(urlParams);
   if (
     md5 === null ||
     md5 === undefined ||
@@ -156,7 +160,7 @@ export async function POST(
       });
     }
   }
-
+  const isCanPost = urlParams.get("isCanPost") === "True" ? true : false;
   const body: Omit<Search, "id" | "createdAt" | "updatedAt"> = {
     md5: urlParams.get("md5") ?? "",
     position: urlParams.get("position") ?? "",
@@ -165,6 +169,11 @@ export async function POST(
     scale: urlParams.get("scale") ?? "",
     taskId: parseInt(urlParams.get("taskId") ?? "0", 10),
     autoThreadNo: urlParams.get("autoThreadNo") ?? "0",
+    oid: urlParams.get("oid") ?? "",
+    isCanPost: isCanPost,
+    whiteInfo: urlParams.get("whiteInfo") ?? "",
+    blackInfo: urlParams.get("blackInfo") ?? "",
+    errDesc: urlParams.get("errDesc") ?? "",
   };
   //   const body = JSON.parse(bodyText);
   try {

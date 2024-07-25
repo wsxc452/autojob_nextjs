@@ -1,3 +1,4 @@
+"use client";
 import React, { FC, useEffect } from "react";
 
 import { message } from "antd";

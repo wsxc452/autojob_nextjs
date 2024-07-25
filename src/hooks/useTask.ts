@@ -15,14 +15,18 @@ export const useTasks = (initialPage = 1, initialPageSize = 10) => {
     queryKey: ["task", pagination.current, pagination.pageSize],
     queryFn: () => getTaskList(pagination.current, pagination.pageSize),
     initialData: {
-      data: [],
-      pagination: { total: 0, page: 1, limit: 10, totalPages: 1 },
+      data: {
+        data: [],
+        pagination: { total: 0, page: 1, limit: 10, totalPages: 1 },
+      },
+      status: 0,
     },
+    retry: 1,
   });
   useEffect(() => {
     setPagination((prev) => ({
       ...prev,
-      total: data.pagination.total,
+      total: data.data.pagination.total,
     }));
   }, [data]);
   const handleTableChange = (pagination: any) => {

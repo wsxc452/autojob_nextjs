@@ -15,7 +15,7 @@ interface SidebarProps {
 
 const menuGroups = [
   {
-    name: "MENU",
+    name: "菜单",
     menuItems: [
       {
         icon: (
@@ -91,7 +91,7 @@ const menuGroups = [
             />
           </svg>
         ),
-        label: "Calendar",
+        label: "用户管理",
         route: "/calendar",
       },
       // {
@@ -259,7 +259,7 @@ const menuGroups = [
             </defs>
           </svg>
         ),
-        label: "Chart",
+        label: "分销商管理",
         route: "/chart",
       },
       {
@@ -298,7 +298,7 @@ const menuGroups = [
             </defs>
           </svg>
         ),
-        label: "UI Elements",
+        label: "智能投递",
         route: "#",
         children: [
           { label: "Alerts", route: "/ui/alerts" },
@@ -337,7 +337,7 @@ const menuGroups = [
             </defs>
           </svg>
         ),
-        label: "Authentication",
+        label: "用户统计",
         route: "#",
         children: [
           { label: "Sign In", route: "/auth/signin" },
@@ -361,14 +361,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <Link href="/">
-            <Image
+          <Link
+            href="/"
+            className=" w-full items-center justify-end text-center "
+          >
+            {/* <Image
               width={176}
               height={32}
               src={"/images/logo/logo.svg"}
               alt="Logo"
               priority
-            />
+            /> */}
+            <div className="text-left text-[40px] text-white">AutoJob</div>
+            <div className="text-left text-indigo-200">387558862@qq.com</div>
           </Link>
 
           <button

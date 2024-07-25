@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 export const config = {
   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
@@ -9,18 +10,40 @@ export const config = {
 // });
 
 const isPublicRoute = createRouteMatcher([
+  // "/api/(.*)",
+  "/api/task/(.*)",
+  "/api/search",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/",
   "/h5/login",
   "/h5/register",
 ]);
+
+const isTenantRoute = createRouteMatcher([
+  "/h5(.*)",
+  // '/orgid/(.*)'
+]);
+
+const isTenantAdminRoute = createRouteMatcher([
+  "/orgId/(.*)/memberships",
+  "/orgId/(.*)/domain",
+]);
+const isApiRoute = createRouteMatcher(["/api/(.*)"]);
+
 export default clerkMiddleware(
   (auth, request) => {
+    // 如果不是公共路由,需要拦截
     console.log("request.url", request.url);
     if (!isPublicRoute(request)) {
-      // h5项目,如果首页没有登录,则跳转到登录页
-      if (request.url.includes("/h5/index")) {
+      // 如果是api路由,需要验证登录
+      if (isApiRoute(request)) {
+        if (!auth().userId) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 500 });
+        }
+      }
+
+      // h5项目,需要验证登录
+      if (request.url.includes("/h5/")) {
         const signInUrl = new URL("/h5/login", request.url);
         console.log("signInUrl", signInUrl.toString());
         auth().protect({
@@ -28,11 +51,12 @@ export default clerkMiddleware(
           unauthenticatedUrl: signInUrl.toString(),
         });
       } else {
+        // 说明是pc项目,按默认拦截
         auth().protect();
       }
     }
   },
   {
-    debug: false,
+    debug: true,
   },
 );

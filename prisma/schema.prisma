@@ -52,6 +52,10 @@ model Search {
   company  String @db.VarChar(100) // 公司名称，假设最大长度为 100 个字符
   scale    String @db.VarChar(50) // 公司规模，假设最大长度为 50 个字符
 
+  whiteInfo String?  @db.VarChar(50) //  
+  blackInfo String?  @db.VarChar(50) //  
+  errDesc   String?  @db.VarChar(50) // 错误描述
+  isCanPost Boolean? // 是否可以投递
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
