@@ -5,7 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import AppBody from "./AppBody";
 const queryClient = new QueryClient();
-import MessageCom from "@/components/Message";
+import MessageCom from "@/app/pc/components/Message";
+
+import { ClerkProvider } from "@clerk/nextjs";
+import { zhCN } from "@clerk/localizations";
 
 export default function AppWrap({ children }: { children: React.ReactNode }) {
   // const [colorMode, setColorMode] = useColorMode();
@@ -24,14 +27,16 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
   //   }
   // }, [user]);
   return (
-    <div className="h-dvh w-full">
-      <QueryClientProvider client={queryClient}>
-        <AntdRegistry>
-          <AppBody>{children}</AppBody>
-          <MessageCom />
-        </AntdRegistry>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-      </QueryClientProvider>
-    </div>
+    <ClerkProvider localization={zhCN}>
+      <div className="h-dvh w-full">
+        <QueryClientProvider client={queryClient}>
+          <AntdRegistry>
+            <AppBody>{children}</AppBody>
+            <MessageCom />
+          </AntdRegistry>
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        </QueryClientProvider>
+      </div>
+    </ClerkProvider>
   );
 }

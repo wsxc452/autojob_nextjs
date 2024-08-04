@@ -1,4 +1,4 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import Breadcrumb from "@/app/pc/components/Breadcrumbs/Breadcrumb";
 import List from "./components/List";
 import { Metadata } from "next";
 export const metadata: Metadata = {

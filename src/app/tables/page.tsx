@@ -1,10 +1,10 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import TableOne from "@/components/Tables/TableOne";
-import TableThree from "@/components/Tables/TableThree";
-import TableTwo from "@/components/Tables/TableTwo";
+import Breadcrumb from "@/app/pc/components/Breadcrumbs/Breadcrumb";
+import TableOne from "@/app/pc/components/Tables/TableOne";
+import TableThree from "@/app/pc/components/Tables/TableThree";
+import TableTwo from "@/app/pc/components/Tables/TableTwo";
 
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import DefaultLayout from "@/app/pc/components/Layouts/DefaultLayout";
 
 export const metadata: Metadata = {
   title: "Next.js Tables | TailAdmin - Next.js Dashboard Template",

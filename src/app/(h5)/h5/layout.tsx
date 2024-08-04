@@ -1,4 +1,4 @@
-import MessageCom from "@/components/Message";
+import MessageCom from "@/app/pc/components/Message";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

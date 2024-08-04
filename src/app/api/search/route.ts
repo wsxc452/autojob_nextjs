@@ -1,6 +1,8 @@
 import prisma from "@/db";
 import { Prisma, Search } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { jsonReturn } from "../common/common";
+import { message } from "antd";
 
 function transformSalary(input: string): string {
   return input.replace(/·\d+薪/, "");
@@ -91,7 +93,6 @@ export async function POST(
   const taskId = urlParams.get("taskId");
   const company = urlParams.get("company") || "";
   const salary = urlParams.get("salary") || "";
-  console.log("urlParams==========11");
   console.log(urlParams);
   if (
     md5 === null ||
@@ -101,11 +102,13 @@ export async function POST(
     taskId === undefined ||
     taskId === ""
   ) {
-    return NextResponse.json({
-      error: "md5/taskId不能为空",
-      status: 400,
-      code: "10001",
-    });
+    return jsonReturn(
+      {
+        message: "参数不全",
+        code: "10001",
+      },
+      400,
+    );
   }
   let taskInfo;
   try {
@@ -123,11 +126,13 @@ export async function POST(
       },
     });
   } catch (err) {
-    return NextResponse.json({
-      error: "找不到任务",
-      status: 400,
-      code: "10003",
-    });
+    return jsonReturn(
+      {
+        message: "找不到任务",
+        code: "10003",
+      },
+      400,
+    );
   }
 
   // 过滤掉某些公司
@@ -136,11 +141,13 @@ export async function POST(
   // 如果薪资在过滤列表中，则不保存
   if (salary != "" && taskInfo.salary != null) {
     if (!isIncludeSalary(salary, taskInfo.salary)) {
-      return NextResponse.json({
-        error: `公司薪资范围 (${salary}) 与设置的条件 (${taskInfo.salary}) 不匹配`,
-        status: 400,
-        code: "10005",
-      });
+      return jsonReturn(
+        {
+          message: `公司薪资范围 (${salary}) 与设置的条件 (${taskInfo.salary}) 不匹配`,
+          code: "10005",
+        },
+        400,
+      );
     }
   }
 
@@ -153,11 +160,13 @@ export async function POST(
   if (company != "") {
     const { isExits, keyword } = isIncludeKeyword(company, filterKeywords);
     if (isExits) {
-      return NextResponse.json({
-        error: `(${keyword})在过滤列表中`,
-        status: 400,
-        code: "10004",
-      });
+      return jsonReturn(
+        {
+          message: `(${keyword})在过滤列表中`,
+          code: "10004",
+        },
+        400,
+      );
     }
   }
   const isCanPost = urlParams.get("isCanPost") === "True" ? true : false;
@@ -187,21 +196,17 @@ export async function POST(
       status: 200,
     });
   } catch (error: any) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log(error);
-      return NextResponse.json(
-        { error: "md5 exits", status: 500 },
-        { status: 500 },
-      );
-    } else {
-      return NextResponse.json(
+    console.error(error.message + "====" + error.code);
+    if (error.code === "P2002") {
+      return jsonReturn(
         {
-          error: "search.create error",
-          status: 500,
+          message: "数据重复",
+          code: "10002",
         },
-        { status: 500 },
+        400,
       );
     }
+    return jsonReturn({ message: error.message, code: error.code }, 500);
   }
 }
 export async function GET(request: NextRequest) {

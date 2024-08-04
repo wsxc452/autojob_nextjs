@@ -1,6 +1,6 @@
 "use client";
 import { getTask } from "@/service/task";
-import TaskForm from "@/components/Task/Form";
+import TaskForm from "@/app/pc/components/Task/Form";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { TaskItem } from "@/types";

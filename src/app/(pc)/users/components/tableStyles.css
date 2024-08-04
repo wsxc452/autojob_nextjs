@@ -1,0 +1,16 @@
+/* :roor {
+  --bodydark1: red;
+}
+.dark .custom-table .ant-table-thead > tr > th {
+  background-color: #001529;
+  color: #fff;
+}
+
+.dark .custom-table .ant-table-tbody > tr > td {
+  background-color: #aeb7c0;
+  color: #000;
+}
+
+.dark .custom-table .ant-table-row:hover {
+  background-color: #e6f7ff;
+} */

@@ -1,8 +1,8 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import Breadcrumb from "@/app/pc/components/Breadcrumbs/Breadcrumb";
 
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
+import DefaultLayout from "@/app/pc/components/Layouts/DefaultLayout";
+import SelectGroupOne from "@/app/pc/components/SelectGroup/SelectGroupOne";
 import Link from "next/link";
 
 export const metadata: Metadata = {

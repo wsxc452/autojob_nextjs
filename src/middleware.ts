@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/search",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/auth-callback(.*)",
   "/h5/login",
   "/h5/register",
 ]);

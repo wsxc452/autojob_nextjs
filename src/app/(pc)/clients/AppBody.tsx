@@ -1,5 +1,5 @@
 "use client";
-import Loader from "@/components/common/Loader";
+import Loader from "@/app/pc/components/common/Loader";
 import { useEffect, useState } from "react";
 import { App, ConfigProvider, theme as antTheme } from "antd";
 import { useSnapshot } from "valtio";

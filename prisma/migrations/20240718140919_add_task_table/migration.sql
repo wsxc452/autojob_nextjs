@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `search` ADD COLUMN `autoThreadNo` INTEGER NOT NULL DEFAULT 0;

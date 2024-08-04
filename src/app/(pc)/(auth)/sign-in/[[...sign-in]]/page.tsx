@@ -1,4 +1,4 @@
-import { SignIn } from "@clerk/nextjs";
+import { AuthenticateWithRedirectCallback, SignIn } from "@clerk/nextjs";
 
 export default function Page() {
   return (
