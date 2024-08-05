@@ -1,6 +1,8 @@
 import ECommerce from "@/app/pc/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/app/pc/components/Layouts/DefaultLayout";
+import { useEffect } from "react";
+import registerEvents from "./common/registerRenderer";
 // import { auth } from "@/auth";
 
 export const metadata: Metadata = {
@@ -14,6 +16,7 @@ export default async function Home({
   children: React.ReactNode;
 }) {
   // const session = await auth();
+
   return (
     <>
       <h3>loading</h3>

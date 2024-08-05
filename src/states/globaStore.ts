@@ -1,3 +1,4 @@
+import { LogBody } from "@/app/(h5)/common/types";
 import { UserInfo } from "@/types";
 import { proxy } from "valtio";
 import { subscribeKey } from "valtio/utils";
@@ -10,6 +11,8 @@ import { subscribeKey } from "valtio/utils";
 const globaStore = proxy<{
   theme: any;
   userInfo: UserInfo;
+  isOpended:boolean;
+  logs: LogBody[];
 }>({
   theme: "light",
   userInfo: {
@@ -18,6 +21,8 @@ const globaStore = proxy<{
     avatar: "",
     id: "",
   },
+  isOpended:false,
+  logs: [],
 });
 subscribeKey(globaStore, "theme", (colorMode) => {
   const className = "dark";
@@ -39,6 +44,24 @@ export const userActions = {
   },
   clearUserInfo: () => {
     globaStore.userInfo = { name: "", email: "", avatar: "", id: "" };
+  },
+  setIsOpended: (val: boolean) => {
+    globaStore.isOpended = val;
+  },
+  addLog: (log: LogBody) => {
+    globaStore.logs.push({
+      id: globaStore.logs.length,
+      time: log.time,
+      type: log.type,
+      message: log.message,
+    });
+  },
+  setLogs: (logs: LogBody[]) => {
+    globaStore.logs = logs;
+  },
+  clearLog: () => {
+    console.log('clearLog....');
+    globaStore.logs = [];
   },
 };
 

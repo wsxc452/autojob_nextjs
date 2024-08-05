@@ -1,3 +1,4 @@
+import { electronAPI } from '@electron-toolkit/preload';
 export type FilterCompony = {
   id: number;
   keyword: string;
@@ -32,3 +33,9 @@ export interface UserInfo {
   status?: string;
   oid?: string;
 }
+declare global {
+  interface Window {
+    electron: typeof electronAPI
+  }
+}
+

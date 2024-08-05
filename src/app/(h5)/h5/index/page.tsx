@@ -1,13 +1,17 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Button, Flex } from "antd";
 import globaStore from "@/states/globaStore";
 import { useSnapshot } from "valtio";
 import message from "@/utils/antdMessage";
 import { arCall } from "@/utils";
-
+import "./page.css";
+import AutoOper from "../common/AutoOper";
+import Versions from "../common/Versions";
+import LogList from "../common/LogList";
+import registerEvents from "../../common/registerRenderer";
 function closeApp() {
   arCall("closeApp");
 }
@@ -25,19 +29,21 @@ export default function H5Index() {
   const [isOuting, setIsOuting] = useState(false);
 
   const userInfo = useSnapshot(globaStore).userInfo;
-
+  useEffect(() => {
+    registerEvents();
+  }, []);
   function doTask() {
     console.log(userInfo);
-
-    const taskInfo = {
-      taskKey: "postTask",
-      data: {
-        name: userInfo.name,
-        email: userInfo.email,
-        id: userInfo.id,
-      },
-    };
-    arCall("startSearch", taskInfo);
+    window.electron.ipcRenderer.send("go", "type");
+    // const taskInfo = {
+    //   taskKey: "postTask",
+    //   data: {
+    //     name: userInfo.name,
+    //     email: userInfo.email,
+    //     id: userInfo.id,
+    //   },
+    // };
+    // arCall("startSearch", taskInfo);
   }
 
   const logout = async () => {
@@ -62,32 +68,28 @@ export default function H5Index() {
       setIsOuting(false);
     }
   };
-  return (
-    <div>
-      <div className="p-5 text-center text-lg">欢迎使用AutoJob</div>
-      <Flex vertical gap="large" style={{ width: "100%", padding: "15px" }}>
-        <Button size="large" onClick={doTask} type="primary" block>
-          启动任务
-        </Button>
+  function goFn(arg0: string): void {
+    throw new Error("Function not implemented.");
+  }
 
-        <Button
-          size="large"
-          onClick={logout}
-          type="primary"
-          danger
-          loading={isOuting}
-          disabled={isOuting}
-          block
-        >
-          账号退出
-        </Button>
-        {/* <Button size="large" onClick={test} type="primary" danger block>
-          测试弹窗
-        </Button> */}
-        <Button size="large" onClick={closeApp} type="primary" danger block>
-          关闭软件
-        </Button>
-      </Flex>
+  return (
+    <div className="page">
+      <div className="box-border flex h-full w-full flex-col px-5">
+        <div className="my-5 flex w-full flex-row  justify-between gap-5">
+          <Button onClick={() => goFn("back")}>返回</Button>
+          <Button onClick={() => goFn("reload")}>刷新</Button>
+          <Button onClick={() => goFn("forward")}>前进</Button>
+        </div>
+        <div className="flex flex-col  items-center gap-3 rounded-lg text-sm">
+          <AutoOper />
+        </div>
+        <div className="my-5 flex-1 rounded bg-white p-3">
+          <LogList />
+        </div>
+        <div className="flex h-[80px] flex-row justify-center text-white">
+          <Versions />
+        </div>
+      </div>
     </div>
   );
 }
