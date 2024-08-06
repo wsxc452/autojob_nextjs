@@ -182,6 +182,7 @@ export default function LoginForm({
     <div>
       <Form
         name="basic"
+        size="small"
         initialValues={{ ...fromInfo }}
         onFinish={handleSumitCb}
         onFinishFailed={onFinishFailed}
@@ -189,11 +190,11 @@ export default function LoginForm({
         autoComplete="off"
         form={form}
       >
-        <Row>
+        {/* <Row>
           <Col span={24}>
             <div className="my-2 text-center text-lg">登录 AutoJob</div>
           </Col>
-        </Row>
+        </Row> */}
         <Form.Item<FieldType>
           style={{ marginBottom: "12px" }}
           label="邮箱"
@@ -262,7 +263,7 @@ export default function LoginForm({
             注册
           </Button>
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           <Button
             size="large"
             type="default"
@@ -271,9 +272,9 @@ export default function LoginForm({
             // onClick={toogleCounter}
             block
           >
-            关闭脚本
+            关闭应用
           </Button>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </div>
   );

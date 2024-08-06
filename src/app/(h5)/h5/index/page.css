@@ -1,7 +1,5 @@
 .page{
   position: relative;
-  color: white;
-  height: 100vh;
   background: linear-gradient(
     200.96deg,
     #fedc2a -29.09%,
@@ -9,12 +7,7 @@
     #7a2c9e 129.35%
   );
   font-family: sans-serif;
-  overflow-y: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
-
 
 button {
     background-color: white;
@@ -44,18 +37,14 @@ button {
 
   
 .versions {
-    position: absolute;
-    bottom: 30px;
     margin: 0 auto;
-    padding: 15px 0;
     font-family: 'Menlo', 'Lucida Console', monospace;
     display: inline-flex;
     overflow: hidden;
     align-items: center;
-    border-radius: 22px;
+    border-radius: 15px;
     background-color: #202127;
-    background-opacity: 0.5;
-    /* backdrop-filter: blur(24px); */
+    backdrop-filter: blur(24px);
   }
   
   .versions li {
@@ -79,8 +68,8 @@ button {
   
   @media (max-width: 620px) {
     .versions {
-      padding: 10px 0;
-      margin: 0 10px;
+      padding: 8px 0;
+      margin: 0 8px;
     }
     .versions li {
       font-size: 10px;

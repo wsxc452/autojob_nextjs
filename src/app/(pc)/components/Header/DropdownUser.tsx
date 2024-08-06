@@ -2,20 +2,25 @@
 // import Link from "next/link";
 // import Image from "next/image";
 // import ClickOutside from "@/app/pc/components/ClickOutside";
+"use client";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-
+import pcStore from "@/app/pc/pcStates/pcStore";
+import { useSnapshot } from "valtio";
+import UpdateUser from "../../dashboard/UpdateUser";
 const DropdownUser = () => {
   // const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user } = useUser();
-  console.log("user", user);
+  const { userInfo } = useSnapshot(pcStore);
+  console.log("userInfo11111111", userInfo);
   return (
     <>
+      <UpdateUser />
       {/* <ClickOutside onClick={() => setDropdownOpen(false)} className="relative"> */}
       <div className="flex items-center gap-4">
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.username || "No Name"}
+            {userInfo.isSuperUser ? "管理员" : "用户"}
           </span>
           <span className="block text-xs">
             Hi,{user?.firstName || "No Name"}

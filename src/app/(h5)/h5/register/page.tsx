@@ -71,6 +71,7 @@ export default function Page() {
       }
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
+        // TODO 送100精力点,不能送,因为邮箱可以轻易获取
         router.push("/h5/index");
       }
     } catch (err) {
@@ -131,6 +132,7 @@ export default function Page() {
     <CardWrap>
       <Form
         name="basic"
+        size="small"
         initialValues={{ ...fromInfo }}
         onFinish={handleSubmit}
         // onFinishFailed={onFinishFailed}
@@ -138,11 +140,11 @@ export default function Page() {
         autoComplete="off"
         form={form}
       >
-        <Row>
+        {/* <Row>
           <Col span={24}>
             <div className="my-2 text-center text-lg">注册 AutoJob</div>
           </Col>
-        </Row>
+        </Row> */}
         <Form.Item<FieldType>
           label="邮箱"
           name="email"
@@ -176,9 +178,10 @@ export default function Page() {
           </Row>
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item style={{ marginBottom: "12px" }}>
           <Button
             size="large"
+            danger
             loading={submiting}
             disabled={submiting}
             type="primary"

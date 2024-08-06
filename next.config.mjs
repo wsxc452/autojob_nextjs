@@ -5,7 +5,7 @@ const nextConfig = {
       {
         source: "/",
         destination: "/dashboard",
-        permanent: true, // 如果是永久重定向，可以设置为 true
+        permanent: false, // 如果是永久重定向，可以设置为 true
       },
     ];
   },

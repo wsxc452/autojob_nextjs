@@ -11,15 +11,15 @@ export default function LogList() {
   const clearLogs = () => {
     userActions.clearLog();
   };
-  // useEffect(() => {
-  //   const mockLogs = Array.from({ length: 600 }, (_, index) => ({  
-  //     id: index,
-  //     time: new Date().toLocaleString(),
-  //     type: 'info',
-  //     message: `message${index}`,
-  //   }));  
-  //   userActions.setLogs(mockLogs);
-  // },[]);
+  useEffect(() => {
+    const mockLogs = Array.from({ length: 600 }, (_, index) => ({  
+      id: index,
+      time: new Date().toLocaleString(),
+      type: 'info',
+      message: `message${index}`,
+    }));  
+    userActions.setLogs(mockLogs);
+  },[]);
   // 订阅日志
   // useEffect(() => {
   //   window.electron.ipcRenderer.on('taskLog', (_event, info: LogBody) => {
@@ -50,7 +50,7 @@ export default function LogList() {
   }, [logs]); // 当 items 更新时触发滚动
 
   return (
-    <div className="w-full  flex flex-col h-[300px]  relative">
+    <div className="w-full  flex flex-col h-full  relative">
       <div className="text-sm mb-2">
         消息数量: {logs.length}
         <Button

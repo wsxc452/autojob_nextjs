@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import List from "./components/List";
 
 export const metadata: Metadata = {
-  title: "Tasks Page",
+  title: "Users Page",
 };
 // export async function generateStaticParams() {
 //   return [];
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <>
-      <Breadcrumb pageName="Tasks" />
+      <Breadcrumb pageName="Users" />
       <List />
     </>
   );

@@ -3,8 +3,8 @@ import { useUser } from "@clerk/nextjs";
 import React from "react";
 import { useEffect } from "react";
 import { syncItem } from "@/service/users";
-import { UserInfo } from "@/types";
 import { Users } from "@prisma/client";
+import { userActions } from "@/app/pc/pcStates/pcStore";
 
 export default function UpdateUser() {
   const { user, isLoaded } = useUser();
@@ -12,6 +12,11 @@ export default function UpdateUser() {
   async function syncUser(userInfo: Partial<Users>) {
     try {
       const ret = await syncItem(userInfo);
+      console.log("synced", ret);
+      if (ret) {
+        userActions.setUserInfo(ret.data);
+      }
+
       console.log(ret);
     } catch (e) {
       console.error(e);
@@ -21,15 +26,17 @@ export default function UpdateUser() {
     if (isLoaded && user) {
       console.log(user);
       syncUser({
-        username: user.fullName || "",
+        userName: user.username || "",
         email: user.emailAddresses[0]?.emailAddress || "",
-        // avatar: user.imageUrl || "",
+        avatar: user.imageUrl || "",
         userId: user.id || "",
-        dId: "1",
+        fullName: user.fullName || "",
+        lastName: user.lastName || "",
+        firstName: user.firstName || "",
       }).then(() => {
         console.log("synced");
       });
     }
   }, [user, isLoaded]);
-  return <div>....update</div>;
+  return <></>;
 }

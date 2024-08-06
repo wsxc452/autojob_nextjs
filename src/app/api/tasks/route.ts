@@ -20,6 +20,9 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     prisma.tasks.findMany({
       skip: offset,
       take: limit,
+      orderBy: {
+        id: "desc",
+      },
       where: {
         oid: userId,
       },

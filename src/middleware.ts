@@ -53,11 +53,15 @@ export default clerkMiddleware(
         });
       } else {
         // 说明是pc项目,按默认拦截
-        auth().protect();
+        const signInUrl = new URL("/sign-in", request.url);
+        auth().protect({
+          unauthorizedUrl: signInUrl.toString(),
+          unauthenticatedUrl: signInUrl.toString(),
+        });
       }
     }
   },
   {
-    debug: true,
+    debug: false,
   },
 );

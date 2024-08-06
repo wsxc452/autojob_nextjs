@@ -16,7 +16,7 @@ export default function Error({
 
   return (
     <div className="">
-      <div className="bg-gray-100 flex min-h-screen items-center justify-center">
+      <div className="bg-gray-100 flex min-h-full items-center justify-center">
         <div className="text-center">
           <h1 className="text-red-600 text-6xl font-bold">Error</h1>
           <p className="text-gray-700 mt-4 py-10 text-xl">

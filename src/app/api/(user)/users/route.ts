@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth, createClerkClient } from "@clerk/nextjs/server";
 import { jsonReturn } from "../../common/common";
+import prisma from "@/db";
 
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
@@ -29,7 +30,33 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     imageUrl: user.imageUrl || "",
     fullName: `${user.firstName || ""}${user.lastName || ""}`,
     createdAt: user.createdAt,
+    isAbnormal: false,
+    avatar: user.imageUrl || "",
   }));
+  // 这里还要同步数据库的信息到列表里面融合
+  const userListIds = filteredUsers.map((user) => user.id);
+
+  const findUsers = await prisma.users.findMany({
+    where: {
+      userId: {
+        in: userListIds,
+      },
+    },
+    select: {
+      userId: true,
+      email: true,
+      isAbnormal: true,
+      // 添加其他您想要选择的字段
+    },
+  });
+
+  for (const user of filteredUsers) {
+    const findUser = findUsers.find((u) => u.userId === user.id);
+    if (findUser) {
+      // user.isAbnormal = findUser.isAbnormal;
+      Object.assign(user, findUser);
+    }
+  }
 
   const total = userListRet.totalCount;
   return jsonReturn({

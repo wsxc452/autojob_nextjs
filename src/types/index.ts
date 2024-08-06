@@ -1,4 +1,4 @@
-import { electronAPI } from '@electron-toolkit/preload';
+import { electronAPI } from "@electron-toolkit/preload";
 export type FilterCompony = {
   id: number;
   keyword: string;
@@ -35,7 +35,16 @@ export interface UserInfo {
 }
 declare global {
   interface Window {
-    electron: typeof electronAPI
+    electron: typeof electronAPI;
   }
 }
 
+export type CardPublishFormValuesType = {
+  id: number;
+  pubNum: number;
+};
+
+export enum UpdateUserType {
+  Disable,
+  IncreasePoint,
+}

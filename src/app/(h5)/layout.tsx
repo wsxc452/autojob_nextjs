@@ -22,7 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <ClerkProvider localization={zhCN}>{children}</ClerkProvider>
+        <ClerkProvider
+          afterSignOutUrl="/h5/login"
+          signInUrl="/h5/login"
+          localization={zhCN}
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

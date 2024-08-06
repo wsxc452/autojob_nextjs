@@ -9,6 +9,7 @@ import MessageCom from "@/app/pc/components/Message";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { zhCN } from "@clerk/localizations";
+import DefaultLayout from "../components/Layouts/DefaultLayout";
 
 export default function AppWrap({ children }: { children: React.ReactNode }) {
   // const [colorMode, setColorMode] = useColorMode();
@@ -27,12 +28,18 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
   //   }
   // }, [user]);
   return (
-    <ClerkProvider localization={zhCN}>
-      <div className="h-dvh w-full">
+    <ClerkProvider
+      localization={zhCN}
+      afterSignOutUrl="/sign-in"
+      signInUrl="/sign-in"
+    >
+      <div className="page h-dvh w-full">
         <QueryClientProvider client={queryClient}>
           <AntdRegistry>
-            <AppBody>{children}</AppBody>
-            <MessageCom />
+            <DefaultLayout>
+              <AppBody>{children}</AppBody>
+              <MessageCom />
+            </DefaultLayout>
           </AntdRegistry>
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
