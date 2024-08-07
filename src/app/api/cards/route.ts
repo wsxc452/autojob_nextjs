@@ -17,9 +17,14 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     model.findMany({
       skip: offset,
       take: limit,
-      orderBy: {
-        id: "desc",
-      },
+      orderBy: [
+        {
+          isRedeemed: "asc", // false 在前
+        },
+        {
+          id: "desc", // 然后按 id 降序排列
+        },
+      ],
     }),
     model.count(),
   ]);

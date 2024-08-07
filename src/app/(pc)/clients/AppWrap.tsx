@@ -27,6 +27,7 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
   //     console.log(globaStore.userInfo);
   //   }
   // }, [user]);
+  console.log("AppWrap");
   return (
     <ClerkProvider
       localization={zhCN}
@@ -41,6 +42,12 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
               <MessageCom />
             </DefaultLayout>
           </AntdRegistry>
+          {/* 
+            <DefaultLayout>
+              <AppBody>{children}</AppBody>
+              <MessageCom />
+            </DefaultLayout>
+          </AntdRegistry> */}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </div>

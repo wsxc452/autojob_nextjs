@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
-import "./tableStyles.css"; // 引入自定义样式文件
 
-import { Button, Space, Table, Popconfirm } from "antd";
+import { Button, Space, Table, Popconfirm, Card, Skeleton } from "antd";
 import type { TableProps } from "antd";
 import { useTasks } from "@/hooks/useTask";
 import Link from "next/link";
 import { deleteTask } from "@/service/task";
 import message from "@/utils/antdMessage";
+import { useRouter } from "next/navigation";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -25,7 +25,8 @@ interface DataType {
 }
 
 // const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
-export default function List() {
+export default function TaskList() {
+  const router = useRouter();
   const {
     data,
     refetch,
@@ -34,6 +35,12 @@ export default function List() {
     pagination,
     handleTableChange,
   } = useTasks(1, 10);
+
+  console.log(data);
+
+  const clickTask = (id: number) => {
+    router.push(`/h5/index/${id}`);
+  };
 
   const delTask = async (id: number) => {
     try {
@@ -97,16 +104,43 @@ export default function List() {
     },
   ];
   return (
-    <div className="dark:bg-gray-800 flex flex-col ">
-      <Table
-        className="custom-table"
-        columns={columns}
-        dataSource={data?.data.data || []}
-        rowKey={(record) => record.id}
-        pagination={pagination}
-        loading={isLoading || isFetching}
-        onChange={handleTableChange}
-      />
+    <div className="flex w-screen flex-col items-center justify-center overflow-x-hidden">
+      {isLoading || isFetching ? (
+        <div className="flex items-center justify-center px-10 py-15">
+          <Skeleton active />
+        </div>
+      ) : (
+        <div className="flex  w-full flex-col gap-2 px-5 py-10">
+          {data.data?.data &&
+            data.data?.data.map((item) => {
+              return (
+                <Card
+                  key={item.id}
+                  title={item.title}
+                  bordered={false}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.4)",
+                  }}
+                >
+                  <p>薪资范围: {item.salary} </p>
+                  <p>匹配关键字: {item.position} </p>
+                  <p>
+                    过滤关键字:{" "}
+                    {item.filteredKeywords
+                      .map((item) => item.keyword)
+                      .join(",")}{" "}
+                  </p>
+
+                  <div className="mt-2 text-right">
+                    <Button onClick={() => clickTask(item.id)} type="primary">
+                      开始投递
+                    </Button>
+                  </div>
+                </Card>
+              );
+            })}
+        </div>
+      )}
     </div>
   );
 }

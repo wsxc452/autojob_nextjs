@@ -49,7 +49,7 @@ const useCountdown = (initialCount: number, onComplete?: () => void) => {
       intervalRef.current = null;
       onComplete && onComplete();
       setIsActive(false);
-      setCount(initialCount);
+      // setCount(initialCount);
     }
   }, [count, isActive, timeId]);
 

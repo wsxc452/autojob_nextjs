@@ -17,7 +17,7 @@ export const getList = async (
   return data;
 };
 export const getItem = async (
-  id: number = 1,
+  id: string,
 ): Promise<{ data: CardTypes; status: number }> => {
   const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
     cache: "no-cache",

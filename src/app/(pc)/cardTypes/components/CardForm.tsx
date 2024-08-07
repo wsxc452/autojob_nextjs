@@ -254,14 +254,14 @@ const CardsForm: React.FC<FormValues> = ({
       </Form.Item> */}
       <Form.Item
         label="卡券充值点数"
-        name="price"
+        name="cValue"
         rules={[{ required: true }, { validator: validatePositiveNumber }]}
       >
         <Input style={{ width: 120 }} type="number" required />
       </Form.Item>
       <Form.Item
         label="卡券购买金额(元)"
-        name="cValue"
+        name="price"
         rules={[{ required: true }]}
       >
         <Input style={{ width: 120 }} type="number" required />

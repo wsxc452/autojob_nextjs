@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { Button } from 'antd';
-import { useSnapshot } from 'valtio';
+import { useEffect, useRef } from "react";
+import { Button } from "antd";
+import { useSnapshot } from "valtio";
 // import { LogBody } from '../../common/types';
-import store, { userActions } from '@/states/globaStore';
+import store, { userActions } from "@/states/globaStore";
 
 export default function LogList() {
   // const [logs, setLogs] = useState<LogBody[]>([]);
@@ -12,14 +12,14 @@ export default function LogList() {
     userActions.clearLog();
   };
   useEffect(() => {
-    const mockLogs = Array.from({ length: 600 }, (_, index) => ({  
-      id: index,
-      time: new Date().toLocaleString(),
-      type: 'info',
-      message: `message${index}`,
-    }));  
-    userActions.setLogs(mockLogs);
-  },[]);
+    // const mockLogs = Array.from({ length: 600 }, (_, index) => ({
+    //   id: index,
+    //   time: new Date().toLocaleString(),
+    //   type: 'info',
+    //   message: `message${index}`,
+    // }));
+    // userActions.setLogs(mockLogs);
+  }, []);
   // 订阅日志
   // useEffect(() => {
   //   window.electron.ipcRenderer.on('taskLog', (_event, info: LogBody) => {
@@ -41,17 +41,17 @@ export default function LogList() {
   // }, []);
 
   useEffect(() => {
-    console.log('logs===========', logs);
-    console.log('listRef', listRef.current);
+    console.log("logs===========", logs);
+    console.log("listRef", listRef.current);
     if (listRef.current) {
-      console.log('logs', logs.length, listRef.current.scrollHeight);
+      console.log("logs", logs.length, listRef.current.scrollHeight);
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [logs]); // 当 items 更新时触发滚动
 
   return (
-    <div className="w-full  flex flex-col h-full  relative">
-      <div className="text-sm mb-2">
+    <div className="relative  flex h-full w-full  flex-col">
+      <div className="mb-2 text-sm">
         消息数量: {logs.length}
         <Button
           className="float-right"
@@ -64,13 +64,13 @@ export default function LogList() {
       </div>
       <div
         ref={listRef}
-        className="flex-1  p-2 rounded-lg  text-black text-sm"
-        style={{   overflowX: 'hidden', overflowY: 'scroll' }}
+        className="flex-1  rounded-lg p-2  text-sm text-black"
+        style={{ overflowX: "hidden", overflowY: "scroll" }}
         id="scrollableList"
       >
         {logs.map((log) => (
           <div
-            className="flex flex-row flex-wrap items-start justify-start border-b-slate-200 border-b-2"
+            className="flex flex-row flex-wrap items-start justify-start border-b-2 border-b-slate-200"
             key={log.id}
           >
             [{log.time}]- {log.message}

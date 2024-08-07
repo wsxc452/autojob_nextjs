@@ -1,15 +1,12 @@
 "use client";
-
 import { SignOutButton, SignedIn, UserButton } from "@clerk/nextjs";
-import { Button } from "antd";
-function goLog() {}
 function LogoutButton() {
   return (
     <SignedIn>
-      {/* <SignOutButton redirectUrl="/h5/index"> */}
-      {/* <Button type="primary">登出</Button> */}
-      <UserButton />
-      {/* </SignOutButton> */}
+      <div className="mr-2 mt-2 flex flex-row items-center justify-center gap-2">
+        <span className="text-sm">hi: </span>
+        <UserButton />
+      </div>
     </SignedIn>
   );
 }

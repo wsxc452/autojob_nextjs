@@ -3,16 +3,13 @@
 // import Image from "next/image";
 // import ClickOutside from "@/app/pc/components/ClickOutside";
 "use client";
-import { useAuth, useUser } from "@clerk/nextjs";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import pcStore from "@/app/pc/pcStates/pcStore";
 import { useSnapshot } from "valtio";
 import UpdateUser from "../../dashboard/UpdateUser";
+
 const DropdownUser = () => {
-  // const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user } = useUser();
   const { userInfo } = useSnapshot(pcStore);
-  console.log("userInfo11111111", userInfo);
   return (
     <>
       <UpdateUser />
@@ -23,7 +20,7 @@ const DropdownUser = () => {
             {userInfo.isSuperUser ? "管理员" : "用户"}
           </span>
           <span className="block text-xs">
-            Hi,{user?.firstName || "No Name"}
+            Hi,{userInfo?.firstName || "No Name"}
           </span>
         </span>
         <SignedOut>

@@ -5,9 +5,9 @@ generator client {
 datasource db {
   // provider = "postgresql"
   // url      = env("DATABASE_URL")
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 // 定义表模型
@@ -77,49 +77,51 @@ model Search {
 }
 
 model Users {
-  id             Int         @id @default(autoincrement())
-  userId         String      @unique @db.VarChar(50) // Clerk 的用户 ID
-  email          String      @unique @db.VarChar(128)
-  dId            String?     @unique @db.VarChar(50) // 分销商ID
-  userName       String?     @db.VarChar(128) // 允许用户名为空
-  firstName      String?     @db.VarChar(128) // 允许名为空
-  lastName       String?     @db.VarChar(128)
-  fullName       String?     @db.VarChar(128) // 允许全名为空
-  avatar         String?     @db.VarChar(256) // 头像 URL
-  passwordHash   String?     @db.VarChar(128) // 存储密码的哈希值
+  id             Int      @id @default(autoincrement())
+  userId         String   @unique @db.VarChar(50) // Clerk 的用户 ID
+  email          String   @unique @db.VarChar(128)
+  dId            String?  @unique @db.VarChar(50) // 分销商ID
+  userName       String?  @db.VarChar(128) // 允许用户名为空
+  firstName      String?  @db.VarChar(128) // 允许名为空
+  lastName       String?  @db.VarChar(128)
+  fullName       String?  @db.VarChar(128) // 允许全名为空
+  avatar         String?  @db.VarChar(256) // 头像 URL
+  passwordHash   String?  @db.VarChar(128) // 存储密码的哈希值
   additionalInfo String? // 额外信息，使用可选字段
-  points         Int         @default(0) // 积分数量，默认为 0
-  isVip          Boolean     @default(false) // 是否为 VIP 用户，默认为 false
-  isSuperUser    Boolean     @default(false) // 是否为超级用户，默认为 false
-  roleId         Int         @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
+  points         Int      @default(0) // 积分数量，默认为 0
+  isVip          Boolean  @default(false) // 是否为 VIP 用户，默认为 false
+  isSuperUser    Boolean  @default(false) // 是否为超级用户，默认为 false
+  roleId         Int      @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
   // isStaff        Boolean  @default(false) // 是否为员工，默认为 false
-  isDistributor  Boolean     @default(false) // 是否为分销商，默认为 false
-  isActive       Boolean     @default(true) // 激活状态，默认为 true
-  isAbnormal     Boolean     @default(false) // 异常状态，默认为 false, 用于标记异常用户
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  UserCards      UserCards[]
+  isDistributor  Boolean  @default(false) // 是否为分销商，默认为 false
+  isActive       Boolean  @default(true) // 激活状态，默认为 true
+  isAbnormal     Boolean  @default(false) // 异常状态，默认为 false, 用于标记异常用户
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  // UserCards      UserCards[]
 
   @@index([email]) // 单字段索引
   @@index([userId]) // 单字段索引
 }
 
 model Cards {
-  id            Int         @id @default(autoincrement())
-  title         String      @db.VarChar(100) // 卡密标题
-  code          String      @unique @db.VarChar(50) // 卡密，唯一
+  id            Int       @id @default(autoincrement())
+  title         String    @db.VarChar(100) // 卡密标题
+  code          String    @unique @db.VarChar(50) // 卡密，唯一
   type          CardType // 卡密类型
-  price         Float       @default(0) // 卡密价格，默认为 0
+  price         Float     @default(0) // 卡密价格，默认为 0
   value         Int // 对于日卡、月卡、年卡，存储天数或月份；对于积分，存储积分点数
-  createdBy     String      @db.VarChar(64) // 创建者 ID
-  isActive      Boolean     @default(true) // 是否激活
-  isRedeemed    Boolean     @default(false) // 是否已核销
-  createdAt     DateTime    @default(now()) // 创建时间
-  updatedAt     DateTime    @updatedAt // 更新时间
+  createdBy     String    @db.VarChar(64) // 创建者 ID
+  isActive      Boolean   @default(true) // 是否激活
+  isRedeemed    Boolean   @default(false) // 是否已核销
+  createdAt     DateTime  @default(now()) // 创建时间
+  updatedAt     DateTime  @updatedAt // 更新时间
   redeemedAt    DateTime? // 核销时间（可选）
   distributorId Int? // 发行分销商的 ID
+  redeemedBy    String?   @db.VarChar(64) // 核销者 ID
   // userCard      UserCards? @relation(fields: [code], references: [cardCode]) // 与 UserCards 的一对一关系
-  UserCards     UserCards[]
+  // UserCards     UserCards[]
+  // UserCards     UserCards[]
 }
 
 model CardTypes {
@@ -143,15 +145,15 @@ enum CardType {
   POINTS
 }
 
-model UserCards {
-  id         Int       @id @default(autoincrement())
-  userId     String    @db.VarChar(50) // 用户 ID
-  cardCode   String    @unique @db.VarChar(50) // 卡密（与 Cards.code 关联）
-  redeemed   Boolean   @default(false) // 是否已核销
-  redeemedAt DateTime? // 核销时间（可选）
-  User       Users     @relation(fields: [userId], references: [userId])
-  createdAt  DateTime  @default(now()) // 创建时间
-  updatedAt  DateTime  @updatedAt // 更新时间
-  Cards      Cards?    @relation(fields: [cardsId], references: [id])
-  cardsId    Int?
-}
+// model UserCards {
+//   id         Int       @id @default(autoincrement())
+//   userId     String    @db.VarChar(50) // 用户 ID
+//   cardCode   String    @unique @db.VarChar(50) // 卡密（与 Cards.code 关联）
+//   redeemed   Boolean   @default(false) // 是否已核销
+//   redeemedAt DateTime? // 核销时间（可选）
+//   User       Users     @relation(fields: [userId], references: [userId])
+//   createdAt  DateTime  @default(now()) // 创建时间
+//   updatedAt  DateTime  @updatedAt // 更新时间
+//   // Cards      Cards?    @relation(fields: [cardsId], references: [id])
+//   // cardsId    Int?
+// }

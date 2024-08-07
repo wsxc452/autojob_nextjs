@@ -16,12 +16,10 @@ export const getLists = async (
 };
 export const getItem = async (
   id: number = 1,
-): Promise<{ data: UserInfo; status: number }> => {
+): Promise<{ data: Users; status: number }> => {
   const response = await fetch(`${ApiUrl}/user/${id}`, {
     cache: "no-cache",
   });
-
-  console.log("====getList", response);
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -174,4 +172,23 @@ export const checkAdminOrThrow = async (userId: string): Promise<boolean> => {
     throw new Error("can not find user");
   }
   return true;
+};
+
+export const redeemedCode = async (code: string): Promise<any> => {
+  if (!/^[0-9A-Za-z]*$/.test(code)) {
+    throw new Error("请输入正确的code");
+  }
+  const response = await fetch(`${ApiUrl}/users/redeemedCode`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      code,
+    }),
+  });
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
 };

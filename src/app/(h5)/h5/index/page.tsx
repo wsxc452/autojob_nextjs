@@ -75,11 +75,11 @@ export default function H5Index() {
   return (
     <>
       <div className="page flex h-full w-full flex-col items-center justify-center overflow-hidden !bg-sky-400 px-5">
-        <div className="my-5 flex w-full flex-row  justify-between gap-5">
+        {/* <div className="my-5 flex w-full flex-row  justify-between gap-5">
           <Button onClick={() => goFn("back")}>返回</Button>
           <Button onClick={() => goFn("reload")}>刷新</Button>
           <Button onClick={() => goFn("forward")}>前进</Button>
-        </div>
+        </div> */}
         <div className="flex h-[130px] w-full flex-col  items-center gap-3 rounded-lg text-sm">
           <AutoOper />
         </div>

@@ -31,7 +31,7 @@ const initUserInfo = {
 const pcStore = proxy<{
   userInfo: Users;
 }>({
-  userInfo: {...initUserInfo},
+  userInfo: { ...initUserInfo },
 });
 
 // subscribe(globaStore, () => {
@@ -40,11 +40,10 @@ const pcStore = proxy<{
 
 export const userActions = {
   setUserInfo: (userInfo: Users) => {
-    console.log('userInfo222,',userInfo);
-    pcStore.userInfo = {...userInfo};
+    pcStore.userInfo = userInfo;
   },
   clearUserInfo: () => {
-    pcStore.userInfo = {...initUserInfo};
+    pcStore.userInfo = { ...initUserInfo };
   },
 };
 

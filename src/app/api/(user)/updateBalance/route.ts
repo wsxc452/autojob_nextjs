@@ -1,10 +1,9 @@
 import prisma from "@/db";
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "../../common/common";
-import { isNumberObject } from "util/types";
 
 function isValidateCode(code: string) {
-  return /^[0-9a-Z]*$/.test(code);
+  return /^[0-9A-Za-z]*$/.test(code);
 }
 
 export async function POST(request: Request) {

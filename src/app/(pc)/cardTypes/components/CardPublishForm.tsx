@@ -142,9 +142,7 @@ export default function CardsPublishForm() {
   const { id } = useParams();
   console.log("parsms", id);
   const cardTypeId = id as string;
-  if (!cardTypeId) {
-    return <div>参数错误</div>;
-  }
+
   const [form] = Form.useForm<FormValuesType>();
   const [formValue, setFormValue] = useState<FormValuesType>({
     name: "",
@@ -156,7 +154,7 @@ export default function CardsPublishForm() {
 
   // 获取cartType ID的信息,并展示歘来;
   const getPubInfo = async () => {
-    const itemInfo = await getItem(0);
+    const itemInfo = await getItem(cardTypeId);
     console.log("itemInfo", itemInfo);
     setFormValue({
       name: itemInfo.data.name,
@@ -206,6 +204,10 @@ export default function CardsPublishForm() {
     }
     return Promise.reject(new Error("请输入1-1000的数字！"));
   };
+
+  if (!cardTypeId) {
+    return <div>参数错误</div>;
+  }
 
   return (
     <Form

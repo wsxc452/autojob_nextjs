@@ -26,6 +26,14 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       where: {
         oid: userId,
       },
+      include: {
+        filteredKeywords: {
+          select: {
+            id: true,
+            keyword: true, // 仅选择需要的字段，例如 keyword
+          },
+        }, // 包含关联的 filteredKeywords 数据
+      },
     }),
     prisma.tasks.count(),
   ]);

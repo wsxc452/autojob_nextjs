@@ -12,6 +12,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
   //   const url = new URL(request.url);
   //   console.log(url);
   // 查询数据库，获取任务数据
+  console.log("context", context);
   try {
     const [data] = await prisma.$transaction([
       prisma.tasks.findFirstOrThrow({

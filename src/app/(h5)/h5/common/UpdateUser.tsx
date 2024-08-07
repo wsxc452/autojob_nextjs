@@ -4,13 +4,25 @@ import React from "react";
 import { useEffect } from "react";
 import { syncItem } from "@/service/users";
 import { Users } from "@prisma/client";
-import { userActions } from "@/app/pc/pcStates/pcStore";
+import { userActions } from "@/app/h5/h5/store/index";
 
+function getOS() {
+  const userAgent = navigator.userAgent;
+  if (userAgent.includes("Macintosh") || userAgent.includes("Mac OS X")) {
+    return "macOS";
+  } else if (userAgent.includes("Windows NT")) {
+    return "Windows";
+  } else {
+    return "Other";
+  }
+}
 export default function UpdateUser() {
   const { user, isLoaded } = useUser();
+
   async function syncUser(userInfo: Partial<Users>) {
     try {
       const ret = await syncItem(userInfo);
+      console.log(ret);
       if (ret) {
         userActions.setUserInfo(ret.data);
       }
@@ -31,5 +43,10 @@ export default function UpdateUser() {
       });
     }
   }, [user, isLoaded]);
+
+  // useEffect(() => {
+  //   const os = getOS();
+  //   console.log("os==", os);
+  // }, []);
   return <></>;
 }

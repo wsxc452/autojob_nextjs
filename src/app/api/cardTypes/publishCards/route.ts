@@ -23,6 +23,7 @@ async function generateCards(num: number, cardInfo: CardTypes, userId: string) {
       code: generateUniqueCode(8), // 生成唯一的卡密
       type: cardInfo.type, // 替换为实际的卡密类型
       value: cardInfo.cValue, // 假设存储天数或月份的值为30
+      price: cardInfo.price,
       createdBy: userId, // 创建者ID
       isActive: true,
       isRedeemed: false,
