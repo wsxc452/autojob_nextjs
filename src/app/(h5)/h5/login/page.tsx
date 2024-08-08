@@ -10,7 +10,7 @@ export default function Page() {
   console.log("userId", authInfo);
 
   if (authInfo?.userId) {
-    redirect("/h5/index", RedirectType.replace);
+    redirect("/h5/welcome", RedirectType.replace);
   }
   globaStore.userInfo = {
     name: "",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useLayoutEffect, useState } from "react";
 import { Button, Flex } from "antd";
 import globaStore from "@/states/globaStore";
 import { useSnapshot } from "valtio";
@@ -12,6 +12,7 @@ import AutoOper from "../common/AutoOper";
 import Versions from "../common/Versions";
 import LogList from "../common/LogList";
 import registerEvents from "../../common/registerRenderer";
+import { getList } from "@/service/greetings";
 function closeApp() {
   arCall("closeApp");
 }
@@ -29,9 +30,7 @@ export default function H5Index() {
   const [isOuting, setIsOuting] = useState(false);
 
   const userInfo = useSnapshot(globaStore).userInfo;
-  useEffect(() => {
-    registerEvents();
-  }, []);
+
   function doTask() {
     console.log(userInfo);
     window.electron.ipcRenderer.send("go", "type");

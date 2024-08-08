@@ -119,27 +119,36 @@ const TaskForm: React.FC<FormValues> = ({
   const [form] = Form.useForm();
   const [isCreate, setIsCreate] = useState<boolean>(!initialValues);
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
-  const [formValue, setFormValue] = useState<TaskItem>({
+  const [formValue, setFormValue] = useState<any>({
     id: 0,
     title: "",
-    salary: "",
-    position: [],
+    salary: {
+      minMoney: "",
+      maxMoney: "",
+    },
+    // position: [],
+    positionKeywords: [],
     staffnum: "",
     filteredKeywords: [],
-    oid: "",
+    userId: "",
   });
 
   useEffect(() => {
     if (initialValues) {
       const newValue = {
         ...initialValues,
-      } as TaskItem;
+        salary: {
+          minMoney: initialValues.salary.split("-")[0],
+          maxMoney: initialValues.salary.split("-")[1],
+        },
+      };
       setFormValue(newValue);
       form.setFieldsValue(newValue);
     }
     setIsCreate(!initialValues);
   }, [initialValues, form]);
 
+  const [inputPositionValue, setInputPositionValue] = useState("");
   const [inputValue, setInputValue] = useState("");
   // const [filteredKeywords, setfilteredKeywords] = useState<Array<String>>([]);
 
@@ -150,30 +159,32 @@ const TaskForm: React.FC<FormValues> = ({
       id: 0,
       title: "",
       salary: "",
-      position: [],
       staffnum: "",
       filteredKeywords: [],
-      oid: "",
+      positionKeywords: [],
+      userId: "",
     } as TaskItem;
   }
 
   const userInfo = useSnapshot(globaStore.userInfo);
 
-  useEffect(() => {
-    if (initialValues) {
-      setFormValue(initialValues);
-    }
-  }, [initialValues]);
   console.log("formValue", formValue);
+
   const onFinish = async (values: any) => {
+    console.log("111", values);
     setIsSubmiting(true);
     const submitValue = {
-      ...values,
-      position: values.position.join(","),
+      title: values.title,
+      salary: values.salary.minMoney + "-" + values.salary.maxMoney,
       filteredKeywords: formValue.filteredKeywords,
-      oid: userInfo.id,
+      positionKeywords: formValue.positionKeywords,
     };
     console.log("111", submitValue);
+    if (formValue.positionKeywords.length === 0) {
+      message.error("职位关键字最少要添加一个!");
+      setIsSubmiting(false);
+      return;
+    }
     if (isCreate) {
       try {
         await createTask(submitValue);
@@ -214,6 +225,16 @@ const TaskForm: React.FC<FormValues> = ({
       }),
     );
   };
+  const onRemovePositon = (id: number) => {
+    console.log(id);
+    setFormValue(
+      Object.assign({}, formValue, {
+        positionKeywords: formValue.positionKeywords.filter(
+          (item) => item.id !== id,
+        ),
+      }),
+    );
+  };
 
   const addFilter = () => {
     // check if the value is already in the list
@@ -222,28 +243,101 @@ const TaskForm: React.FC<FormValues> = ({
       message.info("请输入要过滤的公司关键字");
       return;
     }
-    if (
-      formValue.filteredKeywords.findIndex(
-        (item) => item.keyword === inputValue,
-      ) !== -1
-    ) {
-      message.info("已经存在");
-      return;
+    let filterArr = [];
+    // 如果字符串中存在,分隔;说明是批量导入;
+    const inpuValueTemp = inputValue.replaceAll("，", ",");
+    if (inpuValueTemp.indexOf(",") !== -1) {
+      filterArr = inpuValueTemp.split(",");
+    } else {
+      // 如果是一个一个输入的,则提示是否有重复
+      filterArr[0] = inpuValueTemp;
+      if (
+        formValue.filteredKeywords.findIndex(
+          (item) => item.keyword === inpuValueTemp,
+        ) !== -1
+      ) {
+        message.info("过滤的公司已经存在");
+        return;
+      }
     }
+    filterArr = filterArr.filter((item) => item.trim() !== "");
+    const newPositions = filterArr.map((item) => {
+      return {
+        id: Date.now() + item,
+        keyword: item,
+      };
+    }) as any;
+
     setFormValue(
       Object.assign({}, formValue, {
-        filteredKeywords: formValue.filteredKeywords.concat({
-          id: Date.now(),
-          keyword: inputValue,
-        }),
+        filteredKeywords: formValue.filteredKeywords.concat(newPositions),
       }),
     );
-    // setfilteredKeywords([...filteredKeywords, inputValue]);
     setInputValue("");
+  };
+
+  const validateMinMoney = (_: any, value: number) => {
+    if (value < 0) {
+      return Promise.reject(new Error("最小薪资不能小于0"));
+    }
+    return Promise.resolve();
+  };
+
+  const validateMaxMoney = (_: any, value: number) => {
+    const minMoney = form.getFieldValue(["salary", "minMoney"]);
+    if (value && minMoney && value <= minMoney) {
+      return Promise.reject(new Error("最大薪资必须大于最小薪资"));
+    }
+    return Promise.resolve();
+  };
+
+  const addFilterPosition = () => {
+    // check if the value is already in the list
+    console.log("formValue", formValue);
+    if (inputPositionValue.trim() === "") {
+      message.info("请输入要职位关键字");
+      return;
+    }
+    let positionArr = [];
+    // 如果字符串中存在,分隔;说明是批量导入;
+    const inputPositionValueTemp = inputPositionValue.replaceAll("，", ",");
+    if (inputPositionValueTemp.indexOf(",") !== -1) {
+      positionArr = inputPositionValueTemp.split(",");
+    } else {
+      // 如果是一个一个输入的,则提示是否有重复
+      positionArr[0] = inputPositionValueTemp;
+      if (
+        formValue.positionKeywords.findIndex(
+          (item) => item.keyword === inputPositionValueTemp,
+        ) !== -1
+      ) {
+        message.info("职位关键字已经存在");
+        return;
+      }
+    }
+    positionArr = positionArr.filter((item) => item.trim() !== "");
+    const newPositions = positionArr.map((item) => {
+      return {
+        id: Date.now() + item,
+        keyword: item,
+      };
+    }) as any;
+
+    setFormValue(
+      Object.assign({}, formValue, {
+        positionKeywords: formValue.positionKeywords.concat(newPositions),
+      }),
+    );
+    setInputPositionValue("");
   };
   const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
   };
+
+  const handleInputPositionChange = (e: any) => {
+    setInputPositionValue(e.target.value);
+  };
+
   return (
     <Form
       className="w-full"
@@ -263,14 +357,33 @@ const TaskForm: React.FC<FormValues> = ({
       <Form.Item name="title" label="标题" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="salary" label="薪资范围" rules={[{ required: true }]}>
-        <Select
-          style={{ width: 120 }}
-          // onChange={handleChange}
-          options={salayOptions}
-        />
+      <Form.Item label="薪资范围" required>
+        <div className="flex flex-row   justify-start gap-4">
+          <Form.Item
+            name={["salary", "minMoney"]}
+            rules={[
+              { required: true, message: "请输入最低薪资" },
+              { validator: validateMinMoney },
+            ]}
+          >
+            <Input placeholder="从多少K" type="number" />
+          </Form.Item>
+
+          <div>-</div>
+          <Form.Item
+            name={["salary", "maxMoney"]}
+            rules={[
+              { required: true, message: "请输入最高薪资" },
+              { validator: validateMaxMoney },
+            ]}
+          >
+            <Input placeholder="到多少K" type="number" />
+          </Form.Item>
+          <div>单位为K(千), 填写0-99999则不限制</div>
+        </div>
       </Form.Item>
-      <Form.Item
+
+      {/* <Form.Item
         name="position"
         label="职位关键字"
         rules={[{ required: true }]}
@@ -283,25 +396,65 @@ const TaskForm: React.FC<FormValues> = ({
           onChange={handleChange}
           options={posOptions}
         />
-      </Form.Item>
-      <Form.Item label="过滤公司名" rules={[{ required: false }]}>
+      </Form.Item> */}
+      <Form.Item label="职位关键字">
         <div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2">
+              <Input
+                value={inputPositionValue}
+                placeholder="请输入职位关键字,如销售,产品,本科。多个用关键词可以用,分隔; (用来跟公司职位描述去匹配)"
+                maxLength={20}
+                onChange={handleInputPositionChange}
+                allowClear={true}
+              />
+            </div>
+            <div className="col-span-1 flex items-center gap-2">
+              <Button type="primary" size="small" onClick={addFilterPosition}>
+                新增职位关键字
+              </Button>
+            </div>
+          </div>
+          <div className="flex w-full flex-row flex-wrap gap-2 py-5">
+            {(formValue.positionKeywords || []).length === 0 && (
+              <span className="font-bold text-red">暂未设置</span>
+            )}
+            {(formValue.positionKeywords || []).map((position) => (
+              <Tag
+                key={position.id}
+                closable
+                onClose={() => {
+                  onRemovePositon(position.id);
+                }}
+              >
+                {position.keyword}
+              </Tag>
+            ))}
+          </div>
+        </div>
+      </Form.Item>
+      <Form.Item label="过滤公司名">
+        <div>
+          <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
               <Input
                 value={inputValue}
                 maxLength={20}
                 onChange={handleInputChange}
+                placeholder="请输入需要屏蔽的公司名,如:阿里巴巴,腾讯,百度。多个用关键词可以用,分隔;"
                 allowClear={true}
               />
             </div>
             <div className="col-span-1 flex items-center gap-2">
               <Button type="primary" size="small" onClick={addFilter}>
-                新增
+                新增过滤公司名
               </Button>
             </div>
           </div>
           <div className="flex w-full flex-row flex-wrap gap-2 py-5">
+            {(formValue.filteredKeywords || []).length === 0 && (
+              <span className="font-bold">暂未设置</span>
+            )}
             {(formValue.filteredKeywords || []).map((compony) => (
               <Tag
                 key={compony.id}

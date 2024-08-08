@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         id: "desc",
       },
       where: {
-        oid: userId,
+        userId: userId,
       },
       include: {
         filteredKeywords: {

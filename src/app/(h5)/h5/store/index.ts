@@ -1,8 +1,9 @@
-import { getItem } from "@/service/users";
+import { getItem, getItemByUserId } from "@/service/users";
 import { TaskItem } from "@/types";
 import { Users } from "@prisma/client";
 import { proxy } from "valtio";
 import { subscribeKey } from "valtio/utils";
+import { LogBody } from "../../common/types";
 // const [colorMode, setColorMode] = useLocalStorage("color-theme", "light");
 // const themeAtom = atom({
 //   key: "themeAtom", // unique ID (with respect to other atoms/selectors)
@@ -38,6 +39,8 @@ const h5Store = proxy<{
     platform: string;
   };
   currentTaskInfo: TaskItem;
+  isOpended: boolean;
+  logs: LogBody[];
 }>({
   userInfo: { ...initUserInfo },
   chromeInfo: {
@@ -53,6 +56,8 @@ const h5Store = proxy<{
     oid: "",
     filteredKeywords: [],
   },
+  isOpended: false,
+  logs: [],
 });
 
 subscribeKey(h5Store, "chromeInfo", () => {
@@ -67,15 +72,36 @@ export const userActions = {
     h5Store.userInfo = { ...initUserInfo };
   },
   setChromeIno: (value: { path: string; platform: string }) => {
-    h5Store.chromeInfo = value;
+    h5Store.chromeInfo = {
+      path: value.path,
+      platform: value.platform,
+    };
   },
   syncUserInfo: async (userId: string) => {
-    //
-    const userInfo = await getItem();
+    const userInfo = await getItemByUserId(userId);
     if (userInfo.status === 200 && userInfo.data) {
       console.log("userInfo", userInfo);
       h5Store.userInfo.points = userInfo.data.points;
     }
+  },
+  setIsOpended: (val: boolean) => {
+    h5Store.isOpended = val;
+  },
+  addLog: (log: LogBody) => {
+    console.log("addLog....====");
+    h5Store.logs.push({
+      id: h5Store.logs.length,
+      time: log.time,
+      type: log.type,
+      message: log.message,
+    });
+  },
+  setLogs: (logs: LogBody[]) => {
+    h5Store.logs = logs;
+  },
+  clearLog: () => {
+    console.log("clearLog....");
+    h5Store.logs = [];
   },
 };
 

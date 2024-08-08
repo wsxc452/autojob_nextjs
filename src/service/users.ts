@@ -27,7 +27,19 @@ export const getItem = async (
   //   console.log("getList", response.json());
   return response.json();
 };
+export const getItemByUserId = async (
+  userId: string,
+): Promise<{ data: Users; status: number }> => {
+  const response = await fetch(`${ApiUrl}/user/${userId}`, {
+    cache: "no-cache",
+  });
 
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  //   console.log("getList", response.json());
+  return response.json();
+};
 export const syncItem = async (
   updatedData: Partial<Users>,
 ): Promise<{ data: any; status: number }> => {

@@ -1,41 +1,40 @@
 import { ResponseReturn } from "@/app/api/common/common";
 import { ApiUrl } from "@/base/base";
-import { ListProps, TaskItem } from "@/types";
-export const getTaskList = async (
+import { ListProps, ReturnData } from "@/types";
+import { Greetings } from "@prisma/client";
+const modelName = "greetings";
+export const getList = async (
   page = 1,
   limit = 10,
-): Promise<ResponseReturn<ListProps<TaskItem>>> => {
-  const response = await fetch(`${ApiUrl}/tasks?page=${page}&limit=${limit}`);
+): Promise<ResponseReturn<ListProps<Greetings>>> => {
+  const response = await fetch(
+    `${ApiUrl}/${modelName}?page=${page}&limit=${limit}`,
+  );
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
   const data: ResponseReturn = await response.json();
   return data;
 };
-export const getTask = async (
+export const getItem = async (
   id: number = 1,
-  isWithGreeting: boolean = false,
-): Promise<{ data: TaskItem; status: number }> => {
-  const response = await fetch(
-    `${ApiUrl}/task/${id}?isWithGreeting=${isWithGreeting}`,
-    {
-      cache: "no-cache",
-    },
-  );
+): Promise<ReturnData<Greetings>> => {
+  const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
+    cache: "no-cache",
+  });
 
-  console.log("====getTask", response);
+  console.log("====get", response);
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  //   console.log("getTask", response.json());
   return response.json();
 };
-export const updateTask = async (
+export const updateItem = async (
   id: number = 1,
-  updatedData: Partial<TaskItem>,
-): Promise<TaskItem> => {
-  const response = await fetch(`${ApiUrl}/task/${id}`, {
+  updatedData: Partial<Greetings>,
+): Promise<ReturnData<Greetings>> => {
+  const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -47,8 +46,10 @@ export const updateTask = async (
   }
   return response.json();
 };
-export const deleteTask = async (id: number = 1): Promise<TaskItem> => {
-  const response = await fetch(`${ApiUrl}/task/${id}`, {
+export const deleteItem = async (
+  id: number = 1,
+): Promise<ReturnData<Greetings>> => {
+  const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -61,10 +62,11 @@ export const deleteTask = async (id: number = 1): Promise<TaskItem> => {
   return response.json();
 };
 
-export const createTask = async (
-  updatedData: Partial<TaskItem>,
-): Promise<TaskItem> => {
-  const response = await fetch(`${ApiUrl}/task`, {
+export const createItem = async (
+  updatedData: Partial<Greetings>,
+): Promise<ReturnData<Greetings>> => {
+  console.log("createItem", updatedData);
+  const response = await fetch(`${ApiUrl}/${modelName}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

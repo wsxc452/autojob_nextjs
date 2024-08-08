@@ -1,11 +1,23 @@
+import { message } from "antd";
+
 export function test() {
   console.log("test");
 }
-export function doIpc(type: string, params: any) {
-  console.log("doIpc");
+export async function doIpc(
+  taskKey: string,
+  params: any,
+): Promise<{
+  status: boolean;
+  message: string;
+}> {
+  console.log("doIpc", window.electron, taskKey, params);
   if (window.electron?.ipcRenderer) {
-    window.electron.ipcRenderer.send(type, params);
+    const ret = await window.electron.ipcRenderer.invoke(taskKey, params);
+    return ret;
   } else {
-    throw new Error("请在electron环境下运行");
+    return {
+      status: false,
+      message: "请在electron环境下运行!",
+    };
   }
 }

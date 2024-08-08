@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import SidebarItem from "@/app/pc/components/Sidebar/SidebarItem";
 import ClickOutside from "@/app/pc/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -32,7 +31,7 @@ function filterMenuItems(
   function filterItems(items: MenuItem[]): MenuItem[] {
     return items.filter((item) => {
       if (item.isAdmin !== undefined) {
-        return isAdmin ? item.isAdmin : !item.isAdmin;
+        return isAdmin ? true : !item.isAdmin;
       }
       if (item.children) {
         item.children = filterItems(item.children);
@@ -59,16 +58,20 @@ const menuGroups = [
       },
       {
         label: "任务列表",
-        route: "#",
+        route: "/task/edit",
         children: [
           { label: "新增任务", route: "/task/edit" },
           { label: "任务列表", route: "/task" },
         ],
       },
       {
-        label: "用户管理",
-        route: "/users",
-        isAdmin: true,
+        label: "任务配置",
+        route: "/configs/greetings",
+        isAdmin: false,
+        children: [
+          { label: "打招呼语配置", route: "/configs/greetings" },
+          { label: "核销记录", route: "/configs/userCodes" },
+        ],
       },
       {
         label: "卡券管理",

@@ -159,7 +159,7 @@ export default function LoginForm({
       console.log("values", JSON.stringify(result));
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/h5/index");
+        router.push("/h5/welcome");
       } else {
         console.log(result);
         message.info("登录失败");

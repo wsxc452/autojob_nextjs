@@ -12,18 +12,19 @@ datasource db {
 
 // 定义表模型
 model Tasks {
-  id             Int      @id @default(autoincrement())
-  title          String?  @db.VarChar(100) // 任务标题
-  salary         String?  @db.VarChar(100) // 任务薪资
-  position       String?  @db.VarChar(100) // 任务职位
-  staffnum       String?  @db.VarChar(100) // 员工人数
-  isIgnorePassed Boolean? @default(true) // 是否忽略已投递记录
-
-  filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字的关系
-  oid              String                    @default("") @db.VarChar(100) // 默认值为空字符串
+  id               Int                        @id @default(autoincrement())
+  title            String?                    @db.VarChar(100) // 任务标题
+  salary           String?                    @db.VarChar(100) // 任务薪资
+  // position         String?                    @db.VarChar(100) // 任务职位
+  staffnum         String?                    @db.VarChar(100) // 员工人数
+  isIgnorePassed   Boolean?                   @default(true) // 是否忽略已投递记录
+  positionKeywords FilteredPositionKeywords[] //  职位关键字
+  filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字
+  oid              String?                    @default("") @db.VarChar(100) // 默认值为空字符串
   search           Search[] // 搜索结果的关系
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime                  @updatedAt
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+  userId           String                     @db.VarChar(64) // 用户 ID
 
   // 定义主键
   @@map(name: "tasks")
@@ -39,11 +40,30 @@ model FilteredCompanyKeywords {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String   @db.VarChar(64) // 用户 ID
 
   // 确保 taskId 和 keyword 的组合唯一
   @@unique([taskId, keyword])
   // 定义主键
   @@map(name: "filtered_company_keywords")
+}
+
+// 定义过滤公司关键字表
+model FilteredPositionKeywords {
+  id      Int    @id @default(autoincrement())
+  keyword String // 需要过滤的公司关键字
+  taskId  Int // 关联的任务ID
+
+  task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.VarChar(64) // 用户 ID
+
+  // 确保 taskId 和 keyword 的组合唯一
+  @@unique([taskId, keyword])
+  // 定义主键
+  @@map(name: "filtered_position_keywords")
 }
 
 // 定义搜索表
@@ -64,7 +84,7 @@ model Search {
 
   taskId Int // 关联的任务ID
 
-  oid String @default("") // oauth2 relative ID
+  userId String @db.VarChar(50) // oauth2 relative ID
 
   autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
 
@@ -157,3 +177,16 @@ enum CardType {
 //   // Cards      Cards?    @relation(fields: [cardsId], references: [id])
 //   // cardsId    Int?
 // }
+enum GreetingsType {
+  ACTICE
+  DEACTIVE
+}
+
+model Greetings {
+  id        Int           @id @default(autoincrement())
+  content   String        @db.VarChar(200) // 创建内容
+  status    GreetingsType // 创建状态
+  userId    String        @db.VarChar(64) // 创建者 ID
+  createdAt DateTime      @default(now()) // 创建时间
+  updatedAt DateTime      @updatedAt // 更新时间
+}

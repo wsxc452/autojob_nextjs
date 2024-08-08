@@ -6,7 +6,13 @@ const queryClient = new QueryClient();
 import "./index/page.css";
 import HeadTabs from "./common/Tabs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import registerEvents from "../common/registerRenderer";
+import { useEffect } from "react";
 export default function Layout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    registerEvents();
+  }, []);
+
   return (
     <div className="body-wrap page flex h-screen w-screen flex-col text-black">
       <QueryClientProvider client={queryClient}>

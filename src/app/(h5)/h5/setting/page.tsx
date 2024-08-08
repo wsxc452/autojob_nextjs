@@ -3,6 +3,7 @@ import { Button, Form, Input, Select, SelectProps } from "antd";
 import store, { userActions } from "@/app/h5/h5/store";
 import { useSnapshot } from "valtio";
 import { useEffect, useState } from "react";
+import message from "@/utils/antdMessage";
 function SettingPage() {
   const { chromeInfo } = useSnapshot(store);
   const DetaultWindowsPath =
@@ -21,6 +22,7 @@ function SettingPage() {
       path: values.chromePath,
       platform: values.platform,
     });
+    message.success("保存成功");
   };
 
   console.log("platform", chromeInfo);

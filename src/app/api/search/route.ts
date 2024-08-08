@@ -1,8 +1,7 @@
 import prisma from "@/db";
-import { Prisma, Search } from "@prisma/client";
+import { Search } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { jsonReturn } from "../common/common";
-import { message } from "antd";
 
 function transformSalary(input: string): string {
   return input.replace(/·\d+薪/, "");
@@ -178,7 +177,8 @@ export async function POST(
     scale: urlParams.get("scale") ?? "",
     taskId: parseInt(urlParams.get("taskId") ?? "0", 10),
     autoThreadNo: urlParams.get("autoThreadNo") ?? "0",
-    oid: urlParams.get("oid") ?? "",
+    userId: urlParams.get("userId") ?? "",
+    // oid: urlParams.get("oid") ?? "",
     isCanPost: isCanPost,
     whiteInfo: urlParams.get("whiteInfo") ?? "",
     blackInfo: urlParams.get("blackInfo") ?? "",

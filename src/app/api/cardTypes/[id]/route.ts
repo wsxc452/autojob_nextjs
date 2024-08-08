@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import { FilterCompony } from "@/types";
+import { FilterCompony, FilterPosition } from "@/types";
 import { NextRequest } from "next/server";
 import { jsonReturn } from "../../common/common";
 import { auth } from "@clerk/nextjs/server";
@@ -34,11 +34,19 @@ export async function PATCH(
   const { id } = context.params;
   const body = await request.json();
   const keywords = body.filteredKeywords || [];
+  const positions = body.positionKeywords || [];
   const { userId } = auth().protect();
   try {
     await prisma.filteredCompanyKeywords.deleteMany({
       where: {
         taskId: parseInt(id),
+        userId,
+      },
+    });
+    await prisma.filteredPositionKeywords.deleteMany({
+      where: {
+        taskId: parseInt(id),
+        userId,
       },
     });
 
@@ -48,13 +56,23 @@ export async function PATCH(
       data: {
         title: body.title,
         salary: body.salary,
-        position: body.position,
+        // position: body.position,
+        userId,
         staffnum: body.staffnum,
-        oid: userId,
+        // oid: userId,
         filteredKeywords: {
           create: keywords.map((item: FilterCompony) => {
             return {
               keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        positionKeywords: {
+          create: positions.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
             };
           }),
         },
@@ -77,6 +95,7 @@ export async function DELETE(
   _request: NextRequest,
   context: { params: Params },
 ) {
+  const { userId } = auth().protect();
   const { id } = context.params;
   // 从查询参数中解析分页参数
   //   const url = new URL(request.url);
@@ -87,6 +106,7 @@ export async function DELETE(
       prisma.filteredCompanyKeywords.deleteMany({
         where: {
           taskId: parseInt(id),
+          userId,
         },
       }),
       prisma.tasks.delete({

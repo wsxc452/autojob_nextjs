@@ -72,7 +72,7 @@ export default function Page() {
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
         // TODO 送100精力点,不能送,因为邮箱可以轻易获取
-        router.push("/h5/index");
+        router.push("/h5/welcome");
       }
     } catch (err) {
       console.error("Error:", err);

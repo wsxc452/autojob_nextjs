@@ -8,6 +8,7 @@ import Link from "next/link";
 import { deleteTask } from "@/service/task";
 import message from "@/utils/antdMessage";
 import { useRouter } from "next/navigation";
+import { doIpc } from "@/app/(h5)/common/util";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -103,6 +104,11 @@ export default function TaskList() {
       ),
     },
   ];
+
+  const openPcWeb = () => {
+    //调用chrome原生方法打开后台
+    doIpc("openChromeUrl", "http://localhost:3000");
+  };
   return (
     <div className="flex w-screen flex-col items-center justify-center overflow-x-hidden">
       {isLoading || isFetching ? (
@@ -111,6 +117,12 @@ export default function TaskList() {
         </div>
       ) : (
         <div className="flex  w-full flex-col gap-2 px-5 py-10">
+          {data.data.data.length === 0 && (
+            <div className="gp-5 flex flex-col justify-center">
+              <div className="my-5 text-center">暂无数据,请去后台配置</div>
+              <Button onClick={openPcWeb}>打开后台</Button>
+            </div>
+          )}
           {data.data?.data &&
             data.data?.data.map((item) => {
               return (
@@ -123,7 +135,7 @@ export default function TaskList() {
                   }}
                 >
                   <p>薪资范围: {item.salary} </p>
-                  <p>匹配关键字: {item.position} </p>
+                  <p>匹配关键字: {item.positionKeywords.join(",")} </p>
                   <p>
                     过滤关键字:{" "}
                     {item.filteredKeywords

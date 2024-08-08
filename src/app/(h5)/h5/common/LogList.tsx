@@ -1,8 +1,9 @@
+"use client";
 import { useEffect, useRef } from "react";
 import { Button } from "antd";
 import { useSnapshot } from "valtio";
 // import { LogBody } from '../../common/types';
-import store, { userActions } from "@/states/globaStore";
+import store, { userActions } from "@/app/h5/h5/store";
 
 export default function LogList() {
   // const [logs, setLogs] = useState<LogBody[]>([]);
@@ -12,6 +13,7 @@ export default function LogList() {
     userActions.clearLog();
   };
   useEffect(() => {
+    clearLogs();
     // const mockLogs = Array.from({ length: 600 }, (_, index) => ({
     //   id: index,
     //   time: new Date().toLocaleString(),

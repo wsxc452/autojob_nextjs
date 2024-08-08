@@ -1,15 +1,6 @@
-"use client";
-import { Button } from "antd";
-import { useParams } from "next/navigation";
 import AutoOper from "@/app/h5/h5/common/AutoOper";
 import LogList from "@/app/h5/h5/common/LogList";
 function Page() {
-  const { id } = useParams();
-  console.log(id);
-
-  function goFn(arg0: string): void {
-    throw new Error("Function not implemented.");
-  }
   return (
     <div className="page flex h-full w-full flex-col items-center justify-center overflow-hidden !bg-sky-400 px-5">
       {/* <div className="my-5 flex w-full flex-row  justify-between gap-5">

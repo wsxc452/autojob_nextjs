@@ -20,12 +20,17 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
       data: {
         title: body.title,
         salary: body.salary,
-        position: body.position,
+        // position: body.position,
         staffnum: body.staffnum,
-        oid: userId,
+        userId,
         filteredKeywords: {
           create: body.filteredKeywords.map((item: any) => {
-            return { keyword: item.keyword };
+            return { keyword: item.keyword, userId };
+          }),
+        },
+        positionKeywords: {
+          create: body.positionKeywords.map((item: any) => {
+            return { keyword: item.keyword, userId };
           }),
         },
       },

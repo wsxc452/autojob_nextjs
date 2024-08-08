@@ -14,11 +14,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { userId }: { userId: string | null } = auth();
-  console.log("userId", userId);
-  // if (userId) {
-  //   // redirect("/h5/index");
-  // }
-
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
