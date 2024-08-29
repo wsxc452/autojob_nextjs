@@ -13,8 +13,9 @@ const isPublicRoute = createRouteMatcher([
   // "/api/(.*)",
   "/api/task/(.*)",
   "/api/search",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
+  "/api/zhouyi",
+  "/pc/sign-in(.*)",
+  "/pc/sign-up(.*)",
   "/auth-callback(.*)",
   "/h5/login",
   "/h5/register",
@@ -53,7 +54,7 @@ export default clerkMiddleware(
         });
       } else {
         // 说明是pc项目,按默认拦截
-        const signInUrl = new URL("/sign-in", request.url);
+        const signInUrl = new URL("/pc/sign-in", request.url);
         auth().protect({
           unauthorizedUrl: signInUrl.toString(),
           unauthenticatedUrl: signInUrl.toString(),

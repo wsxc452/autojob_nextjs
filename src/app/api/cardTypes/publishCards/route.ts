@@ -20,7 +20,7 @@ async function generateCards(num: number, cardInfo: CardTypes, userId: string) {
   for (let i = 0; i < num; i++) {
     cards.push({
       title: cardInfo.name,
-      code: generateUniqueCode(8), // 生成唯一的卡密
+      code: generateUniqueCode(10), // 生成唯一的卡密
       type: cardInfo.type, // 替换为实际的卡密类型
       value: cardInfo.cValue, // 假设存储天数或月份的值为30
       price: cardInfo.price,
@@ -28,6 +28,8 @@ async function generateCards(num: number, cardInfo: CardTypes, userId: string) {
       isActive: true,
       isRedeemed: false,
       createdAt: new Date(),
+      onlyOneTime: cardInfo.onlyOneTime,
+      cardTypesId: cardInfo.id,
     });
   }
   try {

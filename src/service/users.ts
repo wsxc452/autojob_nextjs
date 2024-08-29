@@ -30,6 +30,7 @@ export const getItem = async (
 export const getItemByUserId = async (
   userId: string,
 ): Promise<{ data: Users; status: number }> => {
+  console.log("getItemByUserId===>", userId);
   const response = await fetch(`${ApiUrl}/user/${userId}`, {
     cache: "no-cache",
   });
@@ -134,21 +135,6 @@ export const createItem = async (
   return response.json();
 };
 
-export const updateBalanceItemCode = async (
-  updatedData: Partial<UserInfo>,
-): Promise<UserInfo> => {
-  const response = await fetch(`${ApiUrl}/updateBalance`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(updatedData),
-  });
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
-};
 export const publichCards = async (
   updatedData: Partial<UserInfo>,
 ): Promise<UserInfo> => {
@@ -186,7 +172,10 @@ export const checkAdminOrThrow = async (userId: string): Promise<boolean> => {
   return true;
 };
 
-export const redeemedCode = async (code: string): Promise<any> => {
+export const redeemedCode = async (
+  code: string,
+  redeemedBy: string,
+): Promise<any> => {
   if (!/^[0-9A-Za-z]*$/.test(code)) {
     throw new Error("请输入正确的code");
   }
@@ -197,6 +186,7 @@ export const redeemedCode = async (code: string): Promise<any> => {
     },
     body: JSON.stringify({
       code,
+      redeemedBy,
     }),
   });
   if (!response.ok) {

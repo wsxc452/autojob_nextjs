@@ -3,24 +3,28 @@ import { FilterCompony, FilterPosition } from "@/types";
 import { NextRequest } from "next/server";
 import { jsonReturn } from "../../common/common";
 import { auth } from "@clerk/nextjs/server";
-import { Greetings, GreetingsType } from "@prisma/client";
+import { GreetingsType } from "@prisma/client";
 type Params = {
   id: string;
 };
 
 export async function GET(_request: NextRequest, context: { params: Params }) {
-  const { userId } = auth().protect();
   // 从查询参数中解析分页参数
   const { searchParams } = new URL(_request.url); // 获取 URL 对象
   const isWithGreeting = searchParams.get("isWithGreeting") || false; // 获取查询参数
-
+  let userIdParam = searchParams.get("userId");
+  console.log("userIdParam", userIdParam);
+  if (!userIdParam) {
+    const { userId } = auth().protect();
+    userIdParam = userId;
+  }
   // 查询数据库，获取任务数据
-  console.log("context", isWithGreeting);
   try {
     const [data] = await prisma.$transaction([
       prisma.tasks.findFirstOrThrow({
         where: {
           id: parseInt(context.params.id),
+          userId: userIdParam,
         },
         include: {
           positionKeywords: {
@@ -35,6 +39,12 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
               keyword: true, // 仅选择需要的字段，例如 keyword
             },
           }, // 包含关联的 filteredKeywords 数据
+          passCompanys: {
+            select: {
+              id: true,
+              keyword: true, // 仅选择需要的字段，例如 keyword
+            },
+          }, //
           search: {
             select: {
               md5: true,
@@ -47,7 +57,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
     if (isWithGreeting) {
       const greetingsRet = await prisma.greetings.findMany({
         where: {
-          userId: userId,
+          userId: userIdParam,
           status: GreetingsType.ACTICE,
         },
         select: {
@@ -61,14 +71,12 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
         take: 10,
       });
       greetings = greetingsRet;
-      console.log("greetings", greetings);
     }
     // 返回分页数据和分页信息
     return jsonReturn(
       {
         ...data,
         greetings,
-        // position: data.position ? data.position.split(",") : [],
       },
       200,
     );
@@ -85,6 +93,7 @@ export async function PATCH(
   const body = await request.json();
   const keywords = body.filteredKeywords || [];
   const positions = body.positionKeywords || [];
+  const passCompanys = body.passCompanys || [];
   const { userId } = auth().protect();
   try {
     await prisma.filteredCompanyKeywords.deleteMany({
@@ -100,33 +109,46 @@ export async function PATCH(
       },
     });
 
-    // 更新任务并添加新的filteredKeywords
-    const updatedTask = await prisma.tasks.update({
-      where: { id: parseInt(id) },
-      data: {
-        title: body.title,
-        salary: body.salary,
-        // position: body.position,
-        staffnum: body.staffnum,
-        // oid: userId,
-        // userId: userId,
-        filteredKeywords: {
-          create: keywords.map((item: FilterCompony) => {
-            return {
-              keyword: item.keyword,
-              userId,
-            };
-          }),
-        },
-        positionKeywords: {
-          create: positions.map((item: FilterPosition) => {
-            return {
-              keyword: item.keyword,
-              userId,
-            };
-          }),
-        },
+    await prisma.filterPassCompanys.deleteMany({
+      where: {
+        taskId: parseInt(id),
+        userId,
       },
+    });
+
+    // 更新任务并添加新的filteredKeywords
+
+    const newBody = Object.assign({}, body, {
+      filteredKeywords: {
+        create: keywords.map((item: FilterCompony) => {
+          return {
+            keyword: item.keyword,
+            userId,
+          };
+        }),
+      },
+      positionKeywords: {
+        create: positions.map((item: FilterPosition) => {
+          return {
+            keyword: item.keyword,
+            userId,
+          };
+        }),
+      },
+      passCompanys: {
+        create: passCompanys.map((item: FilterPosition) => {
+          return {
+            keyword: item.keyword,
+            userId,
+          };
+        }),
+      },
+    });
+
+    console.log("newBody", newBody);
+    const updatedTask = await prisma.tasks.update({
+      where: { id: parseInt(id), userId },
+      data: newBody,
     });
     // 返回更新后的任务数据
     return jsonReturn(updatedTask);
@@ -162,6 +184,11 @@ export async function DELETE(
           taskId: parseInt(id),
         },
       }),
+      prisma.filterPassCompanys.deleteMany({
+        where: {
+          taskId: parseInt(id),
+        },
+      }),
       prisma.tasks.delete({
         where: {
           id: parseInt(id),
@@ -170,6 +197,7 @@ export async function DELETE(
     ]);
     return jsonReturn({ message: "success" });
   } catch (e: any) {
+    console.error(e);
     const errorMessage = e.message || "Internal Server Error";
     return jsonReturn({ error: errorMessage }, 500);
   }

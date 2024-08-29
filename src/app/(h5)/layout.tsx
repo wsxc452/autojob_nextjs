@@ -3,7 +3,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import "@/css/satoshi.css";
 import "@/css/style.css";
 import React from "react";
-import { auth } from "@clerk/nextjs/server";
+// import { auth } from "@clerk/nextjs/server";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { zhCN } from "@clerk/localizations";
@@ -13,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId }: { userId: string | null } = auth();
+  // const { userId }: { userId: string | null } = auth();
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>

@@ -35,6 +35,7 @@ export async function PATCH(
   const body = await request.json();
   const keywords = body.filteredKeywords || [];
   const positions = body.positionKeywords || [];
+  const passCompanys = body.passCompanys || [];
   const { userId } = auth().protect();
   try {
     await prisma.filteredCompanyKeywords.deleteMany({
@@ -44,6 +45,13 @@ export async function PATCH(
       },
     });
     await prisma.filteredPositionKeywords.deleteMany({
+      where: {
+        taskId: parseInt(id),
+        userId,
+      },
+    });
+
+    await prisma.filterPassCompanys.deleteMany({
       where: {
         taskId: parseInt(id),
         userId,
@@ -61,7 +69,7 @@ export async function PATCH(
         staffnum: body.staffnum,
         // oid: userId,
         filteredKeywords: {
-          create: keywords.map((item: FilterCompony) => {
+          create: keywords.map((item: FilterPosition) => {
             return {
               keyword: item.keyword,
               userId,
@@ -70,6 +78,14 @@ export async function PATCH(
         },
         positionKeywords: {
           create: positions.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        passCompanys: {
+          create: passCompanys.map((item: FilterPosition) => {
             return {
               keyword: item.keyword,
               userId,

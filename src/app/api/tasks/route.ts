@@ -33,9 +33,25 @@ export async function GET(request: NextRequest, context: { params: Params }) {
             keyword: true, // 仅选择需要的字段，例如 keyword
           },
         }, // 包含关联的 filteredKeywords 数据
+        positionKeywords: {
+          select: {
+            id: true,
+            keyword: true, // 仅选择需要的字段，例如 keyword
+          },
+        },
+        passCompanys: {
+          select: {
+            id: true,
+            keyword: true,
+          },
+        },
       },
     }),
-    prisma.tasks.count(),
+    prisma.tasks.count({
+      where: {
+        userId: userId,
+      },
+    }),
   ]);
   return jsonReturn({
     data,

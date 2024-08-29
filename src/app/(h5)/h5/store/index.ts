@@ -1,4 +1,4 @@
-import { getItem, getItemByUserId } from "@/service/users";
+import { getItemByUserId } from "@/service/users";
 import { TaskItem } from "@/types";
 import { Users } from "@prisma/client";
 import { proxy } from "valtio";
@@ -31,51 +31,79 @@ const initUserInfo = {
   isAbnormal: false,
   createdAt: new Date(),
   updatedAt: new Date(),
-};
+  greetings: [],
+} as any;
+
 const h5Store = proxy<{
-  userInfo: Users;
+  userInfo: Users & {
+    greetings: [];
+  };
   chromeInfo: {
-    path: string;
+    chromePath: string;
     platform: string;
   };
   currentTaskInfo: TaskItem;
   isOpended: boolean;
+  isTaskEnd: boolean;
   logs: LogBody[];
 }>({
   userInfo: { ...initUserInfo },
   chromeInfo: {
-    path: "",
+    chromePath: "",
     platform: "",
   },
   currentTaskInfo: {
     id: -1,
     title: "",
     salary: "",
-    position: [],
     staffnum: "",
-    oid: "",
+    positionKeywords: [],
+    userId: "",
     filteredKeywords: [],
+    maxCount: 0,
+    isIgnorePassed: false,
+    passCompanys: [],
+    cityCode: "",
+    cityName: "",
+    activeCheck: false,
+    headhunterCheck: false,
+    bossOnlineCheck: false,
+    searchText: "",
+    experienceValue: "", // 经验要求
+    degreeValue: "", // 学历要求
+    salaryValue: "", // 薪资要求
+    scaleValue: "", // 公司规模要求
   },
   isOpended: false,
+  isTaskEnd: true,
   logs: [],
 });
-
+export type h5StoreKeys = typeof h5Store;
 subscribeKey(h5Store, "chromeInfo", () => {
-  console.log("userInfo changed");
   localStorage.setItem("chromeInfo", JSON.stringify(h5Store.chromeInfo));
 });
 export const userActions = {
-  setUserInfo: (userInfo: Users) => {
+  setUserInfo: (
+    userInfo: Users & {
+      greetings: [];
+    },
+  ) => {
     h5Store.userInfo = userInfo;
+  },
+  setIsTaskEnd: (val: boolean) => {
+    h5Store.isTaskEnd = val;
   },
   clearUserInfo: () => {
     h5Store.userInfo = { ...initUserInfo };
   },
-  setChromeIno: (value: { path: string; platform: string }) => {
+  setChromeIno: (value: { chromePath: string; platform: string }) => {
     h5Store.chromeInfo = {
-      path: value.path,
+      chromePath: value.chromePath,
       platform: value.platform,
     };
+  },
+  setCurrentTaskInfo: (taskInfo: TaskItem) => {
+    h5Store.currentTaskInfo = { ...taskInfo };
   },
   syncUserInfo: async (userId: string) => {
     const userInfo = await getItemByUserId(userId);

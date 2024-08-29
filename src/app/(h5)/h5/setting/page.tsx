@@ -19,7 +19,7 @@ function SettingPage() {
   const onsubmit = (values: any) => {
     console.log("values", values);
     userActions.setChromeIno({
-      path: values.chromePath,
+      chromePath: values.chromePath,
       platform: values.platform,
     });
     message.success("保存成功");
@@ -28,7 +28,7 @@ function SettingPage() {
   console.log("platform", chromeInfo);
 
   useEffect(() => {
-    // console.log("chromeInfo", chromeInfo);
+    console.log("chromeInfo", chromeInfo);
     const localStoreChromeInfo = localStorage.getItem("chromeInfo");
     if (localStoreChromeInfo) {
       const chromeInfo = JSON.parse(localStoreChromeInfo);
@@ -40,7 +40,7 @@ function SettingPage() {
       //   });
       form.setFieldsValue({
         platform: chromeInfo.platform,
-        chromePath: chromeInfo.path,
+        chromePath: chromeInfo.chromePath,
       });
     }
   }, []);

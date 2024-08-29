@@ -45,6 +45,8 @@ export async function POST(request: Request) {
         lastName: body.lastName,
         fullName: body.fullName,
         userName: body.username || "",
+        points: 0,
+        isSuperUser: body.email === "wsxc452@gmail.com" ? true : false,
         // passwordHash: passwordHash,
         createdAt: new Date(), // 创建时设置创建时间
       },
@@ -53,9 +55,29 @@ export async function POST(request: Request) {
     // 返回同步后的用户
     const userInfo = await prisma.users.findFirstOrThrow({
       where: { userId: body.userId },
+      select: {
+        userId: true,
+        email: true,
+        userName: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+        points: true,
+        isSuperUser: true,
+        isAbnormal: true,
+        isVip: true,
+        // greetings: {
+        //   select: {
+        //     id: true,
+        //     content: true,
+        //   },
+        // },
+      },
     });
 
-    console.log("User synced to backup:--->", userInfo);
     return jsonReturn(userInfo);
   } catch (error) {
     console.error("Error syncing user to backup:", error);

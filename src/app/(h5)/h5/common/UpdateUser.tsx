@@ -22,7 +22,7 @@ export default function UpdateUser() {
   async function syncUser(userInfo: Partial<Users>) {
     try {
       const ret = await syncItem(userInfo);
-      console.log(ret);
+      console.log("userInfo", ret);
       if (ret) {
         userActions.setUserInfo(ret.data);
       }

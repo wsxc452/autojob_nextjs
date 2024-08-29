@@ -29,7 +29,7 @@
         "./src/app/(h5)/*"
       ],
       "@/app/pc/*": [
-        "./src/app/(pc)/*"
+        "./src/app/pc/*"
       ],
     }
   },

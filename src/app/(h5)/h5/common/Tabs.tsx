@@ -36,8 +36,9 @@ export default function HeadTabs() {
       router.push("/h5/tasks");
     } else if (key === "3") {
       console.log("index");
-      // router.push("/h5/index");
+      router.push("/h5/index/12");
     } else {
+      // router.push("/h5/welcome");
       router.push("/h5/welcome");
     }
   }

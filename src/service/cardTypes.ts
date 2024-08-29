@@ -2,6 +2,7 @@ import { ResponseReturn } from "@/app/api/common/common";
 import { ApiUrl } from "@/base/base";
 import { CardPublishFormValuesType, ListProps } from "@/types";
 import { CardTypes } from "@prisma/client";
+
 const modelName = "cardTypes";
 export const getList = async (
   page = 1,

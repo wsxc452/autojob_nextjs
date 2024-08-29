@@ -15,7 +15,7 @@ export async function PATCH(
 ) {
   const { id } = context.params;
   const body = await request.json();
-  const keywords = body.filteredKeywords || [];
+  // const keywords = body.filteredKeywords || [];
   const { userId } = auth().protect();
   try {
     // 更新任务并添加新的filteredKeywords

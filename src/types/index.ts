@@ -20,9 +20,35 @@ export interface TaskItem {
   userId: string;
   filteredKeywords: Array<FilterCompony>;
   positionKeywords: Array<FilterPosition>;
-  greetings: Array<GreetingItem>;
+  passCompanys: Array<FilterPosition>;
+  // greetings: Array<GreetingItem>;
+  maxCount: number;
+  searchText: string;
+  isIgnorePassed?: boolean;
+  cityCode: string;
+  cityName: string;
+  activeCheck: boolean;
+  bossOnlineCheck: boolean;
+  headhunterCheck: boolean;
+  experienceValue: string; // 经验要求
+  degreeValue: string; // 学历要求
+  salaryValue: string; // 薪资要求
+  scaleValue: string; // 公司规模要求
 }
-
+// Define a type with the modified properties
+export type TaskItemForm = Omit<
+  TaskItem,
+  "experienceValue" | "degreeValue" | "salaryValue" | "scaleValue" | "salary"
+> & {
+  salary: {
+    minMoney: string;
+    maxMoney: string;
+  };
+  experienceValue: string[]; // 经验要求
+  degreeValue: string[]; // 学历要求
+  salaryValue: string; // 薪资要求 (optional if not needed in the form)
+  scaleValue: string[]; // 公司规模要求
+};
 export interface ListProps<T> {
   data: Array<T>;
   pagination: {

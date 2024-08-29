@@ -9,6 +9,7 @@ import { deleteTask } from "@/service/task";
 import message from "@/utils/antdMessage";
 import { useRouter } from "next/navigation";
 import { doIpc } from "@/app/(h5)/common/util";
+import { BaseUrl } from "@/base/base";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -87,7 +88,7 @@ export default function TaskList() {
       render: (_, record) => (
         <Space size="middle">
           <Button>
-            <Link href={`/task/edit/${record.id}`}>编辑</Link>
+            <Link href={`/pc/task/edit/${record.id}`}>编辑</Link>
           </Button>
           <Popconfirm
             title="删除确认"
@@ -107,7 +108,7 @@ export default function TaskList() {
 
   const openPcWeb = () => {
     //调用chrome原生方法打开后台
-    doIpc("openChromeUrl", "http://localhost:3000");
+    doIpc("openChromeUrl", BaseUrl);
   };
   return (
     <div className="flex w-screen flex-col items-center justify-center overflow-x-hidden">
@@ -134,13 +135,35 @@ export default function TaskList() {
                     background: "rgba(255, 255, 255, 0.4)",
                   }}
                 >
-                  <p>薪资范围: {item.salary} </p>
-                  <p>匹配关键字: {item.positionKeywords.join(",")} </p>
                   <p>
-                    过滤关键字:{" "}
-                    {item.filteredKeywords
+                    职位搜索:{item.searchText} - 投递量: {item.maxCount}
+                  </p>
+                  <p>
+                    薪资范围: {item.salary} - 投递城市:{item.cityName}
+                  </p>
+                  <p>过滤非在线HR: {item.bossOnlineCheck ? "是" : "否"} </p>
+                  <p>过滤非活跃HR: {item.activeCheck ? "是" : "否"}</p>
+                  <p>
+                    过滤猎头:
+                    {item.headhunterCheck ? "是" : "否"}
+                  </p>
+                  <p>
+                    过滤公司关键字:
+                    {(item.passCompanys || [])
                       .map((item) => item.keyword)
-                      .join(",")}{" "}
+                      .join(",")}
+                  </p>
+                  <p>
+                    职位关键字:
+                    {(item.positionKeywords || [])
+                      .map((item) => item.keyword)
+                      .join(",")}
+                  </p>
+                  <p>
+                    过滤关键字:
+                    {(item.filteredKeywords || [])
+                      .map((item) => item.keyword)
+                      .join(",")}
                   </p>
 
                   <div className="mt-2 text-right">

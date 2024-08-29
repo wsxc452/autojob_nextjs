@@ -15,22 +15,52 @@ model Tasks {
   id               Int                        @id @default(autoincrement())
   title            String?                    @db.VarChar(100) // 任务标题
   salary           String?                    @db.VarChar(100) // 任务薪资
-  // position         String?                    @db.VarChar(100) // 任务职位
+  searchText       String?                    @default("") @db.VarChar(100) // 任务职位
   staffnum         String?                    @db.VarChar(100) // 员工人数
   isIgnorePassed   Boolean?                   @default(true) // 是否忽略已投递记录
   positionKeywords FilteredPositionKeywords[] //  职位关键字
   filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字
+  passCompanys     FilterPassCompanys[] // 过滤已递公司
   oid              String?                    @default("") @db.VarChar(100) // 默认值为空字符串
   search           Search[] // 搜索结果的关系
   createdAt        DateTime                   @default(now())
   updatedAt        DateTime                   @updatedAt
   userId           String                     @db.VarChar(64) // 用户 ID
+  cityCode         String                     @default("") @db.VarChar(20) // 城市代码
+  cityName         String                     @default("") @db.VarChar(20) // 城市名称
+  maxCount         Int?                       @default(100) // 最大投递次数
+  bossOnlineCheck  Boolean                    @default(false) // 过滤非在线HR
+  activeCheck      Boolean                    @default(false) // 过滤非活跃HR
+  headhunterCheck  Boolean                    @default(false) // 过滤猎头
+
+  experienceValue String? @default("0") @db.VarChar(100) // 经验要求
+  degreeValue     String? @default("0") @db.VarChar(100) // 学历要求
+  salaryValue     String? @default("0") @db.VarChar(80) // 薪资要求
+  scaleValue      String? @default("0") @db.VarChar(100) // 公司规模要求
 
   // 定义主键
   @@map(name: "tasks")
 }
 
-// 定义过滤公司关键字表
+// 定义过滤职位关键字表
+model FilterPassCompanys {
+  id      Int    @id @default(autoincrement())
+  keyword String
+  taskId  Int // 关联的任务ID
+
+  task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.VarChar(64) // 用户 ID
+
+  // 确保 taskId 和 keyword 的组合唯一
+  @@unique([taskId, keyword])
+  // 定义主键
+  @@map(name: "filtered_pass_conpanys")
+}
+
+// 定义过滤职位关键字表
 model FilteredCompanyKeywords {
   id      Int    @id @default(autoincrement())
   keyword String // 需要过滤的公司关键字
@@ -68,19 +98,21 @@ model FilteredPositionKeywords {
 
 // 定义搜索表
 model Search {
-  id       Int    @id @default(autoincrement())
-  md5      String @db.VarChar(32) // MD5 哈希值通常为 32 个字符
-  position String @db.VarChar(100) // 职位名称，假设最大长度为 100 个字符
-  salary   String @db.VarChar(50) // 薪资信息，假设最大长度为 50 个字符
-  company  String @db.VarChar(100) // 公司名称，假设最大长度为 100 个字符
-  scale    String @db.VarChar(50) // 公司规模，假设最大长度为 50 个字符
-
-  whiteInfo String?  @db.VarChar(50) //  
-  blackInfo String?  @db.VarChar(50) //  
-  errDesc   String?  @db.VarChar(50) // 错误描述
+  id        Int      @id @default(autoincrement())
+  md5       String   @db.VarChar(32) // position+company 组成的MD5 哈希值通常为 32 个字符
+  position  String   @db.VarChar(100) // 职位名称，假设最大长度为 100 个字符
+  salary    String   @db.VarChar(50) // 薪资信息，假设最大长度为 50 个字符
+  company   String   @db.VarChar(100) // 公司名称，假设最大长度为 100 个字符
+  scale     String   @db.VarChar(50) // 公司规模，假设最大长度为 50 个字符
+  descText  String?  @db.Text // 描述信息，假设最大长度为 200 个字符
+  whiteInfo String?  @db.VarChar(200) //  
+  blackInfo String?  @db.VarChar(200) //  
+  errDesc   String?  @db.VarChar(200) // 错误描述
   isCanPost Boolean? // 是否可以投递
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  costPoint Int? @default(1) // 消耗积分
 
   taskId Int // 关联的任务ID
 
@@ -89,9 +121,11 @@ model Search {
   autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
 
   task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+  // Tasks   Tasks? @relation(fields: [tasksId], references: [id])
+  // Tasks Tasks? @relation(fields: [taskId], references: [id])
 
   // 确保 taskId 和 md5 的组合唯一
-  @@unique([taskId, md5])
+  // @@unique([taskId, md5])
   // 定义主键
   @@map(name: "search")
 }
@@ -120,6 +154,8 @@ model Users {
   updatedAt      DateTime @updatedAt
   // UserCards      UserCards[]
 
+  greetings Greetings[]
+
   @@index([email]) // 单字段索引
   @@index([userId]) // 单字段索引
 }
@@ -138,7 +174,10 @@ model Cards {
   updatedAt     DateTime  @updatedAt // 更新时间
   redeemedAt    DateTime? // 核销时间（可选）
   distributorId Int? // 发行分销商的 ID
+  onlyOneTime   Boolean   @default(false) // 是否只能购买一次，默认为 false
   redeemedBy    String?   @db.VarChar(64) // 核销者 ID
+  cardTypesId   Int       @default(1) // 卡密类型 ID
+  cardTypes     CardTypes @relation(fields: [cardTypesId], references: [id]) // 与 CardTypes 的一对一关系
   // userCard      UserCards? @relation(fields: [code], references: [cardCode]) // 与 UserCards 的一对一关系
   // UserCards     UserCards[]
   // UserCards     UserCards[]
@@ -156,6 +195,7 @@ model CardTypes {
   isCanDistributor Boolean  @default(false) // 是否可以分销，默认为 false  
   createdAt        DateTime @default(now()) // 创建时间
   updatedAt        DateTime @updatedAt // 更新时间
+  Cards            Cards[]
 }
 
 enum CardType {
@@ -189,4 +229,19 @@ model Greetings {
   userId    String        @db.VarChar(64) // 创建者 ID
   createdAt DateTime      @default(now()) // 创建时间
   updatedAt DateTime      @updatedAt // 更新时间
+
+  Users Users? @relation(fields: [userId], references: [userId])
+}
+
+model City {
+  id         Int     @id @default(autoincrement())
+  firstChar  String? @default("") @db.VarChar(10)
+  code       String  @db.VarChar(20)
+  name       String  @db.VarChar(20)
+  cityCode   String  @db.VarChar(20)
+  regionCode String  @db.VarChar(20)
+  from       String  @db.VarChar(20)
+  pinyin     String  @db.VarChar(100)
+
+  @@unique([code, from]) // 设置 code 和 from 的唯一约束
 }

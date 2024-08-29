@@ -4,22 +4,33 @@ import { useSnapshot } from "valtio";
 import { Button, Form, Input } from "antd";
 import { redeemedCode } from "@/service/users";
 import message from "@/utils/antdMessage";
-import { useState } from "react";
 import DebounceWrap from "../common/DebounceWrap";
+import { doIpc } from "../../common/util";
+import { TaskType } from "../../common/types";
 
 function WelcomePage() {
   const { userInfo } = useSnapshot(store);
   const [form] = Form.useForm();
+  const test = async () => {
+    const ret = await doIpc("task", { type: TaskType.Test });
+    console.log("ret", ret);
+  };
+  const stop = async () => {
+    console.log("stop");
+    const ret = await doIpc("task", { type: TaskType.Paused });
+    console.log("ret", ret);
+  };
   const onSumbit = async function (values: any) {
     console.log("onSumbit", values);
     try {
-      const ret = await redeemedCode(values.code);
+      const ret = await redeemedCode(values.code, userInfo.userId);
       if (ret.status === 200 && ret.data) {
         message.success(`成功充值${ret.data.data}点`);
+        console.log("userInfo===>", userInfo);
         userActions.syncUserInfo(userInfo.userId);
         form.resetFields();
       } else {
-        message.error(ret.data.error || "充值失败");
+        message.error(ret.data.error || "充值失败 !");
       }
       console.log("ret", ret);
     } catch (e) {
@@ -46,12 +57,22 @@ function WelcomePage() {
               name="code"
               rules={[{ required: true, message: "请输入卡密,充值精力点数" }]}
             >
-              <Input allowClear maxLength={8} />
+              <Input allowClear maxLength={10} />
             </Form.Item>
             <Form.Item>
               <DebounceWrap debounceTime={1000}>
                 <Button block type="primary" htmlType="submit">
                   充值
+                </Button>
+              </DebounceWrap>
+              <DebounceWrap debounceTime={1000}>
+                <Button block type="primary" onClick={test}>
+                  test
+                </Button>
+              </DebounceWrap>
+              <DebounceWrap debounceTime={1000}>
+                <Button block type="primary" onClick={stop}>
+                  stop
                 </Button>
               </DebounceWrap>
             </Form.Item>

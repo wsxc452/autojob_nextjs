@@ -7,7 +7,7 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/dashboard",
+        destination: "/pc/dashboard",
         permanent: false, // 如果是永久重定向，可以设置为 true
       },
     ];

@@ -16,24 +16,26 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
   //body.filteredKeywords.map((item: any) => {return item.keyword},
   try {
     // 使用 Prisma 更新任务数据
-    const updatedTask = await prisma.tasks.create({
-      data: {
-        title: body.title,
-        salary: body.salary,
-        // position: body.position,
-        staffnum: body.staffnum,
-        userId,
-        filteredKeywords: {
-          create: body.filteredKeywords.map((item: any) => {
-            return { keyword: item.keyword, userId };
-          }),
-        },
-        positionKeywords: {
-          create: body.positionKeywords.map((item: any) => {
-            return { keyword: item.keyword, userId };
-          }),
-        },
+    const newBody = Object.assign({}, body, {
+      userId,
+      filteredKeywords: {
+        create: body.filteredKeywords.map((item: any) => {
+          return { keyword: item.keyword, userId };
+        }),
       },
+      positionKeywords: {
+        create: body.positionKeywords.map((item: any) => {
+          return { keyword: item.keyword, userId };
+        }),
+      },
+      passCompanys: {
+        create: body.passCompanys.map((item: any) => {
+          return { keyword: item.keyword, userId };
+        }),
+      },
+    });
+    const updatedTask = await prisma.tasks.create({
+      data: newBody,
     });
 
     // 返回更新后的任务数据
