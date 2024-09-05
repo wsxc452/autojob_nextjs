@@ -5,7 +5,7 @@ import { GreetingsType, PrismaClient } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "../common/common";
 const prisma = new PrismaClient();
-const model = prisma.greetings;
+const model = prisma.greetingGroup;
 export async function GET(request: NextRequest, context: { params: Params }) {
   const { userId } = auth().protect();
   const url = new URL(request.url);
@@ -20,17 +20,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     model.findMany({
       skip: offset,
       take: limit,
-      orderBy: {
-        id: "desc",
-      },
-      include: {
-        GreetingGroup: {
-          select: {
-            id: true,
-            name: true, // 仅选择需要的字段，例如 keyword
-          },
-        },
-      },
+      orderBy: { id: "desc" },
       where: {
         userId,
       },
@@ -60,16 +50,14 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
     delete body.id;
   }
   console.log("bodybody2", body);
-  const { id, content } = body;
+  const { id, name } = body;
   //body.filteredKeywords.map((item: any) => {return item.keyword},
   try {
     // 使用 Prisma 更新任务数据
     const updatedTask = await model.create({
       data: {
-        content,
-        greetingGroupId: body.greetingGroupId,
+        name: name,
         userId,
-        status: GreetingsType.ACTICE,
       },
     });
 

@@ -20,45 +20,50 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
   }
   // 查询数据库，获取任务数据
   try {
-    const [data] = await prisma.$transaction([
-      prisma.tasks.findFirstOrThrow({
-        where: {
-          id: parseInt(context.params.id),
-          userId: userIdParam,
-        },
-        include: {
-          positionKeywords: {
-            select: {
-              id: true,
-              keyword: true, // 仅选择需要的字段，例如 keyword
-            },
-          },
-          filteredKeywords: {
-            select: {
-              id: true,
-              keyword: true, // 仅选择需要的字段，例如 keyword
-            },
-          }, // 包含关联的 filteredKeywords 数据
-          passCompanys: {
-            select: {
-              id: true,
-              keyword: true, // 仅选择需要的字段，例如 keyword
-            },
-          }, //
-          search: {
-            select: {
-              md5: true,
-            },
+    const taskInfo = await prisma.tasks.findFirstOrThrow({
+      where: {
+        id: parseInt(context.params.id),
+        userId: userIdParam,
+      },
+      include: {
+        positionKeywords: {
+          select: {
+            id: true,
+            keyword: true, // 仅选择需要的字段，例如 keyword
           },
         },
-      }),
-    ]);
+        filteredKeywords: {
+          select: {
+            id: true,
+            keyword: true, // 仅选择需要的字段，例如 keyword
+          },
+        }, // 包含关联的 filteredKeywords 数据
+        passCompanys: {
+          select: {
+            id: true,
+            keyword: true, // 仅选择需要的字段，例如 keyword
+          },
+        }, //
+        search: {
+          select: {
+            md5: true,
+          },
+        },
+        GreetingGroup: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
     let greetings: any[] = [];
     if (isWithGreeting) {
       const greetingsRet = await prisma.greetings.findMany({
         where: {
           userId: userIdParam,
           status: GreetingsType.ACTICE,
+          greetingGroupId: taskInfo.greetingGroupId!,
         },
         select: {
           id: true,
@@ -75,7 +80,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
     // 返回分页数据和分页信息
     return jsonReturn(
       {
-        ...data,
+        ...taskInfo,
         greetings,
       },
       200,
@@ -91,67 +96,85 @@ export async function PATCH(
 ) {
   const { id } = context.params;
   const body = await request.json();
+  const hasMore = body.hasMore;
   const keywords = body.filteredKeywords || [];
   const positions = body.positionKeywords || [];
   const passCompanys = body.passCompanys || [];
   const { userId } = auth().protect();
+
+  // console.log("=====", body);
+  delete body.hasMore;
+  // delete body.filteredKeywords;
+  // delete body.positionKeywords;
+  // delete body.passCompanys;
+  // delete body.search;
   try {
-    await prisma.filteredCompanyKeywords.deleteMany({
-      where: {
-        taskId: parseInt(id),
-        userId,
-      },
-    });
-    await prisma.filteredPositionKeywords.deleteMany({
-      where: {
-        taskId: parseInt(id),
-        userId,
-      },
-    });
+    if (hasMore) {
+      await prisma.filteredCompanyKeywords.deleteMany({
+        where: {
+          taskId: parseInt(id),
+          userId,
+        },
+      });
+      await prisma.filteredPositionKeywords.deleteMany({
+        where: {
+          taskId: parseInt(id),
+          userId,
+        },
+      });
 
-    await prisma.filterPassCompanys.deleteMany({
-      where: {
-        taskId: parseInt(id),
-        userId,
-      },
-    });
+      await prisma.filterPassCompanys.deleteMany({
+        where: {
+          taskId: parseInt(id),
+          userId,
+        },
+      });
 
-    // 更新任务并添加新的filteredKeywords
+      // 更新任务并添加新的filteredKeywords
 
-    const newBody = Object.assign({}, body, {
-      filteredKeywords: {
-        create: keywords.map((item: FilterCompony) => {
-          return {
-            keyword: item.keyword,
-            userId,
-          };
-        }),
-      },
-      positionKeywords: {
-        create: positions.map((item: FilterPosition) => {
-          return {
-            keyword: item.keyword,
-            userId,
-          };
-        }),
-      },
-      passCompanys: {
-        create: passCompanys.map((item: FilterPosition) => {
-          return {
-            keyword: item.keyword,
-            userId,
-          };
-        }),
-      },
-    });
+      const newBody = Object.assign({}, body, {
+        filteredKeywords: {
+          create: keywords.map((item: FilterCompony) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        positionKeywords: {
+          create: positions.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        passCompanys: {
+          create: passCompanys.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+      });
 
-    console.log("newBody", newBody);
-    const updatedTask = await prisma.tasks.update({
-      where: { id: parseInt(id), userId },
-      data: newBody,
-    });
-    // 返回更新后的任务数据
-    return jsonReturn(updatedTask);
+      console.log("newBody", newBody);
+      const updatedTask = await prisma.tasks.update({
+        where: { id: parseInt(id), userId },
+        data: newBody,
+      });
+      // 返回更新后的任务数据
+      return jsonReturn(updatedTask);
+    } else {
+      // 更新任务并添加新的filteredKeywords
+      const updatedTask = await prisma.tasks.update({
+        where: { id: parseInt(id), userId },
+        data: body,
+      });
+      // 返回更新后的任务数据
+      return jsonReturn(updatedTask);
+    }
   } catch (e: any) {
     // 处理错误情况
     // 处理其他未知错误

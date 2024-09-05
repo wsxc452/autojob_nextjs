@@ -175,9 +175,6 @@ async function checkPostInfo(
     },
   });
 
-  console.log("=====md5", md5);
-  console.log("searchInfo", searchInfo);
-
   if (searchInfo) {
     return {
       status: false,
@@ -229,15 +226,15 @@ async function checkPostInfo(
       );
     }
   }
-  console.log("checkRet====>descText", descText);
-  console.log("checkRet====>1111", JSON.stringify(taskInfo.positionKeywords));
-  console.log("checkRet====>1111", JSON.stringify(taskInfo.filteredKeywords));
+  // console.log("checkRet====>descText", descText);
+  // console.log("checkRet====>1111", JSON.stringify(taskInfo.positionKeywords));
+  // console.log("checkRet====>1111", JSON.stringify(taskInfo.filteredKeywords));
   const checkRet = checkDesc(
     descText,
     taskInfo.positionKeywords,
     taskInfo.filteredKeywords,
   );
-  console.log("checkRet====>222", JSON.stringify(checkRet));
+  // console.log("checkRet====>222", JSON.stringify(checkRet));
   // 如果公司名称在过滤列表中，则不保存
 
   // 如果没有命中职位关键字,则不投递
@@ -266,16 +263,28 @@ export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<{ data: Search; status: number } | { error: string }>> {
   //   console.log("POST request", request);
-  const { userId } = auth().protect();
+  const bodyParams = await request.json();
+  // const { userId } = auth().protect();
   // const bodyText = await request.text();
   // 获取请求体
   // 将 URL 编码的字符串解析为对象
-  const bodyParams = await request.json();
+  const userId = bodyParams.userId;
+
+  if (!!userId) {
+    return jsonReturn(
+      {
+        error: "userId不能为空",
+        code: "10005",
+      },
+      400,
+    );
+  }
+
   // const urlParams = new URLSearchParams(bodyText);
 
   const checkPostRet = await checkPostInfo(bodyParams, userId);
   const costPoint = 1;
-  console.log("checkPostRet", checkPostRet);
+  // console.log("checkPostRet", checkPostRet);
   const body: Omit<Search, "id" | "createdAt" | "updatedAt"> = {
     md5: bodyParams.md5 ?? "",
     position: bodyParams.position ?? "",

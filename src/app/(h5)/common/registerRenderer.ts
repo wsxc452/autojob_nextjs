@@ -93,14 +93,26 @@ export default function registerEvents() {
       if (ret.status !== 200) {
         return { status: ret.ok, message: ret.statusText };
       }
+      try{
+        const retInfo = await ret.json();
+        console.log("postUrl", retInfo);
+        return {
+          status: ret.ok,
+          data: retInfo,
+        };
+      }catch(e){
+        console.log({
+          headers: headerComine,
+          body: JSON.stringify(params || {})
+        })
+        console.error(ret)
+        console.log("postUrl error", e);
+        return {
+          status: ret.ok,
+          data: {},
+        };
+      }
 
-      const retInfo = await ret.json();
-      console.log("postUrl", retInfo);
-
-      return {
-        status: ret.ok,
-        data: retInfo,
-      };
     } catch (e: any) {
       console.log("postUrl error", e);
       return { status: false, message: e.toString() };

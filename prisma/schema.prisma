@@ -38,6 +38,10 @@ model Tasks {
   salaryValue     String? @default("0") @db.VarChar(80) // 薪资要求
   scaleValue      String? @default("0") @db.VarChar(100) // 公司规模要求
 
+  greetingGroupId Int? // 欢迎语组ID
+
+  GreetingGroup GreetingGroup? @relation(fields: [greetingGroupId], references: [id]) // 定义关系
+
   // 定义主键
   @@map(name: "tasks")
 }
@@ -54,8 +58,6 @@ model FilterPassCompanys {
   updatedAt DateTime @updatedAt
   userId    String   @db.VarChar(64) // 用户 ID
 
-  // 确保 taskId 和 keyword 的组合唯一
-  @@unique([taskId, keyword])
   // 定义主键
   @@map(name: "filtered_pass_conpanys")
 }
@@ -72,8 +74,6 @@ model FilteredCompanyKeywords {
   updatedAt DateTime @updatedAt
   userId    String   @db.VarChar(64) // 用户 ID
 
-  // 确保 taskId 和 keyword 的组合唯一
-  @@unique([taskId, keyword])
   // 定义主键
   @@map(name: "filtered_company_keywords")
 }
@@ -90,8 +90,6 @@ model FilteredPositionKeywords {
   updatedAt DateTime @updatedAt
   userId    String   @db.VarChar(64) // 用户 ID
 
-  // 确保 taskId 和 keyword 的组合唯一
-  @@unique([taskId, keyword])
   // 定义主键
   @@map(name: "filtered_position_keywords")
 }
@@ -223,14 +221,28 @@ enum GreetingsType {
 }
 
 model Greetings {
-  id        Int           @id @default(autoincrement())
-  content   String        @db.VarChar(200) // 创建内容
-  status    GreetingsType // 创建状态
-  userId    String        @db.VarChar(64) // 创建者 ID
-  createdAt DateTime      @default(now()) // 创建时间
-  updatedAt DateTime      @updatedAt // 更新时间
+  id      Int           @id @default(autoincrement())
+  content String        @db.VarChar(200) // 创建内容
+  status  GreetingsType // 创建状态
 
-  Users Users? @relation(fields: [userId], references: [userId])
+  userId    String   @db.VarChar(64) // 创建者 ID
+  createdAt DateTime @default(now()) // 创建时间
+  updatedAt DateTime @updatedAt // 更新时间
+
+  Users           Users?        @relation(fields: [userId], references: [userId])
+  GreetingGroup   GreetingGroup @relation(fields: [greetingGroupId], references: [id])
+  greetingGroupId Int
+}
+
+model GreetingGroup {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100) // 创建内容
+  userId    String?  @db.VarChar(64) // 创建者 ID
+  createdAt DateTime @default(now()) // 创建时间
+  updatedAt DateTime @updatedAt // 更新时间
+
+  greetings Greetings[]
+  Tasks     Tasks[]
 }
 
 model City {

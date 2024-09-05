@@ -193,7 +193,7 @@ export default function AutoOper() {
         disabled={!isOpended || isRunning || isLoading}
         onClick={doTask}
       >
-        第二步,开始投递任务 ID:{id} 投递量{data?.data?.taskInfo?.maxCount || 0}
+        第二步,在页面设置筛选条件,开始投递
       </Button>
       <Button
         block

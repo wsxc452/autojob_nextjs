@@ -55,7 +55,6 @@ const h5Store = proxy<{
   currentTaskInfo: {
     id: -1,
     title: "",
-    salary: "",
     staffnum: "",
     positionKeywords: [],
     userId: "",
@@ -73,6 +72,7 @@ const h5Store = proxy<{
     degreeValue: "", // 学历要求
     salaryValue: "", // 薪资要求
     scaleValue: "", // 公司规模要求
+    greetingGroupId: 0,
   },
   isOpended: false,
   isTaskEnd: true,

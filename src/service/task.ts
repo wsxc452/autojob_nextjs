@@ -52,14 +52,18 @@ export const getTaskInfos = async (
 export const updateTask = async (
   id: number = 1,
   updatedData: Partial<TaskItem>,
-): Promise<TaskItem> => {
+): Promise<{
+  status: number;
+  data: any;
+}> => {
+  console.log("updatedData", updatedData);
   const response = await fetch(`${ApiUrl}/task/${id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(Object.assign(updatedData, { id })),
+    body: JSON.stringify(Object.assign(updatedData)),
   });
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -85,7 +89,10 @@ export const deleteTask = async (
 
 export const createTask = async (
   updatedData: Partial<TaskItem>,
-): Promise<TaskItem> => {
+): Promise<{
+  status: number;
+  data: any;
+}> => {
   const response = await fetch(`${ApiUrl}/task`, {
     method: "PUT",
     headers: {

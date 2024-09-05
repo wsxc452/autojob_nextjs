@@ -58,20 +58,16 @@ export default function List() {
       // render: (text) => <a>{text}</a>,
     },
     {
-      title: "title",
-      dataIndex: "title",
-      key: "title",
+      title: "searchText",
+      dataIndex: "searchText",
+      key: "searchText",
       // render: (text) => <a>{text}</a>,
     },
     {
-      title: "薪资",
-      dataIndex: "salary",
-      key: "salary",
-    },
-    {
-      title: "城市",
-      dataIndex: "cityName",
-      key: "cityName",
+      title: "打招呼分組",
+      dataIndex: "greetingGroupId",
+      key: "greetingGroupId",
+      // render: (text) => <a>{text}</a>,
     },
     {
       title: "最大投递次数",

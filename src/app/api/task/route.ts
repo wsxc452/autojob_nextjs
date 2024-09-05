@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "../common/common";
+import { FilterCompony, FilterPosition } from "@/types";
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
@@ -11,35 +12,61 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: NextRequest, context: { params: {} }) {
-  const body = await request.json();
   const { userId } = auth().protect();
-  //body.filteredKeywords.map((item: any) => {return item.keyword},
-  try {
-    // 使用 Prisma 更新任务数据
-    const newBody = Object.assign({}, body, {
-      userId,
-      filteredKeywords: {
-        create: body.filteredKeywords.map((item: any) => {
-          return { keyword: item.keyword, userId };
-        }),
-      },
-      positionKeywords: {
-        create: body.positionKeywords.map((item: any) => {
-          return { keyword: item.keyword, userId };
-        }),
-      },
-      passCompanys: {
-        create: body.passCompanys.map((item: any) => {
-          return { keyword: item.keyword, userId };
-        }),
-      },
-    });
-    const updatedTask = await prisma.tasks.create({
-      data: newBody,
-    });
+  const body = await request.json();
+  const hasMore = body.hasMore;
+  const keywords = body.filteredKeywords || [];
+  const positions = body.positionKeywords || [];
+  const passCompanys = body.passCompanys || [];
 
-    // 返回更新后的任务数据
-    return jsonReturn(updatedTask);
+  //body.filteredKeywords.map((item: any) => {return item.keyword},
+  console.log("=====", body);
+  delete body.hasMore;
+
+  try {
+    // 使用 Prisma create任务数据
+    if (hasMore) {
+      const newBody = Object.assign({}, body, {
+        filteredKeywords: {
+          create: keywords.map((item: FilterCompony) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        positionKeywords: {
+          create: positions.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        passCompanys: {
+          create: passCompanys.map((item: FilterPosition) => {
+            return {
+              keyword: item.keyword,
+              userId,
+            };
+          }),
+        },
+        userId,
+      });
+      console.log("newBody", newBody);
+      const createdTask = await prisma.tasks.create({
+        data: newBody,
+      });
+      // 返回更新后的任务数据
+      return jsonReturn(createdTask);
+    } else {
+      const newBody = Object.assign({}, body, { userId });
+      const createdTask = await prisma.tasks.create({
+        data: newBody,
+      });
+      // 返回更新后的任务数据
+      return jsonReturn(createdTask);
+    }
   } catch (e: any) {
     // 处理错误情况
     console.error("Unknown Error:", e);

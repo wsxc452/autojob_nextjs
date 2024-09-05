@@ -53,8 +53,18 @@ const menuGroups = [
     name: "菜单",
     menuItems: [
       {
-        label: "Dashboard",
+        label: "数据看板",
         route: "/pc/dashboard",
+      },
+      {
+        label: "任务配置",
+        route: "/pc/configs/greetings",
+        isAdmin: false,
+        children: [
+          { label: "打招呼组配置", route: "/pc/configs/greegting_group" },
+          { label: "打招呼语配置", route: "/pc/configs/greetings" },
+          { label: "核销记录", route: "/pc/configs/userCodes" },
+        ],
       },
       {
         label: "任务列表",
@@ -63,15 +73,6 @@ const menuGroups = [
           { label: "新增任务", route: "/pc/task/edit" },
           { label: "任务列表", route: "/pc/task" },
           { label: "投递记录", route: "/pc/search" },
-        ],
-      },
-      {
-        label: "任务配置",
-        route: "/pc/configs/greetings",
-        isAdmin: false,
-        children: [
-          { label: "打招呼语配置", route: "/pc/configs/greetings" },
-          { label: "核销记录", route: "/pc/configs/userCodes" },
         ],
       },
       {

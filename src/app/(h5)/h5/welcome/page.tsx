@@ -65,6 +65,7 @@ function WelcomePage() {
                   充值
                 </Button>
               </DebounceWrap>
+              {/*
               <DebounceWrap debounceTime={1000}>
                 <Button block type="primary" onClick={test}>
                   test
@@ -74,7 +75,7 @@ function WelcomePage() {
                 <Button block type="primary" onClick={stop}>
                   stop
                 </Button>
-              </DebounceWrap>
+              </DebounceWrap> */}
             </Form.Item>
           </Form>
         </div>

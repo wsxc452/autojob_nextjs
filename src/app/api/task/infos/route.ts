@@ -18,37 +18,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
     taskInfo: {},
     chromeInfo: {},
   };
-  try {
-    const userInfo = await prisma.users.findFirstOrThrow({
-      where: {
-        userId: userId,
-      },
-      select: {
-        userId: true,
-        points: true,
-        email: true,
-        greetings: {
-          select: {
-            id: true,
-            content: true,
-          },
-          take: 10,
-        },
-      },
-      // include: {},
-    });
-
-    retInfo.userInfo = userInfo;
-  } catch (e) {
-    return jsonReturn(
-      {
-        error: "找不到用户",
-        code: "10002",
-      },
-      400,
-    );
-  }
-
+  let groupId = null;
   try {
     const taskInfo = await prisma.tasks.findFirstOrThrow({
       where: {
@@ -85,6 +55,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
       },
     });
     retInfo.taskInfo = taskInfo;
+    groupId = taskInfo.greetingGroupId;
   } catch (e) {
     console.error(e);
     return jsonReturn(
@@ -95,6 +66,43 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
       400,
     );
   }
+
+  try {
+    // 先找到taskInfo
+    const userInfo = await prisma.users.findFirstOrThrow({
+      where: {
+        userId: userId,
+      },
+      select: {
+        userId: true,
+        points: true,
+        email: true,
+        greetings: {
+          select: {
+            id: true,
+            content: true,
+            greetingGroupId: true,
+          },
+          where: {
+            greetingGroupId: groupId!,
+          },
+          take: 10,
+        },
+      },
+      // include: {},
+    });
+
+    retInfo.userInfo = userInfo;
+  } catch (e) {
+    return jsonReturn(
+      {
+        error: "找不到用户",
+        code: "10002",
+      },
+      400,
+    );
+  }
+
   //   console.log("taskInfo", taskInfo);/
   //   const userInfo = await prisma.users.findFirstOrThrow({
   //     where: {

@@ -7,7 +7,7 @@ import message from "@/utils/antdMessage";
 function SettingPage() {
   const { chromeInfo } = useSnapshot(store);
   const DetaultWindowsPath =
-    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
   const DefaultMacPath =
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
   const initValues = {

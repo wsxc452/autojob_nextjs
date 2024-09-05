@@ -14,7 +14,7 @@ type GreetingItem = {
 export interface TaskItem {
   id: number;
   title: string;
-  salary: string;
+  salary?: string;
   // position: [];
   staffnum: string;
   userId: string;
@@ -34,6 +34,12 @@ export interface TaskItem {
   degreeValue: string; // 学历要求
   salaryValue: string; // 薪资要求
   scaleValue: string; // 公司规模要求
+  greetingGroupId: number | null;
+  GreetingGroup?: [];
+  greetings?: [];
+  search?: [];
+  createdAt?: string;
+  updatedAt?: string;
 }
 // Define a type with the modified properties
 export type TaskItemForm = Omit<

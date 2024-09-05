@@ -148,7 +148,7 @@ export default function TaskList() {
                     {item.headhunterCheck ? "是" : "否"}
                   </p>
                   <p>
-                    过滤公司关键字:
+                    过滤公司名称关键字:
                     {(item.passCompanys || [])
                       .map((item) => item.keyword)
                       .join(",")}

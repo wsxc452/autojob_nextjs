@@ -10,7 +10,15 @@ type Params = {};
 // }
 //  /api/city 保存city;
 export async function GET(request: NextRequest, context: { params: Params }) {
+  const count = await prisma.city.count();
+  if (count !== 0) {
+    return jsonReturn({ count, msg: "已经存在数据!" });
+  }
+  const saveRet = await saveCity();
+  // if data is not empty, return error
+  // return jsonReturn(saveRet);
   const from = "BOSS";
+
   const ret = await prisma.city.findMany({
     where: {
       from: from,
@@ -36,5 +44,5 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       pinyin: true,
     },
   });
-  return jsonReturn(ret);
+  return jsonReturn({ count, msg: "已经新增数据" });
 }
