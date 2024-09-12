@@ -1,4 +1,5 @@
 import { electronAPI } from "@electron-toolkit/preload";
+import { Dayjs } from "dayjs";
 export type FilterCompony = {
   id: number;
   keyword: string;
@@ -93,4 +94,8 @@ export enum UpdateUserType {
 export type ReturnData<T = any> = {
   data: T | { error: string };
   status: number;
+};
+
+export type SearchFormType = {
+  time_range: Dayjs[];
 };

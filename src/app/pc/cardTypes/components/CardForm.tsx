@@ -13,39 +13,13 @@ import {
 } from "antd";
 import type { RadioChangeEvent, SelectProps } from "antd";
 import { createItem, updateItem } from "@/service/cardTypes";
-import globaStore from "@/states/globaStore";
+import globaStore from "@/app/pc/pcStates/pcStore";
 import { useSnapshot } from "valtio";
 import message from "@/utils/antdMessage";
 import { CardType, CardTypes } from "@prisma/client";
 const { TextArea } = Input;
 
-const posOptions: SelectProps["options"] = [
-  {
-    label: "front-end",
-    value: "front-end",
-  },
-  {
-    label: "后端",
-    value: "后端",
-  },
-  {
-    label: "全栈",
-    value: "全栈",
-  },
-  {
-    label: "react",
-    value: "react",
-  },
-  {
-    label: "vue",
-    value: "vue",
-  },
-  {
-    label: "Node",
-    value: "Node",
-  },
-];
-const salayOptions: SelectProps["options"] = [
+const cardOptions: SelectProps["options"] = [
   {
     label: "日卡",
     value: "DAILY",
@@ -56,51 +30,21 @@ const salayOptions: SelectProps["options"] = [
   },
   {
     label: "季卡",
-    value: "12-18K",
+    value: "QUARTERLY",
   },
   {
     label: "半年卡",
-    value: "12-18K",
+    value: "HALF_YEARLY",
   },
   {
     label: "年卡",
-    value: "18000-22000",
+    value: "YEARLY",
   },
   {
     label: "点卡",
     value: "POINTS",
   },
 ];
-
-const staffNumOptions: SelectProps["options"] = [
-  {
-    label: "不限制",
-    value: "0-0",
-  },
-  {
-    label: "0-20人",
-    value: "0-20",
-  },
-  {
-    label: "20-50人",
-    value: "20-50",
-  },
-  {
-    label: "50-100人",
-    value: "50-100",
-  },
-  {
-    label: "100-500人",
-    value: "100-500",
-  },
-  {
-    label: "500以上",
-    value: "500-999999",
-  },
-];
-const handleChange = (value: string[]) => {
-  console.log(`selected ${value}`);
-};
 
 const layout = {
   labelCol: { span: 4 },
@@ -120,7 +64,7 @@ function getInitValue() {
   return {
     id: 0,
     name: "新人体验卡券,每人只限一次,1000点券",
-    type: CardType.POINTS,
+    type: CardType.MONTHLY,
     price: 100,
     cValue: 1000,
     desc: "新人体验卡券,每人只限一次,1000点券",
@@ -140,7 +84,7 @@ const CardsForm: React.FC<FormValues> = ({
   const [isCreate, setIsCreate] = useState<boolean>(!initialValues);
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
   const [formValue, setFormValue] = useState<CardTypes>(initValue);
-
+  const [selectedCardType, setSelectedCardType] = useState("DAILY");
   useEffect(() => {
     if (initialValues) {
       const newValue = {
@@ -165,6 +109,12 @@ const CardsForm: React.FC<FormValues> = ({
     }
   }, [initialValues]);
   console.log("formValue", formValue);
+
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`);
+    setSelectedCardType(value as CardType);
+  };
+
   const onFinish = async (values: any) => {
     console.log("Success:", values);
     setIsSubmiting(true);
@@ -172,11 +122,10 @@ const CardsForm: React.FC<FormValues> = ({
       ...formValue,
       ...values,
     };
-    console.log("111", submitValue);
     if (isCreate) {
       try {
         await createItem(submitValue);
-        message.success("Success");
+        message.success("成功");
         const newValue = getInitValue();
         setFormValue(newValue);
         form.setFieldsValue(newValue);
@@ -186,7 +135,7 @@ const CardsForm: React.FC<FormValues> = ({
     } else {
       try {
         await updateItem(formValue.id, submitValue);
-        message.success("Success");
+        message.success("成功");
       } catch (e: any) {
         message.success(e.message || "error!");
       }
@@ -237,7 +186,13 @@ const CardsForm: React.FC<FormValues> = ({
       <Form.Item name="name" label="卡券标题" rules={[{ required: true }]}>
         <Input allowClear placeholder="新人体验卡券,每人只限一次,1000点券" />
       </Form.Item>
-
+      <Form.Item name="type" label="卡券类型" rules={[{ required: true }]}>
+        <Select
+          style={{ width: 120 }}
+          onChange={handleChange}
+          options={cardOptions}
+        />
+      </Form.Item>
       {/* <Form.Item name="title" label="卡券类型" rules={[{ required: true }]}>
         <Radio.Group onChange={onChange} value={value}>
           <Radio value={1}>点卡</Radio>
@@ -249,16 +204,20 @@ const CardsForm: React.FC<FormValues> = ({
         <Select
           style={{ width: 120 }}
           // onChange={handleChange}
-          options={salayOptions}
+          options={cardOptions}
         />
       </Form.Item> */}
-      <Form.Item
-        label="卡券充值点数"
-        name="cValue"
-        rules={[{ required: true }, { validator: validatePositiveNumber }]}
-      >
-        <Input style={{ width: 120 }} type="number" required />
-      </Form.Item>
+
+      {selectedCardType === "POINTS" && (
+        <Form.Item
+          label="卡券充值点数"
+          name="cValue"
+          rules={[{ required: true }, { validator: validatePositiveNumber }]}
+        >
+          <Input style={{ width: 120 }} type="number" required />
+        </Form.Item>
+      )}
+
       <Form.Item
         label="卡券购买金额(元)"
         name="price"

@@ -28,17 +28,26 @@ function filterMenuItems(
   menuGroups: MenuGroup[],
   isAdmin: boolean,
 ): MenuGroup[] {
-  function filterItems(items: MenuItem[]): MenuItem[] {
-    return items.filter((item) => {
-      if (item.isAdmin !== undefined) {
-        return isAdmin ? true : !item.isAdmin;
-      }
-      if (item.children) {
-        item.children = filterItems(item.children);
-        return item.children.length > 0;
-      }
-      return true;
-    });
+  function filterItems(items: any) {
+    return items
+      .filter((item: any) => {
+        // 过滤子菜单
+        if (item.children) {
+          item.children = filterItems(item.children);
+        }
+
+        // 根据 isAdmin 过滤菜单项
+        if (item.isAdmin !== undefined) {
+          return isAdmin ? true : !item.isAdmin;
+        }
+
+        // 返回 true 以保留非管理员项
+        return true;
+      })
+      .filter((item: any) => {
+        // 过滤掉没有子项的菜单项
+        return item.children ? item.children.length > 0 || !item.isAdmin : true;
+      });
   }
 
   return menuGroups
@@ -53,6 +62,10 @@ const menuGroups = [
     name: "菜单",
     menuItems: [
       {
+        label: "首页",
+        route: "/pc/welcome",
+      },
+      {
         label: "数据看板",
         route: "/pc/dashboard",
       },
@@ -63,7 +76,7 @@ const menuGroups = [
         children: [
           { label: "打招呼组配置", route: "/pc/configs/greegting_group" },
           { label: "打招呼语配置", route: "/pc/configs/greetings" },
-          { label: "核销记录", route: "/pc/configs/userCodes" },
+          { label: "核销记录", route: "/pc/configs/userCodes", isAdmin: true },
         ],
       },
       {
@@ -88,33 +101,33 @@ const menuGroups = [
       },
     ],
   },
-  {
-    name: "OTHERS",
-    menuItems: [
-      {
-        label: "分销商管理",
-        route: "/pc/chart",
-        isAdmin: true,
-      },
-      {
-        label: "智能投递",
-        route: "#",
-        children: [
-          { label: "Alerts", route: "/pc/ui/alerts" },
-          { label: "Buttons", route: "/pc/ui/buttons" },
-        ],
-      },
-      {
-        label: "用户统计",
-        route: "#",
-        isAdmin: true,
-        children: [
-          { label: "Sign In", route: "/pc/auth/signin" },
-          { label: "Sign Up", route: "/pc/auth/signup" },
-        ],
-      },
-    ],
-  },
+  // {
+  //   name: "OTHERS",
+  //   menuItems: [
+  //     {
+  //       label: "分销商管理",
+  //       route: "/pc/chart",
+  //       isAdmin: true,
+  //     },
+  //     {
+  //       label: "智能投递",
+  //       route: "#",
+  //       children: [
+  //         { label: "Alerts", route: "/pc/ui/alerts" },
+  //         { label: "Buttons", route: "/pc/ui/buttons" },
+  //       ],
+  //     },
+  //     {
+  //       label: "用户统计",
+  //       route: "#",
+  //       isAdmin: true,
+  //       children: [
+  //         { label: "Sign In", route: "/pc/auth/signin" },
+  //         { label: "Sign Up", route: "/pc/auth/signup" },
+  //       ],
+  //     },
+  // ],
+  // },
 ];
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   // const pathname = usePathname();

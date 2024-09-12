@@ -7,9 +7,23 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import pcStore from "@/app/pc/pcStates/pcStore";
 import { useSnapshot } from "valtio";
 import UpdateUser from "../../dashboard/UpdateUser";
+import { useMemo } from "react";
 
 const DropdownUser = () => {
-  const { userInfo } = useSnapshot(pcStore);
+  const store = useSnapshot(pcStore);
+  const userInfo = store.userInfo;
+  console.log("userInfo", userInfo);
+  console.log("userInfo", userInfo?.userName, userInfo?.email);
+  const userNameShow = useMemo(() => {
+    console.log("userNameShow", userInfo?.userName, userInfo?.email);
+    if (userInfo?.userName) {
+      return userInfo.userName;
+    }
+    if (userInfo?.email) {
+      return userInfo.email;
+    }
+    return "Guest";
+  }, [userInfo]);
   return (
     <>
       <UpdateUser />
@@ -17,11 +31,10 @@ const DropdownUser = () => {
       <div className="flex items-center gap-4">
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {userInfo.isSuperUser ? "管理员" : "用户"}
+            {userInfo.isSuperUser ? "管理员" : "用户"} 积分:
+            {userInfo?.points || 0}
           </span>
-          <span className="block text-xs">
-            Hi,{userInfo?.firstName || "No Name"}
-          </span>
+          <span className="block text-xs">Hi,{userNameShow}</span>
         </span>
         <SignedOut>
           <SignInButton />

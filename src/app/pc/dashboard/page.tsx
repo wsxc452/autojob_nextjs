@@ -1,5 +1,11 @@
 import Breadcrumb from "@/app/pc/components/Breadcrumbs/Breadcrumb";
+import ChartGroups from "./components/ChartGroups";
+
 export default async function Dashboard() {
-  console.log("同步用户数据");
-  return <Breadcrumb pageName="数据看板" />;
+  return (
+    <>
+      <Breadcrumb pageName="数据看板" />
+      <ChartGroups />
+    </>
+  );
 }

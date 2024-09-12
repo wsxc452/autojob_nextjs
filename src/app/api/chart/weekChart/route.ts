@@ -12,7 +12,8 @@ export async function GET(request: NextRequest, context: { params: Params }) {
 
   const startOfWeek = dayjs().startOf("week").add(1, "day").toDate(); // 本周一
   const endOfWeek = dayjs().endOf("week").add(1, "day").toDate(); // 本周日
-
+  // const startOfMonth = dayjs().startOf("month").toDate(); // 本月第一天
+  // const endOfMonth = dayjs().endOf("month").toDate(); // 本月最后一天
   const records = await prisma.search.findMany({
     select: {
       id: true,

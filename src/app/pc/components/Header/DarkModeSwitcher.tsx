@@ -1,4 +1,4 @@
-import globaStore from "@/states/globaStore";
+import globaStore from "@/app/pc/pcStates/pcStore";
 import { useSnapshot } from "valtio";
 
 const DarkModeSwitcher = () => {

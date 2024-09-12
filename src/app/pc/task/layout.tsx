@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col dark:bg-boxdark dark:text-bodydark ">
+    <div className="flex h-full flex-col dark:bg-boxdark dark:text-bodydark ">
       {children}
     </div>
   );

@@ -49,7 +49,6 @@ const TaskForm = forwardRef(
     }, [groupData, groupIsLoading]);
 
     useEffect(() => {
-      console.log("initialValues==", initialValues);
       setFormValue(initialValues);
       form.setFieldsValue(initialValues);
     }, [initialValues]);
@@ -118,14 +117,14 @@ const TaskForm = forwardRef(
         >
           <Form.Item
             name="searchText"
-            label="职位名称"
+            label="搜索职位名称"
             rules={[
               { required: true },
               { min: 2, message: "最少2个字符" },
-              { max: 20, message: "最多20个字符" },
+              { max: 200, message: "最多200个字符" },
             ]}
           >
-            <Input />
+            <Input placeholder="请输入搜索职位关键字,多个用,分割" />
           </Form.Item>
           <Form.Item
             name="greetingGroupId"

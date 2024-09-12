@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         gte: startOfWeek,
         lte: endOfWeek,
       },
-      userId,
+      userId: userId,
     },
   });
 

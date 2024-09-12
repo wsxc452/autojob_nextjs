@@ -1,6 +1,5 @@
 import prisma from "@/db";
-import { PrismaClient, Users } from "@prisma/client";
-import { hash } from "crypto";
+import { GreetingsType, PrismaClient, Users } from "@prisma/client";
 import { jsonReturn } from "../../common/common";
 
 export async function GET(request: Request) {
@@ -8,21 +7,34 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   const body = await request.json();
-  // const ret = await syncUserToBackup({
-  //   userId: body.userId,
-  //   email: body.email,
-  //   userName: body.userName,
-  //   firstName: body.firstName,
-  //   lastName: body.lastName,
-  //   fullName: body.fullName,
-  //   avatar: body.avatar || "",
-  //   // password: body.password,
-  //   // avatar: body.avatar,
-  // });
-
   try {
     // 哈希密码
     // const passwordHash = await hash(user.password, "sha256");
+    // 初始化打招呼分组
+    // 检测是否有默认分组
+    const defaultGroup = await prisma.greetingGroup.findFirst({
+      where: {
+        userId: body.userId,
+        name: "默认",
+      },
+    });
+    if (!defaultGroup) {
+      console.log("创建默认分组");
+      const createData = await prisma.greetingGroup.create({
+        data: {
+          name: "默认",
+          userId: body.userId,
+        },
+      });
+      await prisma.greetings.create({
+        data: {
+          content: "您好，对公司的岗位很感兴趣，可以聊聊吗？",
+          status: GreetingsType.ACTICE,
+          userId: body.userId,
+          greetingGroupId: createData.id,
+        },
+      });
+    }
 
     // 同步用户到 UserBackup 表
     await prisma.users.upsert({
@@ -69,6 +81,8 @@ export async function POST(request: Request) {
         isSuperUser: true,
         isAbnormal: true,
         isVip: true,
+        cardEndTime: true,
+        cardStartTime: true,
         // greetings: {
         //   select: {
         //     id: true,
@@ -83,9 +97,4 @@ export async function POST(request: Request) {
     console.error("Error syncing user to backup:", error);
     return jsonReturn({ error: "Error syncing user to backup" }, 500);
   }
-}
-
-// 用户注册时,要同步用户到 UserBackup 表
-async function syncUserToBackup(user: Users): Promise<Users | null> {
-  return null;
 }

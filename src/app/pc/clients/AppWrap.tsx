@@ -6,35 +6,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppBody from "./AppBody";
 const queryClient = new QueryClient();
 import MessageCom from "@/app/pc/components/Message";
-
-import { ClerkProvider } from "@clerk/nextjs";
-import { zhCN } from "@clerk/localizations";
 import DefaultLayout from "../components/Layouts/DefaultLayout";
-
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import registerEvents from "../common/registerRenderer";
 export default function AppWrap({ children }: { children: React.ReactNode }) {
-  // const [colorMode, setColorMode] = useColorMode();
-  // const pathname = usePathname();
-  // const { user } = useUser();
+  useEffect(() => {
+    registerEvents();
+  }, []);
+  const router = usePathname();
 
-  // useEffect(() => {
-  //   if (user) {
-  //     userActions.setUserInfo({
-  //       name: user?.fullName || "",
-  //       email: user?.emailAddresses[0]?.emailAddress || "",
-  //       avatar: user?.imageUrl || "",
-  //       id: user?.id || "",
-  //     });
-  //     console.log(globaStore.userInfo);
-  //   }
-  // }, [user]);
-  console.log("AppWrap");
-  return (
-    <ClerkProvider
-      localization={zhCN}
-      afterSignOutUrl="/pc/sign-in"
-      signInUrl="/pc/sign-in"
-    >
-      <div className="page h-dvh w-full">
+  const LayoutMemo = useMemo(() => {
+    const isAuthPage = router.includes("/auth/");
+
+    if (!isAuthPage) {
+      return (
         <QueryClientProvider client={queryClient}>
           <AntdRegistry>
             <DefaultLayout>
@@ -42,15 +28,12 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
               <MessageCom />
             </DefaultLayout>
           </AntdRegistry>
-          {/* 
-            <DefaultLayout>
-              <AppBody>{children}</AppBody>
-              <MessageCom />
-            </DefaultLayout>
-          </AntdRegistry> */}
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
-      </div>
-    </ClerkProvider>
-  );
+      );
+    } else {
+      return <AppBody>{children}</AppBody>;
+    }
+  }, [router]);
+
+  return <div className="page h-dvh w-full">{LayoutMemo}</div>;
 }

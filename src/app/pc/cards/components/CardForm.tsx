@@ -13,7 +13,7 @@ import {
 } from "antd";
 import type { RadioChangeEvent, SelectProps } from "antd";
 import { createItem, updateItem } from "@/service/cardTypes";
-import globaStore from "@/states/globaStore";
+import globaStore from "@/app/pc/pcStates/pcStore";
 import { useSnapshot } from "valtio";
 import message from "@/utils/antdMessage";
 import { CardType, CardTypes } from "@prisma/client";

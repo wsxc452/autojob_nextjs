@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jsonReturn } from "../common/common";
 import { error } from "console";
 import { auth } from "@clerk/nextjs/server";
+import { AccountCheckError, checkAndSubscibeUserAccount } from "./util";
 
 function transformSalary(input: string): string {
   return input.replace(/·\d+薪/, "");
@@ -140,6 +141,7 @@ type CheckRetType = {
   code?: string;
   checkRet?: CheckDescType;
 };
+
 async function checkPostInfo(
   urlParams: any,
   userId: string,
@@ -270,13 +272,13 @@ export async function POST(
   // 将 URL 编码的字符串解析为对象
   const userId = bodyParams.userId;
 
-  if (!!userId) {
+  if (!userId || userId === "") {
     return jsonReturn(
       {
         error: "userId不能为空",
         code: "10005",
       },
-      400,
+      500,
     );
   }
 
@@ -285,72 +287,64 @@ export async function POST(
   const checkPostRet = await checkPostInfo(bodyParams, userId);
   const costPoint = 1;
   // console.log("checkPostRet", checkPostRet);
-  const body: Omit<Search, "id" | "createdAt" | "updatedAt"> = {
-    md5: bodyParams.md5 ?? "",
-    position: bodyParams.position ?? "",
-    salary: bodyParams.salary ?? "",
-    company: bodyParams.company ?? "",
-    scale: bodyParams.scale ?? "", // pc暂时没获取
-    taskId: bodyParams.taskId,
-    autoThreadNo: bodyParams.autoThreadNo,
-    userId: userId,
-    descText: bodyParams.descText ?? "",
-    costPoint,
-    // oid: urlParams.get("oid") ?? "",
-    isCanPost: checkPostRet.status,
-    whiteInfo: checkPostRet.checkRet?.positionKeywords.join(",") ?? "",
-    blackInfo: checkPostRet.checkRet?.filteredKeywords.join(",") ?? "",
-    errDesc: checkPostRet.error || "",
-  };
+
   //   const body = JSON.parse(bodyText);
   try {
     // 使用 Prisma 更新任务数据
+    const body: Omit<Search, "id" | "createdAt" | "updatedAt"> = {
+      md5: bodyParams.md5 ?? "",
+      position: bodyParams.position ?? "",
+      salary: bodyParams.salary ?? "",
+      company: bodyParams.company ?? "",
+      scale: bodyParams.scale ?? "", // pc暂时没获取
+      taskId: bodyParams.taskId,
+      autoThreadNo: bodyParams.autoThreadNo,
+      userId: userId,
+      descText: bodyParams.descText ?? "",
+      costPoint,
+      // oid: urlParams.get("oid") ?? "",
+      isCanPost: checkPostRet.status,
+      whiteInfo: checkPostRet.checkRet?.positionKeywords.join(",") ?? "",
+      blackInfo: checkPostRet.checkRet?.filteredKeywords.join(",") ?? "",
+      errDesc: checkPostRet.error || "",
+    };
     const updatedTask = await prisma.search.create({
       data: body,
     });
 
+    // checkpost first ,and if can post, then subscibe user account
     if (!checkPostRet.status) {
       return jsonReturn(
         { error: checkPostRet.error, code: checkPostRet.code },
-        400,
+        500,
       );
     }
 
     // 这里过了所有的检查,则可以投递
     // 扣除用户的积分
-    const userPoints = await prisma.users.update({
-      where: {
-        userId: userId,
-      },
-      select: {
-        points: true,
-      },
-      data: {
-        points: {
-          decrement: 1,
-        },
-      },
-    });
+    // TODO export fn to js,  add extra logical to check user cardEndTime and points
+    const checkAccountRet = await checkAndSubscibeUserAccount(userId);
 
-    console.log("扣除用户积分后", userPoints);
-
+    // console.log("扣除用户积分后", checkRet);
     return jsonReturn({
-      data: userPoints,
+      data: checkAccountRet.points,
+      checkRet: checkAccountRet,
       checkPost: checkPostRet,
     });
   } catch (error: any) {
     // console.error(error);
-    console.error(error.message + "====" + error.code);
-    if (error.code === "P2002" || error.code === "P2003") {
+    if (error instanceof AccountCheckError) {
+      return jsonReturn({ error: error.toString() }, 501);
+    } else if (error.code === "P2002" || error.code === "P2003") {
       return jsonReturn(
         {
           error: "数据重复",
           code: "10002",
         },
-        400,
+        500,
       );
     }
-    return jsonReturn({ error: error.message, code: error.code }, 400);
+    return jsonReturn({ error: error.message, code: error.code }, 500);
   }
 }
 

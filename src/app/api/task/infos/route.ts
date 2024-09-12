@@ -77,6 +77,8 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
         userId: true,
         points: true,
         email: true,
+        cardEndTime: true,
+        cardStartTime: true,
         greetings: {
           select: {
             id: true,

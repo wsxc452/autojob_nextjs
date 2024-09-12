@@ -1,9 +1,31 @@
 import prisma from "@/db";
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "@/app/api/common/common";
+import { CardType } from "@prisma/client";
+import dayjs from "dayjs";
 
 function isValidateCode(code: string) {
   return /^[0-9A-Za-z]*$/.test(code);
+}
+
+function getAddTimesByType(type: CardType, startTime?: Date | null) {
+  if (!startTime) {
+    startTime = dayjs().toDate();
+  }
+  switch (type) {
+    case CardType.DAILY:
+      return dayjs(startTime).add(1, "day").toDate();
+    case CardType.MONTHLY:
+      return dayjs(startTime).add(1, "month").toDate();
+    case CardType.QUARTERLY:
+      return dayjs(startTime).add(3, "month").toDate();
+    case CardType.HALF_YEARLY:
+      return dayjs(startTime).add(6, "month").toDate();
+    case CardType.YEARLY:
+      return dayjs(startTime).add(1, "year").toDate();
+    default:
+      return null;
+  }
 }
 
 export async function POST(request: Request) {
@@ -53,28 +75,110 @@ export async function POST(request: Request) {
     const balance = codeInfo.value;
     const now = new Date();
 
-    // 更新用户积分和卡片状态
-    const updatedUser = await prisma.$transaction([
-      prisma.users.update({
-        where: { userId: redeemedBy },
-        data: {
-          points: {
-            increment: balance,
-          },
-        },
-      }),
-      prisma.cards.update({
-        where: { code: code },
-        data: {
-          isRedeemed: true,
-          redeemedBy: redeemedBy,
-          redeemedAt: now,
-          updatedAt: now,
-        },
-      }),
-    ]);
+    // todo
+    // check the card type, if type is points, then add points to user
 
-    return jsonReturn({ message: "账户增加成功", data: balance });
+    if (codeInfo.cardTypes.type === "POINTS") {
+      // 更新用户积分和卡片状态
+      const updatedUser = await prisma.$transaction([
+        prisma.users.update({
+          where: { userId: redeemedBy },
+          data: {
+            points: {
+              increment: balance,
+            },
+          },
+        }),
+        prisma.cards.update({
+          where: { code: code },
+          data: {
+            isRedeemed: true,
+            redeemedBy: redeemedBy,
+            redeemedAt: now,
+            updatedAt: now,
+          },
+        }),
+      ]);
+
+      return jsonReturn({ message: "账户增加成功", data: balance });
+    } else {
+      const userInfo = await prisma.users.findFirstOrThrow({
+        where: {
+          userId: redeemedBy,
+        },
+      });
+
+      // update user card time status
+      // check the card type, if type is time, then add time to user
+      // check user cardStartTime is before now, if not, then set cardStartTime to now\
+      let isNewAppend = false;
+      let endTime: Date | null = now;
+      if (!userInfo.cardStartTime || !userInfo.cardEndTime) {
+        isNewAppend = true;
+        endTime = getAddTimesByType(codeInfo.type);
+      } else {
+        const hasEnoughTime = dayjs(userInfo.cardEndTime).isAfter(dayjs());
+        endTime = getAddTimesByType(
+          codeInfo.type,
+          hasEnoughTime ? userInfo.cardEndTime : null,
+        );
+      }
+      // const isBeforeNow = dayjs().isBefore(dayjs(userInfo.cardStartTime));
+
+      console.log("isBeforeNow", isNewAppend, endTime, userInfo.cardStartTime);
+      if (isNewAppend) {
+        const updatedUser = await prisma.$transaction([
+          prisma.users.update({
+            where: { userId: redeemedBy },
+            data: {
+              cardStartTime: now,
+              cardEndTime: endTime,
+              // points: {
+              //   increment: balance,
+              // },
+            },
+          }),
+          prisma.cards.update({
+            where: { code: code },
+            data: {
+              isRedeemed: true,
+              redeemedBy: redeemedBy,
+              redeemedAt: now,
+              updatedAt: now,
+              cardStartTime: now,
+              cardEndTime: endTime,
+            },
+          }),
+        ]);
+      } else {
+        // append time to user
+        const updatedUser = await prisma.$transaction([
+          prisma.users.update({
+            where: { userId: redeemedBy },
+            data: {
+              cardEndTime: endTime,
+            },
+          }),
+          prisma.cards.update({
+            where: { code: code },
+            data: {
+              isRedeemed: true,
+              redeemedBy: redeemedBy,
+              redeemedAt: now,
+              updatedAt: now,
+              // cardStartTime: userInfo.cardStartTime,
+              cardEndTime: endTime,
+            },
+          }),
+        ]);
+      }
+
+      return jsonReturn({
+        message: "账户增加成功",
+        data: endTime,
+        info: dayjs(endTime).format("YYYY-MM-DD HH:mm:ss"),
+      });
+    }
   } catch (e: any) {
     return jsonReturn({ error: e.message || "账户增加失败" }, 500);
   }

@@ -1,8 +1,10 @@
 import { ResponseReturn } from "@/app/api/common/common";
+import { getChinaTime } from "@/app/pc/common/util";
 import { ApiUrl } from "@/base/base";
 import prisma from "@/db";
 import { ListProps, UpdateUserType, UserInfo } from "@/types";
 import { Users } from "@prisma/client";
+import dayjs from "dayjs";
 export const getLists = async (
   page = 1,
   limit = 10,
@@ -194,3 +196,49 @@ export const redeemedCode = async (
   }
   return response.json();
 };
+
+// type UserInfoAccount = {
+//   points: number;
+//   cardStartTime: Date;
+//   cardEndTime: Date;
+// };
+// export const checkUserAccount = (userInfo: UserInfoAccount) => {
+//   // first check user is Has cardEndTime
+//   let msg = "";
+//   if (!userInfo.cardEndTime) {
+//     // check is has points
+//     if (userInfo.points <= 0) {
+//       msg = "用户余额不足";
+//       return {
+//         status: false,
+//         msg: "用户余额不足",
+//       };
+//     } else {
+//       msg = `用户余额: ${userInfo.points}`;
+//     }
+//   } else {
+//     // check cardEndTime is valid
+//     const hasTimeLeft = dayjs(userInfo.cardEndTime).isAfter(dayjs());
+//     if (!hasTimeLeft) {
+//       // check is has points
+//       console.log("用户卡密已过期,check userInfo.points", userInfo.points);
+//       if (userInfo.points <= 0) {
+//         return {
+//           status: false,
+//           msg: "用户余额不足",
+//         };
+//       } else {
+//         msg = `用户卡密已过期,用户余额: ${userInfo.points}`;
+//       }
+//     } else {
+//       msg = `用户卡密有效期: ${getChinaTime(userInfo.cardEndTime)}`;
+//     }
+//   }
+//   console.log("checkUserAccount", userInfo);
+//   return {
+//     status: true,
+//     points: userInfo.points,
+//     cardEndTime: userInfo.cardEndTime,
+//     msg,
+//   };
+// };

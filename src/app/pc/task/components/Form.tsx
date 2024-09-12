@@ -4,7 +4,7 @@
 // import type { SelectProps } from "antd";
 // import { TaskItem } from "@/types";
 // import { createTask, updateTask } from "@/service/task";
-// import globaStore from "@/states/globaStore";
+// import globaStore from "@/app/pc/pcStates/pcStore";
 // import { useSnapshot } from "valtio";
 // import message from "@/utils/antdMessage";
 // const posOptions: SelectProps["options"] = [

@@ -1,19 +1,25 @@
 "use client";
 import { getList } from "@/service/search";
+import { SearchFormType } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 
-export const useSearch = (initialPage = 1, initialPageSize = 10) => {
+export const useSearch = (
+  initialPage = 1,
+  initialPageSize = 10,
+  searchForm: SearchFormType,
+) => {
   const [pagination, setPagination] = useState({
     current: initialPage,
     pageSize: initialPageSize,
     total: 0,
+    showTotal: (total: number) => `总共 ${total} 条数据`,
   });
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["cards", pagination.current, pagination.pageSize],
-    queryFn: () => getList(pagination.current, pagination.pageSize),
+    queryKey: ["search", pagination.current, pagination.pageSize, searchForm],
+    queryFn: () => getList(pagination.current, pagination.pageSize, searchForm),
     initialData: {
       data: {
         data: [],
@@ -34,6 +40,7 @@ export const useSearch = (initialPage = 1, initialPageSize = 10) => {
       current: pagination.current,
       pageSize: pagination.pageSize,
       total: pagination.total,
+      showTotal: (total: number) => `Total ${total} items`,
     });
   };
 

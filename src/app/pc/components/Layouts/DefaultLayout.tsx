@@ -12,22 +12,24 @@ export default function DefaultLayout({
   return (
     <>
       {/* <!-- ===== Page Wrapper Start ===== --> */}
-      <div className="flex">
+      <div className="flex h-dvh w-full overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col lg:ml-72.5">
+        <div className="relative flex h-full flex-1 flex-col overflow-hidden  lg:ml-72.5">
           {/* <!-- ===== Header Start ===== --> */}
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
-          <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+          <main className="relative flex-1 overflow-auto p-5 pb-10">
+            {children}
+            {/* <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
               {children}
-            </div>
+              <div className="clear"></div>
+            </div> */}
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
         </div>

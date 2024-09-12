@@ -7,9 +7,10 @@ type Params = {};
 export async function GET(request: NextRequest, context: { params: Params }) {
   const { userId } = auth().protect();
 
-  const startOfWeek = dayjs().startOf("week").add(1, "day").toDate(); // 本周一
-  const endOfWeek = dayjs().endOf("week").add(1, "day").toDate(); // 本周日
-
+  // const startOfWeek = dayjs().startOf("week").add(1, "day").toDate(); // 本周一
+  // const endOfWeek = dayjs().endOf("week").add(1, "day").toDate(); // 本周日
+  const todayStart = dayjs().startOf("day").toDate();
+  const todayEnd = dayjs().endOf("day").toDate();
   const records = await prisma.search.findMany({
     select: {
       id: true,
@@ -19,10 +20,12 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     },
     where: {
       createdAt: {
-        gte: startOfWeek,
-        lte: endOfWeek,
+        // gte: startOfWeek,
+        // lte: endOfWeek,
+        gte: todayStart,
+        lte: todayEnd,
       },
-      userId,
+      userId: userId,
     },
   });
   const errGroups = {} as any;
@@ -47,7 +50,6 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       errGroups[errDesc] = 0;
     }
     errGroups[errDesc] += 1;
-    console.log("errDesc", errDesc);
   });
 
   // object to array

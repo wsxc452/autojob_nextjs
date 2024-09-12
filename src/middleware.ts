@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { SIGN_IN } from "./app/pc/auth/config";
 export const config = {
   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
@@ -12,10 +13,12 @@ export const config = {
 const isPublicRoute = createRouteMatcher([
   // "/api/(.*)",
   "/api/task/(.*)",
+  "/api/task/export/(.*)",
   "/api/search",
+  "/api/task/upload",
   "/api/zhouyi",
-  "/pc/sign-in(.*)",
-  "/pc/sign-up(.*)",
+  "/pc/auth/sign-in(.*)",
+  "/pc/auth/sign-up(.*)",
   "/auth-callback(.*)",
   "/h5/login",
   "/h5/register",
@@ -54,12 +57,14 @@ export default clerkMiddleware(
         });
       } else {
         // 说明是pc项目,按默认拦截
-        const signInUrl = new URL("/pc/sign-in", request.url);
+        const signInUrl = new URL(SIGN_IN, request.url);
         auth().protect({
           unauthorizedUrl: signInUrl.toString(),
           unauthenticatedUrl: signInUrl.toString(),
         });
       }
+    } else if (request.url.includes("/api/task/upload")) {
+      console.log("upload....");
     }
   },
   {

@@ -1,15 +1,17 @@
 import { ResponseReturn } from "@/app/api/common/common";
 import { ApiUrl } from "@/base/base";
-import { ListProps } from "@/types";
+import { ListProps, SearchFormType } from "@/types";
 import { Cards } from "@prisma/client";
 const modelName = "search";
 export const getList = async (
   page = 1,
   limit = 10,
+  searchForm: SearchFormType,
 ): Promise<ResponseReturn<ListProps<Cards>>> => {
-  const response = await fetch(
-    `${ApiUrl}/${modelName}?page=${page}&limit=${limit}`,
-  );
+  const response = await fetch(`${ApiUrl}/${modelName}/list`, {
+    method: "POST",
+    body: JSON.stringify({ page, limit, searchForm: searchForm || {} }),
+  });
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
@@ -23,7 +25,7 @@ export const getItem = async (
     cache: "no-cache",
   });
 
-  console.log("====get", response);
+  // console.log("====get", response);
 
   if (!response.ok) {
     throw new Error("Network response was not ok");

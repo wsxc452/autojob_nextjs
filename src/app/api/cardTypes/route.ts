@@ -47,15 +47,30 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
     delete body.id;
   }
   console.log("bodybody2", body);
-  const { id, price, cValue, ...rest } = body;
+  const { id, price, cValue, type, ...rest } = body;
   //body.filteredKeywords.map((item: any) => {return item.keyword},
   try {
     // 使用 Prisma 更新任务数据
+    // id               Int      @id @default(autoincrement())
+    // name             String   @db.VarChar(50) // 卡密类型名称
+    // type             CardType @default(POINTS)
+    // price            Float    @default(0) // 卡密价格，默认为 0
+    // cValue           Int      @default(0) // 卡密价值，默认为 0
+    // desc             String?  @db.VarChar(100) // 卡密类型描述
+    // rebate           Float?   @default(0) // 返点比例，默认为 null
+    // onlyOneTime      Boolean  @default(false) // 是否只能购买一次，默认为 false
+    // isCanDistributor Boolean  @default(false) // 是否可以分销，默认为 false
+    // createdAt        DateTime @default(now()) // 创建时间
+    // updatedAt        DateTime @updatedAt // 更新时间
+    // Cards            Cards[]
+    // userId           String?  @db.VarChar(64) // 用户 ID
     const updatedTask = await prisma.cardTypes.create({
       data: {
         ...rest,
         price: parseInt(price),
-        cValue: parseInt(cValue),
+        cValue: type === "POINTS" ? parseInt(cValue) : 0,
+        type,
+        userId,
       },
     });
 

@@ -826,12 +826,12 @@ const TaskFormForm = forwardRef(
             </Row>
           </Form.Item>
 
-          <Form.Item label="薪资范围" required>
+          <Form.Item label="薪资范围">
             <div className="flex flex-row   justify-start gap-4">
               <Form.Item
                 name={["salary", "minMoney"]}
                 rules={[
-                  { required: true, message: "请输入最低薪资" },
+                  // { required: true, message: "请输入最低薪资" },
                   { validator: validateMinMoney },
                 ]}
               >
@@ -842,7 +842,7 @@ const TaskFormForm = forwardRef(
               <Form.Item
                 name={["salary", "maxMoney"]}
                 rules={[
-                  { required: true, message: "请输入最高薪资" },
+                  // { required: true, message: "请输入最高薪资" },
                   { validator: validateMaxMoney },
                 ]}
               >

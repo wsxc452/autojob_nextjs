@@ -70,11 +70,17 @@ export default function FormWrap({ id }: { id?: number }) {
   };
 
   const onSubmit = async () => {
-    console.log("baseForm", baseForm);
     const baseFormValues = await baseForm.current?.submit();
     console.log("baseFormValues", baseFormValues);
     const moreFormValues = await moreForm.current?.submit();
     console.log("moreFormValues", moreFormValues);
+
+    if (baseFormValues && baseFormValues.searchText.includes("，")) {
+      baseFormValues.searchText = baseFormValues.searchText.replaceAll(
+        "，",
+        ",",
+      );
+    }
 
     const submitValueOri = Object.assign({}, baseFormValues, {
       hasMore: false,

@@ -129,27 +129,29 @@ model Search {
 }
 
 model Users {
-  id             Int      @id @default(autoincrement())
-  userId         String   @unique @db.VarChar(50) // Clerk 的用户 ID
-  email          String   @unique @db.VarChar(128)
-  dId            String?  @unique @db.VarChar(50) // 分销商ID
-  userName       String?  @db.VarChar(128) // 允许用户名为空
-  firstName      String?  @db.VarChar(128) // 允许名为空
-  lastName       String?  @db.VarChar(128)
-  fullName       String?  @db.VarChar(128) // 允许全名为空
-  avatar         String?  @db.VarChar(256) // 头像 URL
-  passwordHash   String?  @db.VarChar(128) // 存储密码的哈希值
+  id             Int       @id @default(autoincrement())
+  userId         String    @unique @db.VarChar(50) // Clerk 的用户 ID
+  email          String    @unique @db.VarChar(128)
+  dId            String?   @unique @db.VarChar(50) // 分销商ID
+  userName       String?   @db.VarChar(128) // 允许用户名为空
+  firstName      String?   @db.VarChar(128) // 允许名为空
+  lastName       String?   @db.VarChar(128)
+  fullName       String?   @db.VarChar(128) // 允许全名为空
+  avatar         String?   @db.VarChar(256) // 头像 URL
+  passwordHash   String?   @db.VarChar(128) // 存储密码的哈希值
   additionalInfo String? // 额外信息，使用可选字段
-  points         Int      @default(0) // 积分数量，默认为 0
-  isVip          Boolean  @default(false) // 是否为 VIP 用户，默认为 false
-  isSuperUser    Boolean  @default(false) // 是否为超级用户，默认为 false
-  roleId         Int      @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
+  points         Int       @default(0) // 积分数量，默认为 0
+  cardStartTime  DateTime? // 卡密开始时间
+  cardEndTime    DateTime? // 卡密结束时间
+  isVip          Boolean   @default(false) // 是否为 VIP 用户，默认为 false
+  isSuperUser    Boolean   @default(false) // 是否为超级用户，默认为 false
+  roleId         Int       @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
   // isStaff        Boolean  @default(false) // 是否为员工，默认为 false
-  isDistributor  Boolean  @default(false) // 是否为分销商，默认为 false
-  isActive       Boolean  @default(true) // 激活状态，默认为 true
-  isAbnormal     Boolean  @default(false) // 异常状态，默认为 false, 用于标记异常用户
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isDistributor  Boolean   @default(false) // 是否为分销商，默认为 false
+  isActive       Boolean   @default(true) // 激活状态，默认为 true
+  isAbnormal     Boolean   @default(false) // 异常状态，默认为 false, 用于标记异常用户
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   // UserCards      UserCards[]
 
   greetings Greetings[]
@@ -165,6 +167,8 @@ model Cards {
   type          CardType // 卡密类型
   price         Float     @default(0) // 卡密价格，默认为 0
   value         Int // 对于日卡、月卡、年卡，存储天数或月份；对于积分，存储积分点数
+  cardStartTime DateTime? // 卡密开始时间
+  cardEndTime   DateTime? // 卡密结束时间
   createdBy     String    @db.VarChar(64) // 创建者 ID
   isActive      Boolean   @default(true) // 是否激活
   isRedeemed    Boolean   @default(false) // 是否已核销
@@ -194,11 +198,40 @@ model CardTypes {
   createdAt        DateTime @default(now()) // 创建时间
   updatedAt        DateTime @updatedAt // 更新时间
   Cards            Cards[]
+  userId           String?  @db.VarChar(64) // 用户 ID
 }
 
+// [
+//   {
+//     label: "日卡",
+//     value: "DAILY",
+//   },
+//   {
+//     label: "月卡",
+//     value: "MONTHLY",
+//   },
+//   {
+//     label: "季卡",
+//     value: "QUARTERLY",
+//   },
+//   {
+//     label: "半年卡",
+//     value: "HALF_YEARLY",
+//   },
+//   {
+//     label: "年卡",
+//     value: "YEARLY",
+//   },
+//   {
+//     label: "点卡",
+//     value: "POINTS",
+//   },
+// ];
 enum CardType {
   DAILY
   MONTHLY
+  QUARTERLY
+  HALF_YEARLY
   YEARLY
   POINTS
 }
