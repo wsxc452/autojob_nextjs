@@ -121,11 +121,11 @@ const tailLayout = {
 function getInitValue() {
   return {
     id: 0,
-    name: "新人体验卡券,每人只限一次,1000点券",
+    name: "新人体验卡券,每人只限一次,1000积分",
     type: CardType.POINTS,
     price: 2,
     cValue: 1000,
-    desc: "新人体验卡券,每人只限一次,1000点券",
+    desc: "新人体验卡券,每人只限一次,1000积分",
     rebate: 0,
     onlyOneTime: true,
     isCanDistributor: false,

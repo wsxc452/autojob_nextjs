@@ -66,12 +66,12 @@ function GreatingGroupForm() {
       key: "id",
     },
     {
-      title: "name",
+      title: "名称",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Action",
+      title: "操作",
       key: "action",
       render: (_: any, record: GreetingGroup) => (
         <Space size="middle">
@@ -84,7 +84,9 @@ function GreatingGroupForm() {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger>删除</Button>
+            <Button disabled={record.name === "默认"} danger>
+              删除
+            </Button>
           </Popconfirm>
         </Space>
       ),

@@ -15,12 +15,9 @@ type UserBaseInfo = {
 };
 export default function AutoOper() {
   const { id } = useParams();
+  const { userInfo } = useSnapshot(pcStore);
   const [isRunning, setIsRunning] = useState(false);
   // const getTaskInfos(id);
-  const [chromeInfo, setChromeIno] = useState({
-    platform: "",
-    chromePath: "",
-  });
   let errMsg = "";
   const { isOpended, isTaskEnd } = useSnapshot(pcStore);
   const { isLoading, isError, data, error } = useQuery({
@@ -29,6 +26,12 @@ export default function AutoOper() {
       getTaskInfos(parseInt(id as string)),
     retry: 1,
   });
+
+  const chromePath = useMemo(() => {
+    // console.log("userInfo.configJson", userInfo.configJson);
+    const chromeInfo = JSON.parse(userInfo.configJson || "{}");
+    return chromeInfo.chromePath || "";
+  }, [userInfo.configJson]);
 
   // const doTest = async () => {
   //   console.log("doTest");
@@ -56,11 +59,6 @@ export default function AutoOper() {
     console.log("readdy......");
     setIsOpening(false);
     userActions.setIsOpended(false);
-    const localStoreChromeInfo = localStorage.getItem("chromeInfo");
-    if (localStoreChromeInfo) {
-      const chromeInfo = JSON.parse(localStoreChromeInfo);
-      setChromeIno({ ...chromeInfo });
-    }
   }, []);
 
   const isCanStart = useMemo(() => {
@@ -76,7 +74,7 @@ export default function AutoOper() {
       return false;
     }
     console.log(userInfo);
-    if (!chromeInfo) {
+    if (chromePath === "") {
       errMsg = "请先配置chrome环境! ";
       return false;
     }
@@ -89,20 +87,16 @@ export default function AutoOper() {
     } else if (userInfo.points <= 0) {
       errMsg = "当前用户余额不足!";
       return false;
-    } else if (chromeInfo.chromePath === "" || chromeInfo.chromePath === null) {
+    } else if (chromePath === "") {
       // 用户的chrome是否配置过
       errMsg = "请先配置chrome路径!";
-      return false;
-    } else if (chromeInfo.platform === "" || chromeInfo.platform === null) {
-      // 用户的chrome是否配置过
-      errMsg = "请先配置平台类型!";
       return false;
     } else {
       errMsg = "";
     }
 
     return true;
-  }, [data?.data, isLoading, chromeInfo]);
+  }, [data?.data, isLoading, userInfo.configJson]);
 
   const [isOpening, setIsOpening] = useState(false);
   const doInit = async (): Promise<void> => {
@@ -126,9 +120,14 @@ export default function AutoOper() {
     setIsOpening(true);
     const userInfo = data?.data.userInfo! || {};
     console.log("isCanStart111233322");
+    if (chromePath === "") {
+      message.error("请先配置chrome路径");
+      setIsOpening(false);
+      return;
+    }
     const openRet = await doIpc("task", {
       type: TaskType.Init,
-      ...chromeInfo,
+      chromePath: chromePath,
       taskId: id,
       userBaseInfo: {
         points: userInfo.points,

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import SidebarItem from "@/app/pc/components/Sidebar/SidebarItem";
 import ClickOutside from "@/app/pc/components/ClickOutside";
@@ -31,22 +30,30 @@ function filterMenuItems(
   function filterItems(items: any) {
     return items
       .filter((item: any) => {
+        // console.log("item", item);
         // 过滤子菜单
         if (item.children) {
           item.children = filterItems(item.children);
+          // console.log("item.children", item.children);
         }
 
-        // 根据 isAdmin 过滤菜单项
-        if (item.isAdmin !== undefined) {
-          return isAdmin ? true : !item.isAdmin;
+        if (item.isAdmin === true && isAdmin === false) {
+          return false;
         }
+
+        // // 根据 isAdmin 过滤菜单项
+        // if (item.isAdmin !== undefined) {
+        //   console.log(item, item.isAdmin !== undefined ? item.isAdmin : true);
+        //   return item.isAdmin !== undefined ? isAdmin || item.isAdmin : true;
+        // }
 
         // 返回 true 以保留非管理员项
         return true;
       })
       .filter((item: any) => {
         // 过滤掉没有子项的菜单项
-        return item.children ? item.children.length > 0 || !item.isAdmin : true;
+        // console.log("22", item);
+        return item.children ? item.children.length > 0 : true;
       });
   }
 
@@ -64,10 +71,12 @@ const menuGroups = [
       {
         label: "首页",
         route: "/pc/welcome",
+        isAdmin: false,
       },
       {
         label: "数据看板",
         route: "/pc/dashboard",
+        isAdmin: false,
       },
       {
         label: "任务配置",
@@ -82,6 +91,7 @@ const menuGroups = [
       {
         label: "任务列表",
         route: "/pc/task/edit",
+        isAdmin: false,
         children: [
           { label: "新增任务", route: "/pc/task/edit" },
           { label: "任务列表", route: "/pc/task" },
@@ -94,9 +104,60 @@ const menuGroups = [
         isAdmin: true,
         children: [
           { label: "新增卡券类别", route: "/pc/cardTypes/add" },
-          { label: "卡券列表列表", route: "/pc/cardTypes" },
-          // { label: "发行卡券", route: "/cards/publish" },
+          { label: "卡券类别列表", route: "/pc/cardTypes" },
           { label: "卡券列表", route: "/pc/cards" },
+        ],
+      },
+      {
+        label: "口令管理",
+        route: "/pc/words",
+        // isAdmin: true,
+        children: [
+          { label: "新增口令", route: "/pc/words/add", isAdmin: true },
+          { label: "口令列表", route: "/pc/words/list", isAdmin: true },
+          { label: "核销记录", route: "/pc/words/record", isAdmin: true },
+        ],
+      },
+      {
+        label: "账户记录",
+        route: "/pc/words",
+        isAdmin: false,
+        children: [
+          {
+            label: "推广列表",
+            route: "/pc/referrer/recordByUser",
+            isAdmin: false,
+          },
+          {
+            label: "账户变更",
+            route: "/pc/users/accountLog",
+            isAdmin: false,
+          },
+        ],
+      },
+      {
+        label: "推荐人计划",
+        route: "/pc/referrer/active",
+        isAdmin: true,
+        children: [
+          { label: "推广激活", route: "/pc/referrer/active" },
+          {
+            label: "推广列表",
+            route: "/pc/referrer/recordByUser",
+            isAdmin: false,
+          },
+          { label: "返利列表", route: "/pc/referrer/record", isAdmin: true },
+          { label: "推广人排名Top", route: "/pc/cardTypes", isAdmin: true },
+        ],
+      },
+      {
+        label: "代理管理",
+        route: "/pc/referrer/baseList",
+        isAdmin: true,
+        children: [
+          { label: "推荐人列表", route: "/pc/referrer/baseList" },
+          { label: "代理人列表", route: "/pc/referrer/vipList" },
+          { label: "提现列表", route: "/pc/cardTypes" },
         ],
       },
     ],
@@ -197,9 +258,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <nav className="mt-5 px-4 py-4 lg:mt-2 lg:px-6">
             {menus.map((group, groupIndex) => (
               <div key={groupIndex}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-                  {group.name}
-                </h3>
+                {/* <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                  {group.name} - {groupIndex}
+                </h3> */}
 
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {group.menuItems.map((menuItem: any, menuIndex: number) => (

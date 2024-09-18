@@ -134,7 +134,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
   return jsonReturn({
     values: [
       { type: "投递成功", data: successRet },
-      { type: "投递失败", data: failRet },
+      { type: "投递过滤", data: failRet },
       { type: "投递忽略", data: ignoreRet },
     ],
     // successRet2,

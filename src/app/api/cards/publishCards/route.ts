@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "../../common/common";
 import prisma from "@/db";
-import { CardTypes, Cards } from "@prisma/client";
+import { CardTypes } from "@prisma/client";
+import { checkAdminOrThrow } from "@/service/users";
 
 function generateUniqueCode(length: number): string {
   const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -57,15 +58,17 @@ export async function POST(request: Request) {
   }
   try {
     // 检测是否是管理员, 不是则返回错误
-    const userInfo = await prisma.users.findFirstOrThrow({
-      where: {
-        userId: userId,
-      },
-    });
+    // const userInfo = await prisma.users.findFirstOrThrow({
+    //   where: {
+    //     userId: userId,
+    //   },
+    // });
 
-    if (userInfo.isSuperUser === false) {
-      return jsonReturn({ error: "You are not a super user" }, 500);
-    }
+    // if (userInfo.isSuperUser === false) {
+    //   return jsonReturn({ error: "You are not a super user" }, 500);
+    // }
+
+    await checkAdminOrThrow(userId);
 
     const cardInfo = await prisma.cardTypes.findFirstOrThrow({
       where: {

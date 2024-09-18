@@ -6,7 +6,9 @@ export const getTaskList = async (
   page = 1,
   limit = 10,
 ): Promise<ResponseReturn<ListProps<TaskItem>>> => {
-  const response = await fetch(`${ApiUrl}/tasks?page=${page}&limit=${limit}`);
+  const response = await fetch(`${ApiUrl}/tasks?page=${page}&limit=${limit}`, {
+    cache: "no-cache",
+  });
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
@@ -16,9 +18,10 @@ export const getTaskList = async (
 export const getTask = async (
   id: number = 1,
   isWithGreeting: boolean = false,
+  isWithSearch: boolean = false,
 ): Promise<{ data: TaskItem; status: number }> => {
   const response = await fetch(
-    `${ApiUrl}/task/${id}?isWithGreeting=${isWithGreeting}`,
+    `${ApiUrl}/task/${id}?isWithGreeting=${isWithGreeting}&isWithSearch=${isWithSearch}`,
     {
       cache: "no-cache",
     },
@@ -94,6 +97,7 @@ export const createTask = async (
   data: any;
 }> => {
   const response = await fetch(`${ApiUrl}/task`, {
+    cache: "no-cache",
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

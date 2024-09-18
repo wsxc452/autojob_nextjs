@@ -3,8 +3,13 @@ import { getLists } from "@/service/users";
 import { useQuery } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
+export type SearchFormType = {};
 
-export const useUsers = (initialPage = 1, initialPageSize = 10) => {
+export const useUsers = (
+  initialPage = 1,
+  initialPageSize = 10,
+  searchForm?: SearchFormType,
+) => {
   const [pagination, setPagination] = useState({
     current: initialPage,
     pageSize: initialPageSize,
@@ -12,8 +17,9 @@ export const useUsers = (initialPage = 1, initialPageSize = 10) => {
   });
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["users", pagination.current, pagination.pageSize],
-    queryFn: () => getLists(pagination.current, pagination.pageSize),
+    queryKey: ["users", pagination.current, pagination.pageSize, searchForm],
+    queryFn: () =>
+      getLists(pagination.current, pagination.pageSize, searchForm),
     initialData: {
       data: {
         data: [],

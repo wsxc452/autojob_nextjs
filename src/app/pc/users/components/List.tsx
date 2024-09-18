@@ -4,10 +4,9 @@ import { Button, Space, Table, Popconfirm } from "antd";
 import type { TableProps } from "antd";
 import { useUsers } from "@/hooks/useUsers";
 import Link from "next/link";
-import { delItem, updateUser } from "@/service/users";
+import { updateUser } from "@/service/users";
 import message from "@/utils/antdMessage";
 import { UpdateUserType } from "@/types";
-import { Users } from "@prisma/client";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -62,16 +61,7 @@ export default function List() {
       message.error("禁用失败");
     }
   };
-  const delTask = async (id: number) => {
-    try {
-      await delItem(id);
-      message.success("删除成功");
-      refetch();
-    } catch (error) {
-      console.error(error);
-      message.error("删除失败");
-    }
-  };
+
   const columns: ColumnsType<any> = [
     {
       title: "email",
@@ -129,9 +119,7 @@ export default function List() {
           <Popconfirm
             title="删除确认"
             description="确认要删除?"
-            onConfirm={() => {
-              delTask(record.id);
-            }}
+            onConfirm={() => {}}
             okText="是"
             cancelText="否"
           >

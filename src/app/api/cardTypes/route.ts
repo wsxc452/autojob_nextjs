@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { jsonReturn } from "../common/common";
+import { parse } from "path";
 const prisma = new PrismaClient();
 
 type Params = {};
@@ -47,7 +48,7 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
     delete body.id;
   }
   console.log("bodybody2", body);
-  const { id, price, cValue, type, ...rest } = body;
+  const { id, price, cValue, type, cardId, ...rest } = body;
   //body.filteredKeywords.map((item: any) => {return item.keyword},
   try {
     // 使用 Prisma 更新任务数据
@@ -64,6 +65,9 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
     // updatedAt        DateTime @updatedAt // 更新时间
     // Cards            Cards[]
     // userId           String?  @db.VarChar(64) // 用户 ID
+    if (parseInt(price) <= 0 || parseInt(cValue) <= 0) {
+      return jsonReturn({ error: "价格或者价值不能小于0" }, 400);
+    }
     const updatedTask = await prisma.cardTypes.create({
       data: {
         ...rest,

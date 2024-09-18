@@ -42,7 +42,7 @@ export default function FormWrap({ id }: { id?: number }) {
   const moreForm = useRef<any>(null);
   useEffect(() => {
     console.log("data", data);
-    if (data && data.data) {
+    if (data && data.data && data.data.id) {
       let minMoney = "";
       let maxMoney = "";
       if (data.data.salary && data.data.salary.split("-").length === 2) {
@@ -50,7 +50,7 @@ export default function FormWrap({ id }: { id?: number }) {
         maxMoney = data.data.salary.split("-")[1].replace("K", "");
       }
       const formData = Object.assign({}, data.data, {
-        experienceValue: data.data.experienceValue.split(","),
+        experienceValue: data.data?.experienceValue.split(",") || [],
         degreeValue: data.data.degreeValue.split(","),
         scaleValue: data.data.scaleValue.split(","),
         salary: {
@@ -58,7 +58,7 @@ export default function FormWrap({ id }: { id?: number }) {
           maxMoney,
         },
       });
-      console.log("formData===", formData);
+      // console.log("formData===", formData);
       setInitialValues(formData); // 仅在 data 变化时更新 initialValues
     }
   }, [data]);

@@ -4,7 +4,6 @@ import React from "react";
 import { Button, Space, Table, Popconfirm } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import Link from "next/link";
-import { delItem } from "@/service/users";
 import message from "@/utils/antdMessage";
 import { CardType, Search } from "@prisma/client";
 import { useSearch } from "@/hooks/useSearch";
@@ -175,16 +174,6 @@ export default function SearchList({ searchForm }: any) {
     pagination,
     handleTableChange,
   } = useSearch(1, 10, searchForm);
-
-  const delTask = async (id: number) => {
-    try {
-      await delItem(id);
-      message.success("删除成功");
-    } catch (error) {
-      console.error(error);
-      message.error("删除失败");
-    }
-  };
 
   console.log("searchForm", searchForm);
 

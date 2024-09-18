@@ -11,6 +11,7 @@ type Params = {
 export async function GET(_request: NextRequest, context: { params: Params }) {
   // 从查询参数中解析分页参数
   const { searchParams } = new URL(_request.url); // 获取 URL 对象
+  const isWithSearch = searchParams.get("isWithSearch") || false; // 获取查询参数
   const isWithGreeting = searchParams.get("isWithGreeting") || false; // 获取查询参数
   let userIdParam = searchParams.get("userId");
   console.log("userIdParam", userIdParam);
@@ -44,11 +45,11 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
             keyword: true, // 仅选择需要的字段，例如 keyword
           },
         }, //
-        search: {
-          select: {
-            md5: true,
-          },
-        },
+        // search: {
+        //   select: {
+        //     md5: true,
+        //   },
+        // },
         GreetingGroup: {
           select: {
             id: true,
@@ -58,6 +59,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
       },
     });
     let greetings: any[] = [];
+    let searchs: any[] = [];
     if (isWithGreeting) {
       const greetingsRet = await prisma.greetings.findMany({
         where: {
@@ -77,11 +79,36 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
       });
       greetings = greetingsRet;
     }
+
+    // 是否包含历史搜索记录
+    if (isWithSearch) {
+      const searchRet = await prisma.search.findMany({
+        where: {
+          userId: userIdParam,
+          taskId: taskInfo.id,
+        },
+        select: {
+          // id: true,
+          // taskId: true,
+          md5: true,
+        },
+        orderBy: {
+          id: "desc",
+        },
+      });
+      console.log({
+        userId: userIdParam,
+        taskId: taskInfo.id,
+      });
+      console.log("searchRet", searchRet);
+      searchs = searchRet;
+    }
     // 返回分页数据和分页信息
     return jsonReturn(
       {
         ...taskInfo,
         greetings,
+        search: searchs,
       },
       200,
     );

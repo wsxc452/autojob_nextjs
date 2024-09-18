@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "AcountLogType" ADD VALUE 'WORDBINDREFERRER';

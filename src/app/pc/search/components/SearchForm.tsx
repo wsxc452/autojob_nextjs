@@ -42,11 +42,6 @@ function SearchForm({ searchForm, setSearchForm }: any) {
   const onFinish = async function (values: any) {
     console.log("onSumbit", values);
     try {
-      console.log(
-        "ret",
-        values.time_range[0],
-        dayjs(values.time_range[0]).format("YYYY-MM-DD HH:mm:ss"),
-      );
       setSearchForm((prev: any) => ({
         ...prev,
         time_range: values.time_range,

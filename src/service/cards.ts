@@ -9,6 +9,9 @@ export const getList = async (
 ): Promise<ResponseReturn<ListProps<Cards>>> => {
   const response = await fetch(
     `${ApiUrl}/${modelName}?page=${page}&limit=${limit}`,
+    {
+      cache: "no-cache",
+    },
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -35,6 +38,7 @@ export const updateItem = async (
   updatedData: Partial<Cards>,
 ): Promise<Cards> => {
   const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
+    cache: "no-cache",
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -48,6 +52,7 @@ export const updateItem = async (
 };
 export const deleteItem = async (id: number = 1): Promise<Cards> => {
   const response = await fetch(`${ApiUrl}/${modelName}/${id}`, {
+    cache: "no-cache",
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -65,6 +70,7 @@ export const createItem = async (
 ): Promise<Cards> => {
   console.log("createItem", updatedData);
   const response = await fetch(`${ApiUrl}/${modelName}`, {
+    cache: "no-cache",
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

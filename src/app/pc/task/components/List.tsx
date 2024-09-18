@@ -52,6 +52,7 @@ export default function List() {
       // 向 API 发送请求获取文件
       const res = await fetch(`${BaseUrl}/api/task/export/${record.id}`, {
         method: "GET",
+        cache: "no-cache",
       });
 
       if (!res.ok) {
@@ -151,6 +152,7 @@ export default function List() {
     try {
       const response = await fetch(`${BaseUrl}/api/task/upload`, {
         method: "POST",
+        cache: "no-cache",
         body: formData,
       });
 

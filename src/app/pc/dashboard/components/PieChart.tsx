@@ -9,7 +9,9 @@ function PieChartD() {
   const [labels, setLabels] = useState([]);
 
   const asyncFetch = () => {
-    fetch(`${BaseUrl}/api/chart/dayChart`)
+    fetch(`${BaseUrl}/api/chart/dayChart`, {
+      cache: "no-cache",
+    })
       .then((response) => response.json())
       .then((json) => {
         console.log("json", json.data.values);

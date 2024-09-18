@@ -5,7 +5,6 @@ import { Button, Space, Table, Popconfirm } from "antd";
 import type { TableProps } from "antd";
 import { useCardTypes } from "@/hooks/useCardTypes";
 import Link from "next/link";
-import { delItem } from "@/service/users";
 import message from "@/utils/antdMessage";
 import { CardType, CardTypes } from "@prisma/client";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
@@ -35,16 +34,6 @@ export default function CardTypesList() {
     handleTableChange,
   } = useCardTypes(1, 10);
 
-  const delTask = async (id: number) => {
-    try {
-      await delItem(id);
-      message.success("删除成功");
-      refetch();
-    } catch (error) {
-      console.error(error);
-      message.error("删除失败");
-    }
-  };
   const columns: ColumnsType<CardTypes> = [
     {
       title: "id",
@@ -89,19 +78,6 @@ export default function CardTypesList() {
           <Button>
             <Link href={`/pc/cardTypes/publish/${record.id}`}>发券</Link>
           </Button>
-          <Popconfirm
-            title="删除确认"
-            description="确认要删除?"
-            onConfirm={() => {
-              delTask(record.id);
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button disabled danger>
-              删除
-            </Button>
-          </Popconfirm>
         </Space>
       ),
     },

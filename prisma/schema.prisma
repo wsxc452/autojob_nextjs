@@ -22,7 +22,7 @@ model Tasks {
   filteredKeywords FilteredCompanyKeywords[] // 过滤公司关键字
   passCompanys     FilterPassCompanys[] // 过滤已递公司
   oid              String?                    @default("") @db.VarChar(100) // 默认值为空字符串
-  search           Search[] // 搜索结果的关系
+  // search           Search[] // 搜索结果的关系
   createdAt        DateTime                   @default(now())
   updatedAt        DateTime                   @updatedAt
   userId           String                     @db.VarChar(64) // 用户 ID
@@ -118,7 +118,7 @@ model Search {
 
   autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
 
-  task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
+  // task Tasks @relation(fields: [taskId], references: [id]) // 定义关系
   // Tasks   Tasks? @relation(fields: [tasksId], references: [id])
   // Tasks Tasks? @relation(fields: [taskId], references: [id])
 
@@ -143,21 +143,90 @@ model Users {
   points         Int       @default(0) // 积分数量，默认为 0
   cardStartTime  DateTime? // 卡密开始时间
   cardEndTime    DateTime? // 卡密结束时间
-  isVip          Boolean   @default(false) // 是否为 VIP 用户，默认为 false
-  isSuperUser    Boolean   @default(false) // 是否为超级用户，默认为 false
-  roleId         Int       @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
-  // isStaff        Boolean  @default(false) // 是否为员工，默认为 false
-  isDistributor  Boolean   @default(false) // 是否为分销商，默认为 false
-  isActive       Boolean   @default(true) // 激活状态，默认为 true
-  isAbnormal     Boolean   @default(false) // 异常状态，默认为 false, 用于标记异常用户
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  // UserCards      UserCards[]
 
-  greetings Greetings[]
+  isSuperUser     Boolean   @default(false) // 是否为超级用户，默认为 false
+  roleId          Int       @default(1) // 角色 ID，默认为 0 表示超级管理员 1 表示普通用户 2 表示员工 3 表示分销商
+  // isStaff        Boolean  @default(false) // 是否为员工，默认为 false
+  isDistributor   Boolean   @default(false) // 是否为分销商，默认为 false
+  isActive        Boolean   @default(true) // 激活状态，默认为 true
+  isAbnormal      Boolean   @default(false) // 异常状态，默认为 false, 用于标记异常用户
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  // UserCards      UserCards[]
+  isReferrer      Boolean   @default(false) // 是否为推荐人，默认为 false
+  isBind          Boolean   @default(false) // 是否为已经绑定推荐人，默认为 false
+  bindTime        DateTime? // 绑定时间
+  accountMoney    Float     @default(0) // 账户余额，默认为 0
+  referrerCode    String?   @unique @db.VarChar(50) // 推荐码
+  referrerUserId  String?   @db.VarChar(64) // 推荐人 ID
+  referrerTime    DateTime? // 成为推荐人时间
+  referrerVipTime DateTime? // 成为推荐 VIP 时间
+  isVip           Boolean   @default(false) // 是否为 VIP 推荐人，默认为 false
+
+  configJson String? @db.VarChar(256) // 配置信息,{chromePath:''}
+
+  greetings      Greetings[]
+  UsersAccoutLog UsersAccoutLog[]
+  WordsRecord    WordsRecord[]
 
   @@index([email]) // 单字段索引
   @@index([userId]) // 单字段索引
+}
+
+// 推荐人返点记录
+model ReferrerRecord {
+  id         Int      @id @default(autoincrement())
+  userId     String   @db.VarChar(64) // 用户 ID
+  points     Int      @default(0) // 积分数量，默认为 0
+  money      Float    @default(0) // 金额，默认为 0
+  createdAt  DateTime @default(now()) // 创建时间
+  updatedAt  DateTime @updatedAt // 更新时间
+  // cardCode   String   @db.VarChar(50) // 卡密
+  cardInfo   String   @db.VarChar(500) // 卡密JSON序列号
+  codeUserId String   @db.VarChar(64) // 来源用户 ID
+  codeIsVip  Boolean  @default(false) // 是否为 VIP 推荐人，默认为 false
+
+  cardType CardType? // 卡密类型
+  cardCode String    @db.VarChar(200) // 卡密
+
+  cardId Int // 卡密 ID
+}
+
+// 推荐人绑定返点记录
+model ReferrerBindRecord {
+  id         Int      @id @default(autoincrement())
+  userId     String   @unique @db.VarChar(64) // 用户 ID
+  points     Int      @default(0) // 积分数量，默认为 0
+  money      Float    @default(0) // 金额，默认为 0
+  createdAt  DateTime @default(now()) // 创建时间
+  updatedAt  DateTime @updatedAt // 更新时间
+  code       String   @db.VarChar(50) // 推荐码
+  codeUserId String   @db.VarChar(64) // 来源用户 ID
+  codeIsVip  Boolean  @default(false) // 是否为 VIP 推荐人，默认为 false
+
+  userEmail String? @db.VarChar(128) // 用户邮箱
+  desc      String? @db.VarChar(500) // 描述
+  bindType  String? @db.VarChar(20) // 绑定类型 "referrerCode" | "wordCode"
+}
+
+// 用户余额积分变更表
+model UsersAccoutLog {
+  id         Int      @id @default(autoincrement())
+  userId     String   @db.VarChar(64) // 用户 ID
+  points     Int      @default(0) // 积分数量，默认为 0
+  money      Float    @default(0) // 金额，默认为 0
+  cardType   String?  @db.VarChar(50) // 类型
+  createdAt  DateTime @default(now()) // 创建时间
+  updatedAt  DateTime @updatedAt // 更新时间
+  byUserId   String?  @db.VarChar(64) // 来源用户 ID
+  byResaon   String?  @db.VarChar(200) // 来源原因
+  isReferrer Boolean  @default(false) // 是否为返利，默认为 false
+
+  desc String? @db.VarChar(500) // 描述
+
+  type AcountLogType? // 类型
+
+  User Users @relation(fields: [userId], references: [userId])
 }
 
 model Cards {
@@ -185,13 +254,55 @@ model Cards {
   // UserCards     UserCards[]
 }
 
+// 口令红包表格
+model Words {
+  id             Int           @id @default(autoincrement())
+  word           String        @unique @db.VarChar(100) // 口令
+  points         Int           @default(0) // 积分数量，默认为 0
+  type           CardType      @default(POINTS) // 卡密类型
+  isBindUser     Boolean       @default(false) // 是否绑定用户，默认为 false
+  bindUserId     String        @db.VarChar(64) // 绑定用户ID
+  bindUserEmail  String?       @db.VarChar(128) // 绑定用户邮箱
+  maxCount       Int           @default(0) // 最大领取次数，默认为 0
+  remainderCount Int           @default(0) // 剩余领取次数，默认为 0
+  desc           String?       @db.VarChar(500) // 描述
+  endTime        DateTime? // 结束时间
+  startTime      DateTime? // 开始时间
+  createUserId   String?       @db.VarChar(64) // 创建者 ID
+  createdAt      DateTime      @default(now()) // 创建时间
+  updatedAt      DateTime      @updatedAt // 更新时间
+  WordsRecord    WordsRecord[]
+}
+
+// 口令核销记录
+model WordsRecord {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.VarChar(64) // 用户 ID
+  points    Int      @default(0) // 积分数量，默认为 0
+  money     Float    @default(0) // 金额，默认为 0
+  createdAt DateTime @default(now()) // 创建时间
+  updatedAt DateTime @updatedAt // 更新时间
+  // cardCode   String   @db.VarChar(50) // 卡密
+  wordInfo  String?  @db.VarChar(400) // 卡密JSON序列号
+
+  cardType      CardType? // 卡密类型
+  wordCode      String    @db.VarChar(200) // 口令
+  wordId        Int // 口令 ID
+  bindUserId    String?   @db.VarChar(64) // 绑定用户ID
+  bindUserEmail String?   @db.VarChar(128) // 绑定用户邮箱
+
+  Words Words @relation(fields: [wordId], references: [id])
+
+  User Users @relation(fields: [userId], references: [userId])
+}
+
 model CardTypes {
   id               Int      @id @default(autoincrement())
   name             String   @db.VarChar(50) // 卡密类型名称
-  type             CardType @default(POINTS)
+  type             CardType @default(POINTS) // 卡密类型
   price            Float    @default(0) // 卡密价格，默认为 0
   cValue           Int      @default(0) // 卡密价值，默认为 0
-  desc             String?  @db.VarChar(100) // 卡密类型描述
+  desc             String?  @db.VarChar(500) // 卡密类型描述
   rebate           Float?   @default(0) // 返点比例，默认为 null
   onlyOneTime      Boolean  @default(false) // 是否只能购买一次，默认为 false
   isCanDistributor Boolean  @default(false) // 是否可以分销，默认为 false  
@@ -234,6 +345,13 @@ enum CardType {
   HALF_YEARLY
   YEARLY
   POINTS
+}
+
+enum AcountLogType {
+  BINDREFERRER
+  WORDBINDREFERRER
+  CODECHARGE
+  WORDCHARGE
 }
 
 // model UserCards {

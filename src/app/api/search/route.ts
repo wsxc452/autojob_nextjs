@@ -215,7 +215,12 @@ async function checkPostInfo(
   //   const FilterCompony: taskInfo.filteredKeywords[] =
   //     filterKeywords.filteredKeywords;
   // 如果薪资在过滤列表中，则不保存
-  if (salary != "" && taskInfo.salary != null) {
+  if (
+    salary != "" &&
+    taskInfo.salary != null &&
+    taskInfo.salary != "" &&
+    taskInfo.salary != "-K"
+  ) {
     if (!isIncludeSalary(salary, taskInfo.salary)) {
       return {
         status: false,

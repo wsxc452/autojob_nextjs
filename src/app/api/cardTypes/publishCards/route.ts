@@ -11,7 +11,7 @@ function generateUniqueCode(length: number): string {
     const randomIndex = Math.floor(Math.random() * characters.length);
     code += characters[randomIndex];
   }
-  return code;
+  return code.toUpperCase();
 }
 
 async function generateCards(num: number, cardInfo: CardTypes, userId: string) {
@@ -20,7 +20,7 @@ async function generateCards(num: number, cardInfo: CardTypes, userId: string) {
   for (let i = 0; i < num; i++) {
     cards.push({
       title: cardInfo.name,
-      code: generateUniqueCode(10), // 生成唯一的卡密
+      code: "C8" + generateUniqueCode(6), // 生成唯一的卡密,卡密C8开头
       type: cardInfo.type, // 替换为实际的卡密类型
       value: cardInfo.cValue, // 假设存储天数或月份的值为30
       price: cardInfo.price,

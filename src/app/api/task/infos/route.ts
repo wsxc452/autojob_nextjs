@@ -54,7 +54,21 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
         // },
       },
     });
+
+    let searchs = [];
+    searchs = await prisma.search.findMany({
+      where: {
+        taskId: parseInt(taskId),
+        userId: userId,
+      },
+      select: {
+        md5: true,
+      },
+    });
     retInfo.taskInfo = taskInfo;
+    Object.assign(retInfo.taskInfo, {
+      search: searchs,
+    });
     groupId = taskInfo.greetingGroupId;
   } catch (e) {
     console.error(e);

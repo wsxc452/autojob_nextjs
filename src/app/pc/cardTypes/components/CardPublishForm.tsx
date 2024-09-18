@@ -118,21 +118,6 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-function getInitValue() {
-  return {
-    id: 0,
-    name: "新人体验卡券,每人只限一次,1000点券",
-    type: CardType.POINTS,
-    price: 2,
-    cValue: 1000,
-    desc: "新人体验卡券,每人只限一次,1000点券",
-    rebate: 0,
-    onlyOneTime: true,
-    isCanDistributor: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
 type FormValuesType = {
   name: string;
   pubNum: number;

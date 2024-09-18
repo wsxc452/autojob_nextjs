@@ -4,7 +4,7 @@ import { useGreetingGroup } from "@/hooks/useGreetingGroup";
 import { useGreetings } from "@/hooks/useGreetings";
 import { createItem, deleteItem, updateItem } from "@/service/greetings";
 import message from "@/utils/antdMessage";
-import { GreetingGroup, Greetings, GreetingsType } from "@prisma/client";
+import { Greetings, GreetingsType } from "@prisma/client";
 import {
   Button,
   Flex,
@@ -160,6 +160,7 @@ function GreatingForm() {
               {record.status === GreetingsType.ACTICE ? "禁用" : "启用"}
             </Button>
           </Popconfirm>
+
           <Popconfirm
             title="删除确认"
             description="确认要删除?"
@@ -169,7 +170,12 @@ function GreatingForm() {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger>删除</Button>
+            <Button
+              disabled={(record as any).GreetingGroup.name === "默认"}
+              danger
+            >
+              删除
+            </Button>
           </Popconfirm>
         </Space>
       ),

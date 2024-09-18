@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "WordsRecord" ALTER COLUMN "wordInfo" SET DATA TYPE VARCHAR(400);

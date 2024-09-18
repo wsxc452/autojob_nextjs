@@ -13,11 +13,11 @@ function ColumnChart() {
       data: [0],
     },
     {
-      name: "投递失败",
+      name: "投递过滤",
       data: [0],
     },
     {
-      name: "投递忽略",
+      name: "投递过滤",
       data: [0],
     },
   ]);
@@ -57,7 +57,9 @@ function ColumnChart() {
   };
 
   const asyncFetch = () => {
-    fetch(`${BaseUrl}/api/chart/monthChart`)
+    fetch(`${BaseUrl}/api/chart/monthChart`, {
+      cache: "no-cache",
+    })
       .then((response) => response.json())
       .then((json) => {
         console.log("json", json.data.values);
@@ -68,11 +70,11 @@ function ColumnChart() {
             data: Object.values(data.success || []),
           },
           {
-            name: "投递失败",
+            name: "投递过滤",
             data: Object.values(data.fail || []),
           },
           {
-            name: "投递忽略",
+            name: "投递过滤",
             data: Object.values(data.ignore || []),
           },
         ]);

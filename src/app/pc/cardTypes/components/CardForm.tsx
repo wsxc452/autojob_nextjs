@@ -63,16 +63,18 @@ type FormValues = {
 function getInitValue() {
   return {
     id: 0,
-    name: "新人体验卡券,每人只限一次,1000点券",
-    type: CardType.MONTHLY,
-    price: 100,
-    cValue: 1000,
-    desc: "新人体验卡券,每人只限一次,1000点券",
+    name: "新人体验卡券,1000积分",
+    type: CardType.POINTS,
+    price: 30,
+    cValue: 1000, // 点卡点数
+    desc: "新人体验卡券,1000积分",
     rebate: 0,
-    onlyOneTime: true,
+    onlyOneTime: false,
     isCanDistributor: false,
     createdAt: new Date(),
     updatedAt: new Date(),
+    cardId: null,
+    userId: "",
   };
 }
 const initValue = getInitValue();
@@ -84,7 +86,7 @@ const CardsForm: React.FC<FormValues> = ({
   const [isCreate, setIsCreate] = useState<boolean>(!initialValues);
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
   const [formValue, setFormValue] = useState<CardTypes>(initValue);
-  const [selectedCardType, setSelectedCardType] = useState("DAILY");
+  const [selectedCardType, setSelectedCardType] = useState(CardType.POINTS);
   useEffect(() => {
     if (initialValues) {
       const newValue = {
@@ -112,7 +114,7 @@ const CardsForm: React.FC<FormValues> = ({
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
-    setSelectedCardType(value as CardType);
+    setSelectedCardType(value as any);
   };
 
   const onFinish = async (values: any) => {
@@ -184,7 +186,7 @@ const CardsForm: React.FC<FormValues> = ({
       // onFieldsChange={(e) => onGenderChange(e)}
     >
       <Form.Item name="name" label="卡券标题" rules={[{ required: true }]}>
-        <Input allowClear placeholder="新人体验卡券,每人只限一次,1000点券" />
+        <Input allowClear placeholder="新人体验卡券,每人只限一次,1000积分" />
       </Form.Item>
       <Form.Item name="type" label="卡券类型" rules={[{ required: true }]}>
         <Select
@@ -241,7 +243,7 @@ const CardsForm: React.FC<FormValues> = ({
         name="onlyOneTime"
         rules={[{ required: true }]}
       >
-        <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+        <Switch checkedChildren="是" unCheckedChildren="否" />
       </Form.Item>
       <Form.Item label="卡券描述" name="desc" rules={[{ required: true }]}>
         <TextArea rows={2} placeholder="卡券描述" allowClear />

@@ -19,7 +19,9 @@ function BlackChart() {
   const [labels, setLabels] = useState([]);
 
   const asyncFetch = () => {
-    fetch(`${BaseUrl}/api/chart/blackChart`)
+    fetch(`${BaseUrl}/api/chart/blackChart`, {
+      cache: "no-cache",
+    })
       .then((response) => response.json())
       .then((json) => {
         console.log("json", json.data.values);

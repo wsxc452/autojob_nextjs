@@ -12,8 +12,8 @@ import { useMemo } from "react";
 const DropdownUser = () => {
   const store = useSnapshot(pcStore);
   const userInfo = store.userInfo;
-  console.log("userInfo", userInfo);
-  console.log("userInfo", userInfo?.userName, userInfo?.email);
+  // console.log("userInfo", userInfo);
+  // console.log("userInfo", userInfo?.userName, userInfo?.email);
   const userNameShow = useMemo(() => {
     console.log("userNameShow", userInfo?.userName, userInfo?.email);
     if (userInfo?.userName) {

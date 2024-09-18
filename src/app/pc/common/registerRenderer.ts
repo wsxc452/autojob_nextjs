@@ -83,6 +83,7 @@ export default function registerEvents() {
       };
       console.log("headerComine", headerComine);
       const ret = await fetch(url, {
+        cache: "no-cache",
         method: "POST",
         headers: headerComine,
         body: JSON.stringify(params || {}),
@@ -123,6 +124,7 @@ export default function registerEvents() {
     try {
       const ret = await fetch(url, {
         method: "GET",
+        cache: "no-cache",
         headers: {
           "Content-Type": "application/json",
         },

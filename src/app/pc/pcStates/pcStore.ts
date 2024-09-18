@@ -40,10 +40,6 @@ const pcStore = proxy<{
   userInfo: Users & {
     greetings: [];
   };
-  chromeInfo: {
-    chromePath: string;
-    platform: string;
-  };
   currentTaskInfo: TaskItem;
   isOpended: boolean;
   isTaskEnd: boolean;
@@ -51,10 +47,6 @@ const pcStore = proxy<{
 }>({
   theme: "light",
   userInfo: { ...initUserInfo },
-  chromeInfo: {
-    chromePath: "",
-    platform: "",
-  },
   currentTaskInfo: {
     id: -1,
     title: "",
@@ -81,17 +73,12 @@ const pcStore = proxy<{
   isTaskEnd: true,
   logs: [],
 });
-
-subscribeKey(pcStore, "chromeInfo", () => {
-  localStorage.setItem("chromeInfo", JSON.stringify(pcStore.chromeInfo));
-});
 subscribeKey(pcStore, "theme", (colorMode) => {
   const className = "dark";
   const bodyClass = window.document.body.classList;
   localStorage.setItem("color-theme", colorMode);
   colorMode === "dark" ? bodyClass.add(className) : bodyClass.remove(className);
 });
-
 export const userActions = {
   setTheme: (theme: any) => {
     pcStore.theme = theme;
@@ -109,16 +96,18 @@ export const userActions = {
   clearUserInfo: () => {
     pcStore.userInfo = { ...initUserInfo };
   },
-  setChromeIno: (value: { chromePath: string; platform: string }) => {
-    pcStore.chromeInfo = {
-      chromePath: value.chromePath,
-      platform: value.platform,
-    };
-  },
   setCurrentTaskInfo: (taskInfo: TaskItem) => {
     pcStore.currentTaskInfo = { ...taskInfo };
   },
-  syncUserInfo: async (userId: string) => {
+  syncUserInfo: async (userId?: string) => {
+    if (!userId) {
+      console.error(pcStore.userInfo);
+      userId = pcStore.userInfo.userId || "";
+      if (userId === "") {
+        // console.error("userId is null");
+        return;
+      }
+    }
     const userInfo = await getItemByUserId(userId);
     if (userInfo.status === 200 && userInfo.data) {
       // pcStore.userInfo.points = userInfo.data.points;
