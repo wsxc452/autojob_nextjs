@@ -91,6 +91,8 @@ export type CheckDescType = {
   positionKeywords: string[]; // 职位关键字命中
   filteredExits: boolean; // 过滤关键字是否存在
   filteredKeywords: string[]; // 过滤关键字命中
+  filteredPositionExits: boolean; // 过滤职位position关键字是否存在
+  filteredPositionKeywords: string[]; // 过滤position关键字命中
 };
 
 export type ItemTaskRet = {
@@ -100,6 +102,7 @@ export type ItemTaskRet = {
 };
 
 function checkDesc(
+  urlParams: Record<string, any>,
   descText: string,
   positionKeywords: KeyWordsMap[],
   filteredKeywords: KeyWordsMap[],
@@ -109,13 +112,15 @@ function checkDesc(
     positionKeywords: [],
     filteredExits: false,
     filteredKeywords: [],
+    filteredPositionExits: false,
+    filteredPositionKeywords: [],
   } as CheckDescType;
 
   const descTextLower = descText.toLowerCase();
   // 对比职位描述,是否符合要求,只要有一个关键字存在,则认为符合要求
   // 如果没有设置职位关键字,说明不检测职位关键字,直接投递
   if (positionKeywords.length === 0) {
-    console.log("没有设置职位关键字,直接投递");
+    // console.log("没有设置职位关键字,直接投递");
     retInfo.positionExits = true;
   } else {
     for (const keywordItem of positionKeywords) {
@@ -133,6 +138,16 @@ function checkDesc(
       retInfo.filteredKeywords.push(keywordItem.keyword);
     }
   }
+  // 新增职位过滤关键字，因为有些标题如销售，Java开发等也需要过滤
+  const position = urlParams.position.toLowerCase();
+  // 如果有一个过滤关键字存在,则不符合
+  for (const keywordItem of filteredKeywords) {
+    if (position.includes(keywordItem.keyword.toLowerCase())) {
+      retInfo.filteredPositionExits = true;
+      retInfo.filteredPositionKeywords.push(keywordItem.keyword);
+    }
+  }
+
   return retInfo;
 }
 type CheckRetType = {
@@ -153,12 +168,14 @@ async function checkPostInfo(
   const salary = urlParams.salary || "";
   const descText = urlParams.descText || "";
   const autoThreadNo = urlParams.autoThreadNo || "";
+  const position = urlParams.position || "";
   if (
     md5 === "" ||
     taskId === "" ||
     descText === "" ||
     company === "" ||
-    autoThreadNo === ""
+    autoThreadNo === "" ||
+    position === ""
   ) {
     console.error("参数不全", md5, taskId, descText, company);
     return {
@@ -237,6 +254,7 @@ async function checkPostInfo(
   // console.log("checkRet====>1111", JSON.stringify(taskInfo.positionKeywords));
   // console.log("checkRet====>1111", JSON.stringify(taskInfo.filteredKeywords));
   const checkRet = checkDesc(
+    urlParams,
     descText,
     taskInfo.positionKeywords,
     taskInfo.filteredKeywords,
@@ -259,6 +277,14 @@ async function checkPostInfo(
       status: false,
       error: "命中过滤关键字,不投递",
       code: "10006",
+      checkRet,
+    };
+  } // 如果命中postion过滤关键字,则不投递
+  if (checkRet.filteredPositionExits) {
+    return {
+      status: false,
+      error: "命中职位关键字,不投递",
+      code: "10007",
       checkRet,
     };
   }

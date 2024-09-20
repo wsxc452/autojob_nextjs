@@ -71,7 +71,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
     });
     groupId = taskInfo.greetingGroupId;
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     return jsonReturn(
       {
         error: "找不到任务",
