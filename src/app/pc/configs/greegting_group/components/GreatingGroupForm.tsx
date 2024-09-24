@@ -117,7 +117,7 @@ function GreatingGroupForm() {
             <Button htmlType="submit" type="primary">
               新增
             </Button>
-            &nbsp; 方便不同的任务选择不同的分组,如"默认","礼貌","热情"等
+            &nbsp; {'方便不同的任务选择不同的分组,如"默认","礼貌","热情"等'}
           </Form.Item>
         </Form>
       </div>

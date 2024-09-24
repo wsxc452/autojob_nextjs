@@ -1,6 +1,6 @@
 "use client";
 import { useSnapshot } from "valtio";
-import { Button, Form, Input, Select, Space } from "antd";
+import { Button, Form, Input } from "antd";
 import { redeemedCode, wordCode } from "@/service/users";
 import message from "@/utils/antdMessage";
 import { doIpc, getChinaTime } from "../../common/util";
@@ -11,9 +11,6 @@ import { use, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import ChromeConfig from "./ChromeConfig";
-import ReferrerForm from "./ReferrerForm";
-import { toUpper } from "lodash";
 
 // 加载插件
 dayjs.extend(utc);
@@ -106,7 +103,7 @@ function CodeForm() {
 
   useEffect(() => {
     userActions.syncUserInfo(userInfo.userId);
-  }, []);
+  }, [userInfo.userId]);
   return (
     <div className="flex flex-col p-5">
       <div>

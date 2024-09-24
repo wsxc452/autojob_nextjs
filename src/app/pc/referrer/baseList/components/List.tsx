@@ -48,30 +48,30 @@ export default function SearchList({ searchForm }: any) {
     handleTableChange,
   } = useUsers(1, 10, searchForm);
 
-  const openVip = async (record: any, type: string) => {
-    const openVipRet = await fetch(`${ApiUrl}/cards/activeVip`, {
-      method: "POST",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: record.userId,
-        isVip: type === "vip" ? "true" : "false",
-        code: "test1232",
-      }),
-    });
-    const retJson = await openVipRet.json();
-    if (retJson.status !== 200) {
-      message.error(retJson.data.message);
-      return;
-    } else {
-      message.info("激活成功");
-      refetch();
-    }
-  };
-
   const columns: ColumnsType<any> = useMemo(() => {
+    const openVip = async (record: any, type: string) => {
+      const openVipRet = await fetch(`${ApiUrl}/cards/activeVip`, {
+        method: "POST",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: record.userId,
+          isVip: type === "vip" ? "true" : "false",
+          code: "test1232",
+        }),
+      });
+      const retJson = await openVipRet.json();
+      if (retJson.status !== 200) {
+        message.error(retJson.data.message);
+        return;
+      } else {
+        message.info("激活成功");
+        refetch();
+      }
+    };
+
     return [
       {
         title: "id",
@@ -152,7 +152,7 @@ export default function SearchList({ searchForm }: any) {
         ),
       },
     ];
-  }, []);
+  }, [refetch]);
 
   console.log("searchForm", searchForm);
 

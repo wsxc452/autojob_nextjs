@@ -52,7 +52,7 @@ const TaskForm = forwardRef(
     useEffect(() => {
       setFormValue(initialValues);
       form.setFieldsValue(initialValues);
-    }, [initialValues]);
+    }, [initialValues, form]);
 
     useImperativeHandle(ref, () => ({
       // 可以暴露的方法或属性

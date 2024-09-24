@@ -102,7 +102,6 @@ export type ItemTaskRet = {
 };
 
 function checkDesc(
-  urlParams: Record<string, any>,
   descText: string,
   positionKeywords: KeyWordsMap[],
   filteredKeywords: KeyWordsMap[],
@@ -136,15 +135,6 @@ function checkDesc(
     if (descTextLower.includes(keywordItem.keyword.toLowerCase())) {
       retInfo.filteredExits = true;
       retInfo.filteredKeywords.push(keywordItem.keyword);
-    }
-  }
-  // 新增职位过滤关键字，因为有些标题如销售，Java开发等也需要过滤
-  const position = urlParams.position.toLowerCase();
-  // 如果有一个过滤关键字存在,则不符合
-  for (const keywordItem of filteredKeywords) {
-    if (position.includes(keywordItem.keyword.toLowerCase())) {
-      retInfo.filteredPositionExits = true;
-      retInfo.filteredPositionKeywords.push(keywordItem.keyword);
     }
   }
 
@@ -254,7 +244,6 @@ async function checkPostInfo(
   // console.log("checkRet====>1111", JSON.stringify(taskInfo.positionKeywords));
   // console.log("checkRet====>1111", JSON.stringify(taskInfo.filteredKeywords));
   const checkRet = checkDesc(
-    urlParams,
     descText,
     taskInfo.positionKeywords,
     taskInfo.filteredKeywords,
@@ -277,14 +266,6 @@ async function checkPostInfo(
       status: false,
       error: "命中过滤关键字,不投递",
       code: "10006",
-      checkRet,
-    };
-  } // 如果命中postion过滤关键字,则不投递
-  if (checkRet.filteredPositionExits) {
-    return {
-      status: false,
-      error: "命中职位关键字,不投递",
-      code: "10007",
       checkRet,
     };
   }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useSnapshot } from "valtio";
@@ -66,7 +67,7 @@ export default function AutoOper() {
 
     const userInfo = data?.data?.userInfo || ({} as any);
     if (isLoading) {
-      errMsg = "isLoading! ";
+      errMsg = "isLoading!";
       return false;
     }
     if (!userInfo) {
@@ -89,7 +90,7 @@ export default function AutoOper() {
       return false;
     } else if (chromePath === "") {
       // 用户的chrome是否配置过
-      errMsg = "请先配置chrome路径!";
+      errMsg = "请先配置chrome路径, 首页->tab页->浏览器配置!";
       return false;
     } else {
       errMsg = "";

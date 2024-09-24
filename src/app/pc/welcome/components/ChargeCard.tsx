@@ -62,7 +62,7 @@ function ChargeCard() {
 
   useEffect(() => {
     userActions.syncUserInfo(userInfo.userId);
-  }, []);
+  }, [userInfo.userId]);
   return (
     <div className="flex flex-col p-5">
       <div>

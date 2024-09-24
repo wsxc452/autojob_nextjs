@@ -138,26 +138,26 @@ export default function CardsPublishForm() {
   const { userInfo } = useSnapshot(globaStore);
 
   // 获取cartType ID的信息,并展示歘来;
-  const getPubInfo = async () => {
-    const itemInfo = await getItem(cardTypeId);
-    console.log("itemInfo", itemInfo);
-    setFormValue({
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-
-    form.setFieldsValue({
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-    console.log("itemInfo", itemInfo);
-  };
 
   useEffect(() => {
+    const getPubInfo = async () => {
+      const itemInfo = await getItem(cardTypeId);
+      console.log("itemInfo", itemInfo);
+      setFormValue({
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+
+      form.setFieldsValue({
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+      console.log("itemInfo", itemInfo);
+    };
     getPubInfo();
-  }, []);
+  }, [form, formValue.pubNum, cardTypeId, id]);
 
   const onFinish = async () => {
     const values = form.getFieldsValue();

@@ -126,7 +126,6 @@ type FormValuesType = {
 };
 export default function CardsPublishForm() {
   const { id } = useParams();
-  console.log("parsms", id);
   const cardTypeId = id as string;
 
   const [form] = Form.useForm<FormValuesType>();
@@ -140,28 +139,28 @@ export default function CardsPublishForm() {
   const { userInfo } = useSnapshot(globaStore);
 
   // 获取cartType ID的信息,并展示歘来;
-  const getPubInfo = async () => {
-    const itemInfo = await getItem(id.toString());
-    console.log("itemInfo", itemInfo);
-    setFormValue({
-      id: itemInfo.data.id,
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-
-    form.setFieldsValue({
-      id: itemInfo.data.id,
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-    console.log("itemInfo", itemInfo);
-  };
 
   useEffect(() => {
+    const getPubInfo = async () => {
+      const itemInfo = await getItem(id.toString());
+      setFormValue({
+        id: itemInfo.data.id,
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+
+      form.setFieldsValue({
+        id: itemInfo.data.id,
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+      console.log("itemInfo", itemInfo);
+    };
+
     getPubInfo();
-  }, []);
+  }, [form, id, formValue]);
 
   const onFinish = async () => {
     const values = form.getFieldsValue();

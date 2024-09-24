@@ -2,6 +2,7 @@ import prisma from "@/db";
 import { NextRequest } from "next/server";
 import { jsonReturn } from "../../common/common";
 import { auth } from "@clerk/nextjs/server";
+import { GreetingsType } from "@prisma/client";
 type Params = {
   id: string;
 };
@@ -101,6 +102,7 @@ export async function GET(_request: NextRequest, context: { params: Params }) {
           },
           where: {
             greetingGroupId: groupId!,
+            status: GreetingsType.ACTICE,
           },
           take: 10,
         },

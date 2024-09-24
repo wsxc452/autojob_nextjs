@@ -171,7 +171,7 @@ function GreatingForm() {
             cancelText="No"
           >
             <Button
-              disabled={(record as any).GreetingGroup.name === "默认"}
+              // disabled={(record as any).GreetingGroup.name === "默认"}
               danger
             >
               删除
@@ -185,7 +185,7 @@ function GreatingForm() {
   return (
     <div>
       <div className="mb-5 w-full">
-        <div className="py-5">Tips: 最多10条</div>
+        <div className="py-5">Tips: 最多10条,请至少保留一条,否则无法打招呼</div>
 
         <Form
           form={form}

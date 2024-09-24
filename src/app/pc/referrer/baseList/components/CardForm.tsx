@@ -53,7 +53,7 @@ const CardsForm: React.FC<FormValues> = ({
   const [form] = Form.useForm();
   const [isCreate, setIsCreate] = useState<boolean>(!initialValues);
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
-  const [formValue, setFormValue] = useState<CardTypes>(initValue);
+  const [formValue, setFormValue] = useState<any>(initValue);
 
   useEffect(() => {
     if (initialValues) {

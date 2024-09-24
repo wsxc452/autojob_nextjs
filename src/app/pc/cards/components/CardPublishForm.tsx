@@ -1,30 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Select,
-  Space,
-  App,
-  Tag,
-  Switch,
-  Radio,
-} from "antd";
-import type { RadioChangeEvent, SelectProps } from "antd";
-import {
-  createItem,
-  getItem,
-  publishCards,
-  updateItem,
-} from "@/service/cardTypes";
-import globaStore from "@/app/pc/pcStates/pcStore";
-import { useSnapshot } from "valtio";
+import { Button, Form, Input, Space } from "antd";
+import type { SelectProps } from "antd";
+import { getItem, publishCards } from "@/service/cardTypes";
 import message from "@/utils/antdMessage";
-import { CardType, CardTypes } from "@prisma/client";
-import { CardPublishFormValuesType } from "@/types";
-import { useParams, useRouter } from "next/navigation";
-const { TextArea } = Input;
+import { useParams } from "next/navigation";
 
 const posOptions: SelectProps["options"] = [
   {
@@ -118,21 +98,6 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-function getInitValue() {
-  return {
-    id: 0,
-    name: "新人体验卡券,每人只限一次,1000积分",
-    type: CardType.POINTS,
-    price: 2,
-    cValue: 1000,
-    desc: "新人体验卡券,每人只限一次,1000积分",
-    rebate: 0,
-    onlyOneTime: true,
-    isCanDistributor: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
 type FormValuesType = {
   name: string;
   pubNum: number;
@@ -150,29 +115,26 @@ export default function CardsPublishForm() {
     desc: "",
   });
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
-  const { userInfo } = useSnapshot(globaStore);
 
   useEffect(() => {
+    // 获取cartType ID的信息,并展示歘来;
+    const getPubInfo = async () => {
+      const itemInfo = await getItem("0");
+      setFormValue({
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+
+      form.setFieldsValue({
+        name: itemInfo.data.name,
+        pubNum: formValue.pubNum,
+        desc: itemInfo.data.desc || "",
+      });
+    };
+
     getPubInfo();
-  }, []);
-
-  // 获取cartType ID的信息,并展示歘来;
-  const getPubInfo = async () => {
-    const itemInfo = await getItem("0");
-    console.log("itemInfo", itemInfo);
-    setFormValue({
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-
-    form.setFieldsValue({
-      name: itemInfo.data.name,
-      pubNum: formValue.pubNum,
-      desc: itemInfo.data.desc || "",
-    });
-    console.log("itemInfo", itemInfo);
-  };
+  }, [formValue, form]);
 
   const onFinish = async () => {
     const values = form.getFieldsValue();

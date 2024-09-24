@@ -33,7 +33,7 @@ export default function AppWrap({ children }: { children: React.ReactNode }) {
     } else {
       return <AppBody>{children}</AppBody>;
     }
-  }, [router]);
+  }, [router, children]);
 
   return <div className="page h-dvh w-full">{LayoutMemo}</div>;
 }
