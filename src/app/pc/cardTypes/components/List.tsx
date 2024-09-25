@@ -7,6 +7,7 @@ import { useCardTypes } from "@/hooks/useCardTypes";
 import Link from "next/link";
 import message from "@/utils/antdMessage";
 import { CardType, CardTypes } from "@prisma/client";
+import { ApiUrl } from "@/base/base";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -77,6 +78,17 @@ export default function CardTypesList() {
         <Space size="middle">
           <Button>
             <Link href={`/pc/cardTypes/publish/${record.id}`}>发券</Link>
+          </Button>
+          <Button>
+            <Link href={`/pc/cardTypes/pubrecords/${record.id}`}>剩余详情</Link>
+          </Button>
+          <Button>
+            <Link
+              target="blank"
+              href={`${ApiUrl}/pubrecordsDownload?id=${record.id}`}
+            >
+              导出可用
+            </Link>
           </Button>
         </Space>
       ),

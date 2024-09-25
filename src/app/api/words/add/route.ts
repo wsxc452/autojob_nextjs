@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { jsonReturn } from "../../common/common";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { checkAdminOrThrow } from "@/service/users";
 const model = prisma.words;
 export async function PUT(request: NextRequest, context: { params: {} }) {
   const body = await request.json();
@@ -26,6 +27,7 @@ export async function PUT(request: NextRequest, context: { params: {} }) {
     return jsonReturn({ error: "请输入正确的maxCount" }, 400);
   }
   try {
+    await checkAdminOrThrow(userId);
     // 使用 Prisma 更新任务数据
     // bindUserEmail: "";
     // bindUserId: "";

@@ -7,7 +7,8 @@ import { doIpc, getChinaTime } from "../../common/util";
 import { TaskType } from "../../common/types";
 import DebounceWrap from "../../components/common/DebounceWrap";
 import pcStore, { userActions } from "../../pcStates/pcStore";
-import { use, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -109,9 +110,6 @@ function CodeForm() {
       <div>
         {/* {!userInfo.isBind && <ReferrerForm />} */}
         <div>
-          <div className="pb-5 text-lg text-red">
-            提示: 请确认充值的是卡密还是口令,卡密C8开头
-          </div>
           <Form
             onFinish={onSumbit}
             initialValues={{
@@ -150,6 +148,26 @@ function CodeForm() {
               </DebounceWrap>
             </Form.Item>
           </Form>
+        </div>
+        <div className="pb-5 text-lg text-red">
+          提示: 卡密购买后请在此核销. 以下两种方式均可购买！
+          <div className="mt-5">
+            <span>卡密购买</span>
+            <div>
+              <a href="https://www.shiyuei.cn/links/54C3BBD6" target="_blank">
+                卡密购买链接
+              </a>
+            </div>
+          </div>
+          <div className="mt-5">
+            <span>支付宝扫一扫购买</span>
+            <Image
+              src={"/images/logo/generateqrcode.png"}
+              width={80}
+              height={80}
+              alt="Brand"
+            />
+          </div>
         </div>
       </div>
     </div>

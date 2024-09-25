@@ -204,7 +204,7 @@ function GreatingForm() {
             rules={[
               { required: true, message: "请输入打招呼语句" },
               { min: 5, message: "不能少于5个字符" },
-              { max: 100, message: "不能超过100个字符" },
+              { max: 500, message: "不能超过100个字符" },
             ]}
           >
             <Input allowClear />

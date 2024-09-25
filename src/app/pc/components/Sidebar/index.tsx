@@ -111,11 +111,11 @@ const menuGroups = [
       {
         label: "口令管理",
         route: "/pc/words",
-        // isAdmin: true,
+        isAdmin: true,
         children: [
-          { label: "新增口令", route: "/pc/words/add", isAdmin: true },
-          { label: "口令列表", route: "/pc/words/list", isAdmin: true },
-          { label: "核销记录", route: "/pc/words/record", isAdmin: true },
+          { label: "新增口令", route: "/pc/words/add" },
+          { label: "口令列表", route: "/pc/words/list" },
+          { label: "核销记录", route: "/pc/words/record" },
         ],
       },
       {
@@ -123,6 +123,7 @@ const menuGroups = [
         route: "/pc/words",
         isAdmin: false,
         children: [
+          { label: "推广激活", route: "/pc/referrer/active" },
           {
             label: "推广列表",
             route: "/pc/referrer/recordByUser",
@@ -140,14 +141,9 @@ const menuGroups = [
         route: "/pc/referrer/active",
         isAdmin: true,
         children: [
-          { label: "推广激活", route: "/pc/referrer/active" },
-          {
-            label: "推广列表",
-            route: "/pc/referrer/recordByUser",
-            isAdmin: false,
-          },
-          { label: "返利列表", route: "/pc/referrer/record", isAdmin: true },
-          { label: "推广人排名Top", route: "/pc/cardTypes", isAdmin: true },
+          // { label: "推广激活", route: "/pc/referrer/active" },
+          { label: "返利列表", route: "/pc/referrer/record" },
+          { label: "推广人排名Top", route: "/pc/cardTypes" },
         ],
       },
       {
@@ -192,10 +188,7 @@ const menuGroups = [
 ];
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   // const pathname = usePathname();
-  const [pageName, setPageName] = useLocalStorage(
-    "selectedMenu",
-    "pc/dashboard",
-  );
+  const [pageName, setPageName] = useLocalStorage("selectedMenu", "pc/welcome");
   const { userInfo } = useSnapshot(pcStore);
 
   const menus = useMemo(() => {

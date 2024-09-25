@@ -70,8 +70,16 @@ function SettingPage() {
       </Form>
       <div className="mt-5 flex w-full flex-col gap-2  text-sm">
         <div className="text-sm font-bold">
-          温馨提示: <br />
-          (请根据填写Chrome浏览器的真实路径,路径中如有空格不要删掉)
+          温馨提示:
+          (请根据本机填写Chrome浏览器的真实路径,路径中如有空格不要删掉)
+          <br />
+          参考链接:
+          <a
+            href="https://blog.csdn.net/2401_86293519/article/details/142484268"
+            target="blank"
+          >
+            如何查看chrome可执行文件路径,mac,windows
+          </a>
         </div>
         <div>默认Windows平台chrome路径:</div>
         <div>{DetaultWindowsPath}</div>

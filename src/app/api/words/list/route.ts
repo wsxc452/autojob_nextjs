@@ -2,11 +2,13 @@ import prisma from "@/db";
 import { NextRequest, NextResponse } from "next/server";
 import { jsonReturn } from "../../common/common";
 import { auth } from "@clerk/nextjs/server";
+import { checkAdminOrThrow } from "@/service/users";
 const model = prisma.words;
 export async function POST(request: NextRequest) {
   const { userId } = auth().protect();
   const bodyParams = await request.json();
   try {
+    await checkAdminOrThrow(userId);
     console.log("====bodyParams", bodyParams);
     //   {
     //     searchForm: {

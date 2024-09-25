@@ -25,6 +25,10 @@ const cardOptions: SelectProps["options"] = [
     value: "DAILY",
   },
   {
+    label: "周卡",
+    value: "WEEKLY",
+  },
+  {
     label: "月卡",
     value: "MONTHLY",
   },

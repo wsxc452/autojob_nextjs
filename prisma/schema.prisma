@@ -340,6 +340,7 @@ model CardTypes {
 // ];
 enum CardType {
   DAILY
+  WEEKLY
   MONTHLY
   QUARTERLY
   HALF_YEARLY

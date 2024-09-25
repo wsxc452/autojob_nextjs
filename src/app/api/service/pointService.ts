@@ -109,6 +109,8 @@ function getAddTimesByType(type: CardType, startTime?: Date | null) {
   switch (type) {
     case CardType.DAILY:
       return dayjs(startTime).add(1, "day").toDate();
+    case CardType.WEEKLY:
+      return dayjs(startTime).add(1, "week").toDate();
     case CardType.MONTHLY:
       return dayjs(startTime).add(1, "month").toDate();
     case CardType.QUARTERLY:

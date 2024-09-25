@@ -32,62 +32,6 @@ const posOptions: SelectProps["options"] = [
     value: "Node",
   },
 ];
-const salayOptions: SelectProps["options"] = [
-  {
-    label: "日卡",
-    value: "DAILY",
-  },
-  {
-    label: "月卡",
-    value: "MONTHLY",
-  },
-  {
-    label: "季卡",
-    value: "12-18K",
-  },
-  {
-    label: "半年卡",
-    value: "12-18K",
-  },
-  {
-    label: "年卡",
-    value: "18000-22000",
-  },
-  {
-    label: "点卡",
-    value: "POINTS",
-  },
-];
-
-const staffNumOptions: SelectProps["options"] = [
-  {
-    label: "不限制",
-    value: "0-0",
-  },
-  {
-    label: "0-20人",
-    value: "0-20",
-  },
-  {
-    label: "20-50人",
-    value: "20-50",
-  },
-  {
-    label: "50-100人",
-    value: "50-100",
-  },
-  {
-    label: "100-500人",
-    value: "100-500",
-  },
-  {
-    label: "500以上",
-    value: "500-999999",
-  },
-];
-const handleChange = (value: string[]) => {
-  console.log(`selected ${value}`);
-};
 
 const layout = {
   labelCol: { span: 4 },

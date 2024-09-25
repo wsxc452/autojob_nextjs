@@ -164,7 +164,7 @@ export const publichCards = async (
   return response.json();
 };
 
-export const checkAdminOrThrow = async (userId: string): Promise<boolean> => {
+export const checkAdminOrThrow = async (userId: string): Promise<void> => {
   // 检测是否是管理员, 不是则返回错误
   if (!userId) {
     throw new Error("userId is null");
@@ -179,7 +179,7 @@ export const checkAdminOrThrow = async (userId: string): Promise<boolean> => {
   } catch (e) {
     throw new Error("非管理员账号");
   }
-  return true;
+  // return true;
 };
 
 export const redeemedCode = async (

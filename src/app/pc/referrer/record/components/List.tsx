@@ -48,13 +48,11 @@ const columns: ColumnsType<any> = [
     title: "userId",
     dataIndex: "userId",
     key: "userId",
-    render: (_, record) => <a>{record.User.userId}</a>,
   },
   {
-    title: "email",
-    dataIndex: "email",
-    key: "email",
-    render: (_, record) => <a>{record.User.email}</a>,
+    title: "userEmail",
+    dataIndex: "userEmail",
+    key: "userEmail",
   },
   {
     title: "cardType",
