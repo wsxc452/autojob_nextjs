@@ -34,11 +34,11 @@ export default function AutoOper() {
     return chromeInfo.chromePath || "";
   }, [userInfo.configJson]);
 
-  // const doTest = async () => {
-  //   console.log("doTest");
-  //   const ret = await doIpc("task", { type: TaskType.Test });
-  //   console.log("ret", ret);
-  // };
+  const doTest = async () => {
+    console.log("doTest");
+    const ret = await doIpc("task", { type: TaskType.Test });
+    console.log("ret", ret);
+  };
   // const {
   //   data: greetings,
   //   refetch,
