@@ -35,7 +35,12 @@ export async function POST(request: Request) {
   const { code } = body;
   try {
     // 检测是否已经绑定过推荐人
-    const reRet = await referrerCode(userId, AcountLogType.BINDREFERRER, code);
+    const reRet = await referrerCode(
+      null,
+      userId,
+      AcountLogType.BINDREFERRER,
+      code,
+    );
     return jsonReturn({ message: "账户增加成功", data: reRet });
   } catch (e: any) {
     console.error(e);

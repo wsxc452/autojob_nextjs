@@ -194,15 +194,16 @@ model ReferrerRecord {
 
 // 推荐人绑定返点记录
 model ReferrerBindRecord {
-  id         Int      @id @default(autoincrement())
-  userId     String   @unique @db.VarChar(64) // 用户 ID
-  points     Int      @default(0) // 积分数量，默认为 0
-  money      Float    @default(0) // 金额，默认为 0
-  createdAt  DateTime @default(now()) // 创建时间
-  updatedAt  DateTime @updatedAt // 更新时间
-  code       String   @db.VarChar(50) // 推荐码
-  codeUserId String   @db.VarChar(64) // 来源用户 ID
-  codeIsVip  Boolean  @default(false) // 是否为 VIP 推荐人，默认为 false
+  id         Int       @id @default(autoincrement())
+  userId     String    @unique @db.VarChar(64) // 用户 ID
+  points     Int       @default(0) // 积分数量，默认为 0
+  money      Float     @default(0) // 金额，默认为 0
+  createdAt  DateTime  @default(now()) // 创建时间
+  updatedAt  DateTime  @updatedAt // 更新时间
+  code       String    @db.VarChar(50) // 推荐码
+  cardType   CardType? // 卡密类型   
+  codeUserId String    @db.VarChar(64) // 来源用户 ID
+  codeIsVip  Boolean   @default(false) // 是否为 VIP 推荐人，默认为 false
 
   userEmail String? @db.VarChar(128) // 用户邮箱
   desc      String? @db.VarChar(500) // 描述

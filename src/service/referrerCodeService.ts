@@ -4,19 +4,17 @@ import {
   incrementPoints,
 } from "@/app/api/service/pointService";
 import prisma from "@/db";
-import { AcountLogType, CardType } from "@prisma/client";
+import { AcountLogType, CardType, Words } from "@prisma/client";
 function isValidateCode(code: string) {
   return code.trim().length > 4;
 }
 
 export const referrerCode = async function (
+  codeInfoData: Words | null,
   userId: string,
   bindType: AcountLogType,
   code: string,
 ) {
-  const pricePoint = 200;
-  const refePricePoint = 100;
-
   code = code.trim().toUpperCase();
   if (!isValidateCode(code)) {
     throw new Error("请输入正确的code");
@@ -35,6 +33,7 @@ export const referrerCode = async function (
     // }
     // 生成ReferrerRecord记录
     let reFerrerUserInfo;
+    // not active code
     if (bindType === AcountLogType.BINDREFERRER) {
       reFerrerUserInfo = await prisma.users.findFirst({
         select: {
@@ -58,11 +57,12 @@ export const referrerCode = async function (
     } else {
       // AcountLogType.WORDBINDREFERRER
       // wordCode
-      const reFerrerWordUserInfo = await prisma.words.findFirst({
-        where: {
-          word: code,
-        },
-      });
+      // const reFerrerWordUserInfo = await prisma.words.findFirst({
+      //   where: {
+      //     word: code,
+      //   },
+      // });
+      const reFerrerWordUserInfo = codeInfoData;
       if (!reFerrerWordUserInfo) {
         throw new Error("该口令不存在");
       }
@@ -83,21 +83,11 @@ export const referrerCode = async function (
         throw new Error("该推荐人不存在");
       }
     }
-    // 绑定推荐人
-    await prisma.users.update({
-      where: {
-        userId,
-      },
-      data: {
-        isBind: true,
-        referrerUserId: reFerrerUserInfo.userId,
-        bindTime: new Date(),
-      },
-    });
+
     const referrUserId = reFerrerUserInfo.userId;
 
     // 绑定推荐人,可以模拟一个code类型卡券
-    const PRICE_POINT = false;
+    const PRICE_POINT = codeInfoData?.type === CardType.POINTS;
     let codeInfoJson: {
       money: number;
       point: number;
@@ -118,17 +108,17 @@ export const referrerCode = async function (
     if (PRICE_POINT) {
       // 奖励内容
       codeInfoJson = Object.assign(codeInfoJson, {
-        point: pricePoint,
-        referrPoint: refePricePoint,
+        point: codeInfoData?.points || 100,
+        referrPoint: 100,
         code,
         logType: bindType,
       });
-      // 给本人增加积分记录
+      // 给本人增加积分记录， 推广人增加固定100积分；
       const codeInfo = {
         desc: "绑定口令,",
         type: CardType.POINTS,
         money: 0,
-        points: pricePoint,
+        points: codeInfoJson.point,
         code,
         logType: bindType,
       };
@@ -137,7 +127,7 @@ export const referrerCode = async function (
       await incrementPoints(
         userId,
         codeInfo,
-        pricePoint,
+        codeInfoJson.point,
         0,
         referrUserId,
         false,
@@ -147,7 +137,7 @@ export const referrerCode = async function (
         desc: "",
         type: CardType.POINTS,
         money: 0,
-        points: refePricePoint,
+        points: codeInfoJson.referrPoint,
         userId: userId,
         logType: bindType,
       };
@@ -156,7 +146,7 @@ export const referrerCode = async function (
       await incrementPoints(
         referrUserId,
         codeInfoReferrer,
-        refePricePoint,
+        codeInfoJson.referrPoint,
         0,
         userId,
         true,
@@ -165,8 +155,9 @@ export const referrerCode = async function (
       //   codeInfoJson = getDescText(codeInfo);
     } else {
       // 奖励时间卡, 每人奖励一天卡
+      // 绑定个人新增棒的卡类型， 推广人奖励日卡
       codeInfoJson = Object.assign(codeInfoJson, {
-        time: CardType.DAILY,
+        time: codeInfoData?.type || CardType.DAILY,
         referrerTime: CardType.DAILY,
         code,
         logType: bindType,
@@ -214,9 +205,10 @@ export const referrerCode = async function (
         userId: userId, // 被推荐人id
         codeUserId: reFerrerUserInfo.userId, // 推荐人id
         codeIsVip: reFerrerUserInfo.isVip,
-        points: PRICE_POINT ? pricePoint : 0,
+        points: PRICE_POINT ? codeInfoData?.points || 100 : 0,
         money: 0,
         code: code,
+        cardType: codeInfoData?.type,
         userEmail: bindUserInfo.email, // 推荐人邮箱
         desc: JSON.stringify(codeInfoJson),
         bindType,

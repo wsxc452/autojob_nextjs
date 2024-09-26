@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "dotenv -e .env.local -- npx prisma migrate dev --name autojob_recode_words",
+    "migrate": "dotenv -e .env.local -- npx prisma migrate dev --name autojob_pretest",
     "generate": "dotenv -e .env.local -- npx prisma generate",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
   },

@@ -64,6 +64,7 @@ export async function POST(request: Request) {
     return jsonReturn({ error: "请输入正确的兑换用户" }, 400);
   }
   const codeUper = code.toUpperCase();
+
   try {
     const codeInfo = await prisma.words.findFirst({
       where: {
@@ -81,18 +82,43 @@ export async function POST(request: Request) {
       if (codeInfo.bindUserId === redeemedBy) {
         return jsonReturn({ error: "不能绑定自己的推广口令" }, 400);
       }
-      // 检测是否已经绑定过,如果绑定过,则提示用户次口令"该口令为推广口令,您已领取过此类奖励"
-      const bindInfo = await prisma.referrerBindRecord.findFirst({
+
+      const userInfo = await prisma.users.findFirstOrThrow({
         where: {
           userId: redeemedBy,
         },
       });
-      if (bindInfo) {
+
+      if (userInfo?.isBind) {
         return jsonReturn(
-          { error: "该口令为推广口令,仅限领取过绑定口令" },
+          { error: "该口令为推广口令,您已领取过此类奖励" },
           400,
         );
       }
+
+      await prisma.users.update({
+        where: {
+          userId: redeemedBy,
+        },
+        data: {
+          isBind: true,
+          referrerUserId: codeInfo.bindUserId,
+          bindTime: new Date(),
+        },
+      });
+
+      // 检测是否已经绑定过,如果绑定过,则提示用户次口令"该口令为推广口令,您已领取过此类奖励"
+      // const bindInfo = await prisma.referrerBindRecord.findFirst({
+      //   where: {
+      //     userId: redeemedBy,
+      //   },
+      // });
+      // if (bindInfo) {
+      //   return jsonReturn(
+      //     { error: "该口令为推广口令,您已领取过此类奖励" },
+      //     400,
+      //   );
+      // }
 
       const codeInfoNew = {
         id: codeInfo.id,
@@ -135,6 +161,7 @@ export async function POST(request: Request) {
       ]);
 
       const reRet = await referrerCode(
+        codeInfo,
         redeemedBy,
         AcountLogType.WORDBINDREFERRER,
         codeUper,

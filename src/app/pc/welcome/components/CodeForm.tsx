@@ -45,6 +45,7 @@ function CodeForm() {
   const storeInfo = useSnapshot(pcStore);
   const userInfo = storeInfo.userInfo;
   const [form] = Form.useForm();
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [chargeType, setChargeType] = useState("code");
   const test = async () => {
     const ret = await doIpc("task", { type: TaskType.Test });
@@ -57,6 +58,7 @@ function CodeForm() {
   };
   const onSumbit = async function (values: any) {
     try {
+      setSubmitLoading(true);
       const isC8 = values.code.toUpperCase().startsWith("C8");
       if (isC8) {
         const ret = await redeemedCode(values.code, userInfo.userId);
@@ -83,6 +85,8 @@ function CodeForm() {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -142,7 +146,12 @@ function CodeForm() {
             </Form.Item>
             <Form.Item>
               <DebounceWrap debounceTime={1000}>
-                <Button block type="primary" htmlType="submit">
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  loading={submitLoading}
+                >
                   核销
                 </Button>
               </DebounceWrap>
