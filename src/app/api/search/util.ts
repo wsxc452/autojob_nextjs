@@ -37,7 +37,7 @@ function checkUserAccount(userInfo: any): CheckAcountReturn {
     if (!hasTimeLeft) {
       // check is has points, if hasTimeLeft is false, then use points and check points
       isUsePoints = true;
-      console.log("用户卡密已过期,check userInfo.points", userInfo.points);
+      // console.log("用户卡密已过期,check userInfo.points", userInfo.points);
       if (userInfo.points <= 0) {
         msg = USERCOUNTZOUE;
         return {
@@ -85,7 +85,7 @@ export const checkAndSubscibeUserAccount = async (
       // message.info("用户账户正常" + checkRet.msg);
       // if isUsePoints is true, then use points
       if (checkRet.isUsePoints) {
-        console.log("用户账户余额不足,使用积分");
+        // console.log("用户账户余额不足,使用积分");
         const userPoints = await prisma.users.update({
           where: {
             userId,

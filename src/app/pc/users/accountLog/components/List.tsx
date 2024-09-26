@@ -99,6 +99,11 @@ const columns: ColumnsType<any> = [
     render: (_, record) => <span>{_ ? "是" : "否"}</span>,
   },
   {
+    title: "cardType",
+    dataIndex: "cardType",
+    key: "cardType",
+  },
+  {
     title: "byResaon",
     dataIndex: "byResaon",
     key: "byResaon",
