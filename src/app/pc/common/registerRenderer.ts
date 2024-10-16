@@ -19,13 +19,13 @@ export default function registerEvents() {
     //   }, 3000),
     // );
     window.electron.ipcRenderer.on("taskEnd", (_event, info: LogBody) => {
-      console.log("taskEnd addEvent.. ..", info);
+      // console.log("taskEnd addEvent.. ..", info);
       userActions.setIsTaskEnd(true);
     });
 
     window.electron.ipcRenderer.on("taskLog", (_event, info: LogBody) => {
-      const time = new Date().getTime();
-      console.log("taskLog addEvent.. ..", time, info.message);
+      // const time = new Date().getTime();
+      // console.log("taskLog addEvent.. ..", time, info.message);
       userActions.addLog(info);
       // setLogs((prevLogs) => [
       //   ...prevLogs,

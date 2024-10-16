@@ -43,10 +43,7 @@ export default function LogList() {
   // }, []);
 
   useEffect(() => {
-    console.log("logs===========", logs);
-    console.log("listRef", listRef.current);
     if (listRef.current) {
-      console.log("logs", logs.length, listRef.current.scrollHeight);
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [logs]); // 当 items 更新时触发滚动
