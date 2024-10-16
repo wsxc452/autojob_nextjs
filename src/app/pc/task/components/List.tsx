@@ -9,6 +9,7 @@ import Link from "next/link";
 import { deleteTask } from "@/service/task";
 import message from "@/utils/antdMessage";
 import { BaseUrl } from "@/base/base";
+import DebounceWrap from "../../components/common/DebounceWrap";
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 type TablePagination<T extends object> = NonNullable<
   Exclude<TableProps<T>["pagination"], boolean>
@@ -116,9 +117,11 @@ export default function List() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button>
-            <Link href={`/pc/task/index/${record.id}`}>执行</Link>
-          </Button>
+          <DebounceWrap debounceTime={2000}>
+            <Button>
+              <Link href={`/pc/task/index/${record.id}`}>执行</Link>
+            </Button>
+          </DebounceWrap>
           <Button>
             <Link href={`/pc/task/edit/${record.id}`}>编辑</Link>
           </Button>

@@ -5,6 +5,8 @@ export enum TaskType {
   Stop = "stop",
   Test = "test",
   Paused = "paused",
+  PaChongInit = "paChongInit",
+  PaChongStart = "paChongStart",
 }
 
 export const ActionKeys = {

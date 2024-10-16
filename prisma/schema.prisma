@@ -410,3 +410,29 @@ model City {
 
   @@unique([code, from]) // 设置 code 和 from 的唯一约束
 }
+
+model PTask {
+  id        Int      @id @default(autoincrement())
+  pageUrl   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  desc      String?  @db.VarChar(50) // pachong desc from which page
+  userId    String   @db.VarChar(64) // 创建者 ID
+
+  autoThreadNo String @default("") @db.VarChar(32) // 本次执行编号
+
+  PaChongData PaChongData[]
+}
+
+model PaChongData {
+  id        Int      @id @default(autoincrement())
+  data      String   @db.Text
+  ptaskId   Int
+  pageUrl   String   @db.VarChar(300)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  type      String?  @db.VarChar(50) // pachong type from which page
+  userId    String   @db.VarChar(64) // 创建者 ID
+
+  PTask PTask @relation(fields: [ptaskId], references: [id])
+}

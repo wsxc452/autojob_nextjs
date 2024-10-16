@@ -99,6 +99,15 @@ const menuGroups = [
         ],
       },
       {
+        label: "爬虫",
+        route: "/pc/pachong/index",
+        isAdmin: true,
+        children: [
+          { label: "新增任务", route: "/pc/pachong/index" },
+          { label: "任务列表", route: "/pc/pachong/list" },
+        ],
+      },
+      {
         label: "卡券管理",
         route: "/pc/cards",
         isAdmin: true,

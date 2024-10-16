@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "dotenv -e .env.local -- npx prisma migrate dev --name autojob_pretest",
+    "migrate": "dotenv -e .env.local -- npx prisma migrate dev --name autojob_pachong",
     "generate": "dotenv -e .env.local -- npx prisma generate",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
   },
@@ -26,6 +26,7 @@
     "@types/lodash": "^4.17.7",
     "@types/pinyin": "^2.10.2",
     "@types/qs": "^6.9.15",
+    "@types/xlsx": "^0.0.36",
     "antd": "^5.19.0",
     "apexcharts": "^3.45.2",
     "bcryptjs": "^2.4.3",
@@ -46,7 +47,8 @@
     "react-dom": "^18",
     "segmentit": "^2.0.3",
     "server-only": "^0.0.1",
-    "valtio": "^1.13.2"
+    "valtio": "^1.13.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@clerk/types": "^4.8.0",

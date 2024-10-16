@@ -1,12 +1,16 @@
+"use client";
 import Breadcrumb from "@/app/pc/components/Breadcrumbs/Breadcrumb";
 
-import AutoOper from "../../components/AutoOper";
-import LogList from "../../components/LogList";
-import BackButton from "./BackButton";
-function Page() {
+import { useParams } from "next/navigation";
+import AutoOper from "./components/AutoOper";
+import LogList from "./components/LogList";
+import BackButton from "./components/BackButton";
+
+function TaskPage() {
+  const { id } = useParams();
   return (
-    <>
-      <Breadcrumb pageName="任务" />
+    <div>
+      <Breadcrumb pageName="爬虫任务" />
       <BackButton />
       <div className="page flex h-full w-full flex-col items-center justify-center overflow-hidden px-5">
         <div className="mt-5 flex h-[130px] w-full flex-col  items-center gap-3 rounded-lg text-sm">
@@ -16,8 +20,8 @@ function Page() {
           <LogList />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-export default Page;
+export default TaskPage;
