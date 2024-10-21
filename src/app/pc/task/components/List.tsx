@@ -107,6 +107,11 @@ export default function List() {
       dataIndex: "maxCount",
       key: "maxCount",
     },
+    {
+      title: "城市",
+      dataIndex: "cityName",
+      key: "cityName",
+    },
     // {
     //   title: "公司人数",
     //   dataIndex: "staffnum",
